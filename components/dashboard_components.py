@@ -69,6 +69,7 @@ def _build_dashboard_html(content: dict[str, Any], logo_data_uri: str | None = N
         f"<p>{escape(paragraph)}</p>" for paragraph in content["technical_analysis"]["paragraphs"]
     )
     logo_html = _build_logo_html(logo_data_uri)
+    highlight_caption = costs["highlight"].get("caption") or "principal grupo de custo"
 
     html = dedent(
         f"""
@@ -81,7 +82,8 @@ def _build_dashboard_html(content: dict[str, Any], logo_data_uri: str | None = N
         </div>
         <div class="gd-hero__band">{escape(header["band"])}</div>
         </div>
-        <div class="gd-grid gd-grid--primary">
+        <div class="gd-top-section">
+        <div class="gd-top-column">
         <div class="gd-card gd-card--blue">
         <div class="gd-card__header">
         <div class="gd-title">{escape(revenue["icon"])} {escape(revenue["title"])}</div>
@@ -94,6 +96,19 @@ def _build_dashboard_html(content: dict[str, Any], logo_data_uri: str | None = N
         </div>
         </div>
         </div>
+        <div class="gd-card gd-card--orange gd-card--compact">
+        <div class="gd-title">{escape(result["icon"])} {escape(result["title"])}</div>
+        <div class="gd-kpi">{escape(result["value"])}</div>
+        <div class="gd-subline">{escape(result["subtitle"])}</div>
+        </div>
+        <div class="gd-card gd-card--green">
+        <div class="gd-title">{escape(people["icon"])} {escape(people["title"])}</div>
+        <div class="gd-kpi">{escape(people["value"])}</div>
+        <div class="gd-subline">{escape(people["subtitle"])}</div>
+        <div class="gd-list">{people_rows}</div>
+        </div>
+        </div>
+        <div class="gd-top-column">
         <div class="gd-card gd-card--gray">
         <div class="gd-card__header">
         <div class="gd-title">{escape(costs["icon"])} {escape(costs["title"])}</div>
@@ -104,31 +119,17 @@ def _build_dashboard_html(content: dict[str, Any], logo_data_uri: str | None = N
         <div class="gd-cost gd-cost--highlight">
         <div class="gd-cost__label">{escape(costs["highlight"]["label"])}</div>
         <div class="gd-cost__value gd-cost__value--xl">{escape(costs["highlight"]["value"])}</div>
+        <div class="gd-cost__caption">{escape(highlight_caption)}</div>
         </div>
         <div class="gd-cost-list">
         {cost_cards}
         </div>
         </div>
         </div>
-        </div>
-        <div class="gd-grid gd-grid--secondary">
-        <div class="gd-card gd-card--orange gd-card--compact">
-        <div class="gd-title">{escape(result["icon"])} {escape(result["title"])}</div>
-        <div class="gd-kpi">{escape(result["value"])}</div>
-        <div class="gd-subline">{escape(result["subtitle"])}</div>
-        </div>
         <div class="gd-card gd-card--purple gd-card--compact">
         <div class="gd-title">{escape(margins["icon"])} {escape(margins["title"])}</div>
         <div class="gd-kpi">{escape(margins["value"])}</div>
         <div class="gd-subline">{escape(margins["subtitle"])}</div>
-        </div>
-        </div>
-        <div class="gd-grid gd-grid--secondary">
-        <div class="gd-card gd-card--green">
-        <div class="gd-title">{escape(people["icon"])} {escape(people["title"])}</div>
-        <div class="gd-kpi">{escape(people["value"])}</div>
-        <div class="gd-subline">{escape(people["subtitle"])}</div>
-        <div class="gd-list">{people_rows}</div>
         </div>
         <div class="gd-card gd-card--yellow">
         <div class="gd-title">{escape(clients["icon"])} {escape(clients["title"])}</div>
@@ -136,12 +137,15 @@ def _build_dashboard_html(content: dict[str, Any], logo_data_uri: str | None = N
         <div class="gd-list gd-list--spaced">{client_rows}</div>
         </div>
         </div>
+        </div>
+        <div class="gd-bottom-section">
         <div class="gd-insights">
         {insights}
         </div>
         <div class="gd-technical">
         <h2>{escape(content["technical_analysis"]["title"])}</h2>
         {analysis}
+        </div>
         </div>
         </div>
         """

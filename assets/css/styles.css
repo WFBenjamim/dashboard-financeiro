@@ -56,6 +56,24 @@ footer {
     gap: 1.2rem;
 }
 
+.gd-top-section {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.2rem;
+    align-items: start;
+}
+
+.gd-top-column {
+    display: grid;
+    gap: 1.2rem;
+    align-content: start;
+}
+
+.gd-bottom-section {
+    display: grid;
+    gap: 1.2rem;
+}
+
 .gd-logo-wrap {
     display: flex;
     justify-content: center;
@@ -131,6 +149,10 @@ footer {
     grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.gd-grid--primary {
+    align-items: start;
+}
+
 .gd-card {
     position: relative;
     overflow: hidden;
@@ -173,8 +195,8 @@ footer {
 }
 
 .gd-card--compact {
-    min-height: 250px;
-    align-content: center;
+    min-height: 0;
+    align-content: start;
 }
 
 .gd-title {
@@ -205,7 +227,7 @@ footer {
 .gd-surface {
     position: relative;
     z-index: 1;
-    padding: 1rem 1.05rem;
+    padding: 0.9rem 1.05rem;
     border-radius: 18px;
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.14);
@@ -321,22 +343,22 @@ footer {
     display: grid;
     grid-template-columns: minmax(270px, 0.96fr) minmax(0, 1.14fr);
     gap: 0.95rem;
-    align-items: stretch;
+    align-items: start;
 }
 
 .gd-cost-list {
     display: grid;
     gap: 0.75rem;
+    align-content: start;
 }
 
 .gd-cost {
-    min-height: 100%;
     display: grid;
-    align-content: center;
-    justify-items: center;
-    gap: 0.55rem;
-    padding: 1.1rem 1rem;
-    text-align: center;
+    align-content: start;
+    justify-items: start;
+    gap: 0.4rem;
+    padding: 1.2rem 1.1rem;
+    text-align: left;
     border-radius: 18px;
     background: rgba(255, 255, 255, 0.14);
     border: 1px solid rgba(255, 255, 255, 0.16);
@@ -363,10 +385,16 @@ footer {
     font-size: clamp(2.7rem, 3vw, 4.1rem);
 }
 
+.gd-cost__caption {
+    font-size: 0.86rem;
+    line-height: 1.45;
+    font-weight: 700;
+    color: rgba(255, 245, 231, 0.82);
+}
+
 .gd-cost-rect {
     display: grid;
     gap: 0.55rem;
-    min-height: 114px;
     padding: 1rem 1.05rem;
     border-radius: 18px;
     background: rgba(255, 255, 255, 0.12);
@@ -574,6 +602,7 @@ footer {
 }
 
 @media (max-width: 1180px) {
+    .gd-top-section,
     .gd-grid--primary,
     .gd-grid--secondary,
     .gd-insights {
