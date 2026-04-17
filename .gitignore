@@ -1,4 +1,11 @@
-.venv/
+# Ignorar dados sensíveis
+data/*.csv
+data/*.xlsx
+data/*.json
+
+# Ignorar cache do Python e ambientes virtuais
 __pycache__/
 *.pyc
+venv/
+.env
 .streamlit/secrets.toml

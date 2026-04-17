@@ -89,6 +89,7 @@
         "label": "Sócios de Serviço",
         "value": "R$ 4.600.000,00",
         "share": "51,9%",
+        "color_highlight": "green",
         "details": [
           {
             "name": "Equipe Jurídica",
@@ -109,6 +110,26 @@
           {
             "name": "Apoio",
             "value": "R$ 600.000,00"
+          }
+        ]
+      },
+      {
+        "label": "CLT",
+        "value": "R$ 0,00",
+        "share": "0,0%",
+        "color_highlight": "purple",
+        "details": [
+          {
+            "name": "Pessoal Administrativo",
+            "value": "R$ 0,00"
+          },
+          {
+            "name": "Pessoal Operacional",
+            "value": "R$ 0,00"
+          },
+          {
+            "name": "Encargos CLT",
+            "value": "R$ 0,00"
           }
         ]
       },

@@ -341,15 +341,38 @@ footer {
     position: relative;
     z-index: 1;
     display: grid;
-    grid-template-columns: minmax(270px, 0.96fr) minmax(0, 1.14fr);
+    grid-template-columns: minmax(270px, 0.9fr) minmax(0, 1.1fr);
     gap: 0.95rem;
     align-items: start;
+}
+
+.gd-cost-layout__left,
+.gd-cost-layout__right {
+    display: grid;
+    align-content: start;
+}
+
+.gd-cost-layout__left {
+    gap: 0.85rem;
+}
+
+.gd-cost-layout__right {
+    gap: 0.75rem;
 }
 
 .gd-cost-list {
     display: grid;
     gap: 0.75rem;
     align-content: start;
+}
+
+.gd-cost-list--special,
+.gd-cost-list--main {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.gd-cost-list--special {
+    gap: 0.75rem;
 }
 
 .gd-cost {
@@ -399,6 +422,21 @@ footer {
     border-radius: 18px;
     background: rgba(255, 255, 255, 0.12);
     border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.gd-cost-rect--highlight-blue {
+    background: linear-gradient(135deg, rgba(100, 200, 255, 0.15) 0%, rgba(59, 130, 246, 0.08) 100%);
+    border: 1px solid rgba(100, 200, 255, 0.25);
+}
+
+.gd-cost-rect--highlight-green {
+    background: linear-gradient(135deg, rgba(100, 255, 150, 0.15) 0%, rgba(74, 222, 128, 0.08) 100%);
+    border: 1px solid rgba(100, 255, 150, 0.25);
+}
+
+.gd-cost-rect--highlight-purple {
+    background: linear-gradient(135deg, rgba(180, 100, 255, 0.15) 0%, rgba(168, 85, 247, 0.08) 100%);
+    border: 1px solid rgba(180, 100, 255, 0.25);
 }
 
 .gd-cost-rect--expandable {

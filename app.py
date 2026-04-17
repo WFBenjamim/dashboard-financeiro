@@ -2,7 +2,12 @@ from pathlib import Path
 
 import streamlit as st
 
-from components.dashboard_components import load_css, render_dashboard
+from components.dashboard_components import (
+    load_css,
+    render_dashboard,
+    render_header_com_menu,
+    render_modal_evolucao,
+)
 from utils.data_loader import get_dashboard_content
 
 
@@ -22,6 +27,14 @@ def main() -> None:
 
     load_css(CSS_FILE)
     content = get_dashboard_content()
+    
+    # Renderiza header com menu hambúrguer
+    render_header_com_menu(content, logo_file=LOGO_FILE)
+    
+    # Renderiza modal de evolução (pop-up)
+    render_modal_evolucao()
+    
+    # Renderiza o dashboard principal
     render_dashboard(content, logo_file=LOGO_FILE)
 
 
