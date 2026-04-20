@@ -5,6 +5,8 @@ import re
 import unicodedata
 from copy import deepcopy
 from datetime import date, datetime
+import os
+import sys
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -15,7 +17,18 @@ from utils.analysis_generator import generate_insights, generate_technical_analy
 from utils.dashboard_metrics import build_dashboard_metrics
 
 
-DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+def _runtime_root() -> Path:
+    env_root = os.getenv("DASHBOARD_APP_ROOT")
+    if env_root:
+        return Path(env_root)
+
+    if getattr(sys, "frozen", False):
+        return Path(sys.executable).resolve().parent
+
+    return Path(__file__).resolve().parent.parent
+
+
+DATA_DIR = _runtime_root() / "data"
 TEMPLATE_FILE = DATA_DIR / "dashboard_content.json"
 ORCAMENTO_FILE = DATA_DIR / "Orçamento.xlsx"
 INFO_FILE = DATA_DIR / "INFORMAÇÕES GERENCIAIS - Copia.xlsx"
@@ -83,11 +96,6 @@ def _load_dashboard_template(file_mtime_ns: int) -> dict[str, Any]:
 @st.cache_data(show_spinner=False)
 def _read_excel_sheet(file_path: str, sheet_name: str, header: int | None = 0) -> pd.DataFrame:
     return pd.read_excel(file_path, sheet_name=sheet_name, header=header, engine="openpyxl")
-
-
-@st.cache_data(show_spinner=False)
-def _read_csv_file(file_path: str) -> pd.DataFrame:
-    return pd.read_csv(file_path)
 
 
 def _normalize_text(value: Any) -> str:
@@ -217,14 +225,6 @@ def _sum_terms(df: pd.DataFrame, terms: list[str], columns: list[int]) -> float:
     for term in terms:
         row_index = _find_row_index(df, term)
         total += abs(_row_sum(df, row_index, columns))
-    return total
-
-
-def _sum_terms_with_sign(df: pd.DataFrame, terms: list[str], columns: list[int]) -> float:
-    total = 0.0
-    for term in terms:
-        row_index = _find_row_index(df, term)
-        total += _row_sum(df, row_index, columns)
     return total
 
 

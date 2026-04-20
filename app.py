@@ -25,16 +25,18 @@ def main() -> None:
         initial_sidebar_state="collapsed",
     )
 
+    with st.sidebar:
+        if st.button("🔄 Recarregar Dados", use_container_width=True):
+            st.cache_data.clear()
+            st.rerun()
+
     load_css(CSS_FILE)
     content = get_dashboard_content()
-    
-    # Renderiza header com menu hambúrguer
+
     render_header_com_menu(content, logo_file=LOGO_FILE)
-    
-    # Renderiza modal de evolução (pop-up)
+
     render_modal_evolucao()
-    
-    # Renderiza o dashboard principal
+
     render_dashboard(content, logo_file=LOGO_FILE)
 
 

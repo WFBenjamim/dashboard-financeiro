@@ -74,10 +74,6 @@ def _generate_analysis_with_llm(
 ) -> dict[str, Any]:
     """Ponto de extensão para futura geração via provedor externo."""
     _ = LLM_PROVIDER
-    # Integração futura:
-    # 1. Serializar conteúdo + métricas resumidas.
-    # 2. Enviar para o provider configurado.
-    # 3. Retornar o mesmo contrato: {"title": str, "paragraphs": list[str], "meta": {...}}.
     analysis = _generate_analysis_with_template(content, metrics)
     analysis["meta"]["mode"] = "llm-fallback"
     analysis["meta"]["provider"] = LLM_PROVIDER

@@ -233,8 +233,7 @@ def _build_cost_card(item: dict[str, Any]) -> str:
     details = item.get("details", [])
     formatted_value = _parse_valor_brl_e_formata(item.get("value", ""))
     color_highlight = item.get("color_highlight", "")
-    
-    # Define classe CSS baseada na cor de destaque
+
     highlight_class = ""
     if color_highlight == "green":
         highlight_class = " gd-cost-rect--highlight-green"
@@ -242,7 +241,7 @@ def _build_cost_card(item: dict[str, Any]) -> str:
         highlight_class = " gd-cost-rect--highlight-purple"
     elif color_highlight == "blue":
         highlight_class = " gd-cost-rect--highlight-blue"
-    
+
     content = (
         "<div class='gd-cost-rect__head'>"
         f"<div class='gd-cost-rect__label'>{escape(item['label'])}</div>"

@@ -1,0 +1,17 @@
+[2026-04-19 15:26:47] Iniciando Streamlit na porta 8501
+
+  You can now view your Streamlit app in your browser.
+
+  URL: http://127.0.0.1:8501
+
+[2026-04-20 13:47:59] Iniciando Streamlit na porta 8501
+
+  You can now view your Streamlit app in your browser.
+
+  URL: http://127.0.0.1:8501
+
+2026-04-20 13:48:24.164 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
