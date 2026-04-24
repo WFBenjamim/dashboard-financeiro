@@ -28,11 +28,20 @@ def _runtime_root() -> Path:
     return Path(__file__).resolve().parent.parent
 
 
+def _resolve_data_file(*candidate_names: str) -> Path:
+    for candidate_name in candidate_names:
+        candidate_path = DATA_DIR / candidate_name
+        if candidate_path.exists():
+            return candidate_path
+    raise FileNotFoundError(
+        f"Nenhum dos arquivos esperados foi encontrado em {DATA_DIR}: {', '.join(candidate_names)}"
+    )
+
+
 DATA_DIR = _runtime_root() / "data"
 TEMPLATE_FILE = DATA_DIR / "dashboard_content.json"
-ORCAMENTO_FILE = DATA_DIR / "Orçamento.xlsx"
-INFO_FILE = DATA_DIR / "INFORMAÇÕES GERENCIAIS - Copia.xlsx"
-FATURAMENTO_FILE = DATA_DIR / "Faturamento Allan.xlsx"
+INFO_FILE = _resolve_data_file("INFORMAÇÕES GERENCIAIS.xlsx", "INFORMAÇÕES GERENCIAIS - Copia.xlsx")
+PERFORMANCE_FILE = DATA_DIR / "Faturamento Allan.xlsx"
 
 MONTH_LABELS = {
     1: "jan",
@@ -68,7 +77,7 @@ def get_dashboard_data(mes: int, ano: int) -> dict[str, Any]:
     top_clientes = load_top_clientes(mes, ano)
     distribuicao_despesas = load_dre_distribution(mes, ano, kpis)
 
-    template["header"]["subtitle"] = f"Período acumulado: {MONTH_LABELS[mes]} de {ano} • dados carregados via ETL"
+    template["header"]["subtitle"] = "Período acumulado: 1º tri de 2026 • dados carregados via ETL"
     template["revenue_mix"] = kpis["revenue_mix"]
     template["cost_structure"] = distribuicao_despesas
     template["net_result"] = kpis["net_result"]
@@ -204,6 +213,24 @@ def _date_columns_upto(df: pd.DataFrame, mes: int, ano: int) -> list[int]:
     return columns
 
 
+def _resolve_date_columns(df: pd.DataFrame, mes: int, ano: int) -> list[int]:
+    columns = _date_columns_upto(df, mes, ano)
+    if columns:
+        return columns
+
+    available_years = sorted(
+        {
+            column.year
+            for column in df.columns
+            if isinstance(column, datetime) or isinstance(column, date)
+        }
+    )
+    if not available_years:
+        return []
+
+    return _date_columns_upto(df, mes, available_years[-1])
+
+
 def _row_sum(df: pd.DataFrame, row_index: int, columns: list[int]) -> float:
     if row_index is None:
         return 0.0
@@ -220,12 +247,33 @@ def _last_significant_value(row: pd.Series) -> float:
     return 0.0
 
 
-def _sum_terms(df: pd.DataFrame, terms: list[str], columns: list[int]) -> float:
+def _sum_exact_terms(df: pd.DataFrame, text_column: str, terms: list[str], columns: list[int]) -> float:
     total = 0.0
+    if not columns:
+        return total
+
+    launch = df[text_column].astype(str)
     for term in terms:
-        row_index = _find_row_index(df, term)
-        total += abs(_row_sum(df, row_index, columns))
+        target = _normalize_text(term)
+        if target == "":
+            continue
+        matches = launch == target
+        if not matches.any():
+            continue
+        for row_index in df.loc[matches].index:
+            row = df.iloc[row_index]
+            values = [_to_float(row.iloc[column]) for column in columns]
+            total += sum(values)
     return total
+
+
+def _sum_row_by_label(df: pd.DataFrame, label: str, columns: list[int], absolute: bool = False) -> float:
+    row_index = _find_row_index_exact(df, label)
+    if row_index is None:
+        return 0.0
+
+    value = _row_sum(df, row_index, columns)
+    return abs(value) if absolute else value
 
 
 def _resolve_dre_text_column(df: pd.DataFrame) -> str:
@@ -243,21 +291,7 @@ def _prepare_dre_dataframe(df: pd.DataFrame) -> tuple[pd.DataFrame, str]:
 
 
 def _resolve_dre_columns(df: pd.DataFrame, mes: int, ano: int) -> list[int]:
-    columns = _date_columns_upto(df, mes, ano)
-    if columns:
-        return columns
-
-    available_years = sorted(
-        {
-            column.year
-            for column in df.columns
-            if isinstance(column, datetime) or isinstance(column, date)
-        }
-    )
-    if not available_years:
-        return []
-
-    return _date_columns_upto(df, mes, available_years[-1])
+    return _resolve_date_columns(df, mes, ano)
 
 
 def _sum_dre_terms(df: pd.DataFrame, text_column: str, terms: list[str], columns: list[int]) -> float:
@@ -279,6 +313,15 @@ def _sum_dre_terms(df: pd.DataFrame, text_column: str, terms: list[str], columns
     return total
 
 
+def _resolve_named_column(df: pd.DataFrame, expected_names: list[str]) -> Any:
+    expected = {_normalize_text(name) for name in expected_names}
+    for column in df.columns:
+        if _normalize_text(column) in expected:
+            return column
+
+    raise KeyError(f"Nenhuma das colunas esperadas foi encontrada: {', '.join(expected_names)}")
+
+
 def _build_item(label: str, value: float, total: float, details: list[dict[str, str]] | None = None, color_highlight: str | None = None) -> dict[str, Any]:
     item: dict[str, Any] = {
         "label": label,
@@ -293,49 +336,43 @@ def _build_item(label: str, value: float, total: float, details: list[dict[str, 
 
 @st.cache_data(show_spinner=False)
 def load_kpis(mes: int, ano: int) -> dict[str, Any]:
-    """Carrega os KPIs principais a partir das planilhas de orçamento e resultado."""
-    resultado_df = _read_excel_sheet(str(ORCAMENTO_FILE), "Resultado - Sucumb - Sem Sucumb", header=None).fillna(0)
-    kpi_df = _read_excel_sheet(str(ORCAMENTO_FILE), "KPI AN", header=None).fillna(0)
+    """Carrega os KPIs principais a partir da tabela TOTAIS 20 E 21 e da DRE."""
+    totais_df = _read_excel_sheet(str(INFO_FILE), "TOTAIS  20 E 21", header=0).fillna(0)
+    dre_df = _read_excel_sheet(str(INFO_FILE), "DRE", header=0).fillna(0)
+    dre_df, text_column = _prepare_dre_dataframe(dre_df)
 
-    sem_header = _find_row_index_exact(resultado_df, "Sem Sucumbência")
-    suc_header = _find_row_index_exact(resultado_df, "Sucumbência")
-    total_header = _find_row_index_exact(resultado_df, "Total - Gondim")
+    total_columns = _resolve_date_columns(totais_df, mes, ano)
+    dre_columns = _resolve_dre_columns(dre_df, mes, ano)
 
-    sem_cols = _month_columns_from_header(resultado_df.iloc[sem_header].tolist(), mes) if sem_header is not None else []
-    suc_cols = _month_columns_from_header(resultado_df.iloc[suc_header].tolist(), mes) if suc_header is not None else []
+    total_receita = _sum_row_by_label(totais_df, "RECEITA SEM INTERCOMPANY", total_columns)
+    total_costs = _sum_row_by_label(totais_df, "CUSTOS E DESPESAS SEM INTERCOMPANY", total_columns)
+    total_result_signed = _sum_row_by_label(totais_df, "RESULTADO SEM INTERCOMPANY", total_columns)
+    total_orcado = _sum_row_by_label(totais_df, "TOTAL ORÇADO", total_columns)
 
-    sem_receita = _last_significant_value(resultado_df.iloc[_find_row_index_exact(resultado_df, "Receita", sem_header or 0)])
-    suc_receita = _last_significant_value(resultado_df.iloc[_find_row_index_exact(resultado_df, "Receita", suc_header or 0)])
-    total_receita = abs(sem_receita) + abs(suc_receita)
+    contratuais = abs(_sum_exact_terms(dre_df, text_column, ["Clientes - Honorários Contratuais"], dre_columns))
+    sucumbencia = abs(_sum_exact_terms(dre_df, text_column, ["Clientes - Honorários de Sucumbência"], dre_columns))
+    result_without_sucumbency = total_result_signed - sucumbencia
 
-    total_result_signed = _last_significant_value(kpi_df.iloc[_find_row_index_exact(kpi_df, "Resultado")])
-    total_result = abs(total_result_signed)
-
-    row_total_revenue = _last_significant_value(kpi_df.iloc[_find_row_index_exact(kpi_df, "Receita")])
-    row_direct_costs = abs(_last_significant_value(kpi_df.iloc[_find_row_index_exact(kpi_df, "Despesas Diretas")]))
-    row_taxes = abs(_last_significant_value(kpi_df.iloc[_find_row_index_exact(kpi_df, "Impostos")]))
-    row_rateio = abs(_last_significant_value(kpi_df.iloc[_find_row_index_exact(kpi_df, "Rateio")]))
-    row_margin = _last_significant_value(kpi_df.iloc[_find_row_index_exact(kpi_df, "Margem Operacional (%MC)")])
-    row_result = _last_significant_value(kpi_df.iloc[_find_row_index_exact(kpi_df, "Resultado")])
-
-    revenue_attainment = (total_receita / row_total_revenue * 100) if row_total_revenue else 0.0
+    revenue_attainment = (total_receita / total_orcado * 100) if total_orcado else 0.0
+    revenue_share_sucumbencia = (sucumbencia / total_receita * 100) if total_receita else 0.0
+    margins_value = (total_result_signed / total_receita * 100) if total_receita else 0.0
 
     return {
         "revenue_mix": {
             "icon": "💰",
-            "title": "Origem de Receitas",
+            "title": "Mix de Receitas",
             "value": _format_currency(total_receita),
-            "subtitle": f"▾ {abs((suc_receita / total_receita * 100) if total_receita else 0.0):.1f}% sucumbência • {revenue_attainment:.0f}% do orçado",
+            "subtitle": f"▾ {revenue_share_sucumbencia:.1f}% sucumbência • {revenue_attainment:.0f}% do orçado",
             "rows": [
                 {
                     "label": "Contratuais",
-                    "value": _format_currency(sem_receita),
-                    "share": _format_percent((abs(sem_receita) / total_receita * 100) if total_receita else 0.0),
+                    "value": _format_currency(contratuais),
+                    "share": _format_percent((contratuais / total_receita * 100) if total_receita else 0.0),
                 },
                 {
                     "label": "Sucumbência",
-                    "value": _format_currency(suc_receita),
-                    "share": _format_percent((abs(suc_receita) / total_receita * 100) if total_receita else 0.0),
+                    "value": _format_currency(sucumbencia),
+                    "share": _format_percent(revenue_share_sucumbencia),
                 },
             ],
             "expansions": [
@@ -345,7 +382,7 @@ def load_kpis(mes: int, ano: int) -> dict[str, Any]:
                 },
                 {
                     "title": "Sucumbência",
-                    "items": _build_month_expansion(resultado_df, suc_header, "Receita", mes),
+                    "items": [],
                 },
             ],
         },
@@ -353,25 +390,27 @@ def load_kpis(mes: int, ano: int) -> dict[str, Any]:
             "icon": "📊",
             "title": "Resultado Líquido",
             "value": _format_currency(total_result_signed),
-            "subtitle": f"Resultado líquido sem sucumbência: {_format_currency(total_result)}",
+            "subtitle": f"Resultado líquido sem sucumbência: {_format_currency(result_without_sucumbency)}",
         },
         "margins": {
             "icon": "📈",
             "title": "Margens",
-            "value": _format_percent(row_margin * 100 if abs(row_margin) <= 1 else row_margin),
-            "subtitle": f"Resultado estimado: {_format_currency(row_result)}",
+            "value": _format_percent(margins_value),
+            "subtitle": f"Resultado estimado: {_format_currency(total_result_signed)}",
         },
         "cost_totals": {
-            "direct_costs": row_direct_costs,
-            "taxes": row_taxes,
-            "rateio": row_rateio,
+            "direct_costs": total_costs,
+            "taxes": 0.0,
+            "rateio": 0.0,
+            "total": total_costs,
         },
         "_raw": {
-            "revenue_total": row_total_revenue,
+            "revenue_total": total_receita,
+            "cost_total": total_costs,
             "net_result": total_result_signed,
-            "direct_costs": row_direct_costs,
-            "taxes": row_taxes,
-            "rateio": row_rateio,
+            "direct_costs": total_costs,
+            "taxes": 0.0,
+            "rateio": 0.0,
         },
     }
 
@@ -444,8 +483,8 @@ def _resolve_year_column(df: pd.DataFrame, ano: int) -> Any:
 
 @st.cache_data(show_spinner=False)
 def load_top_clientes(mes: int, ano: int) -> dict[str, Any]:
-    """Carrega o top 5 de clientes por faturamento acumulado no período."""
-    df = _read_excel_sheet(str(FATURAMENTO_FILE), "Faturamento 2025", header=None).fillna(0)
+    """Carrega o top 5 da tabela Performance por faturamento acumulado no período."""
+    df = _read_excel_sheet(str(PERFORMANCE_FILE), "Faturamento 2025", header=None).fillna(0)
     section_headers = [idx for idx in range(len(df)) if _normalize_text(df.iloc[idx, 1] if len(df.columns) > 1 else "") == "carteiras"]
     if not section_headers:
         return {
@@ -494,35 +533,13 @@ def load_dre_distribution(mes: int, ano: int, kpis: dict[str, Any]) -> dict[str,
     df, text_column = _prepare_dre_dataframe(df)
     columns = _resolve_dre_columns(df, mes, ano)
 
-    socios_servico_raw = abs(_sum_dre_terms(df, text_column, ["juridico", "processos trabalhistas"], columns))
-    clt_raw = abs(_sum_dre_terms(df, text_column, ["pessoal adm"], columns))
-    correspondentes_raw = abs(_sum_dre_terms(df, text_column, ["correspondentes"], columns))
-    impostos_raw = abs(_sum_dre_terms(df, text_column, ["imposto"], columns))
-    outras_raw = abs(
-        _sum_dre_terms(
-            df,
-            text_column,
-            [
-                "condenações + glosas",
-                "comunicação",
-                "consumo de material",
-                "despesas gerais",
-                "equipamentos",
-                "localização / ocupação",
-                "prestadores de serviço",
-                "marketing",
-                "vendas e marketing",
-            ],
-            columns,
-        )
-    )
+    total = _to_float(kpis.get("_raw", {}).get("cost_total", 0.0))
 
-    socios_servico = socios_servico_raw
-    clt = clt_raw
-    correspondentes = correspondentes_raw
-    outras = outras_raw
-    impostos = impostos_raw
-    total = socios_servico + clt + correspondentes + outras + impostos
+    socios_servico = abs(_sum_exact_terms(df, text_column, ["Custo Operacional - Jurídico"], columns))
+    clt = abs(_sum_exact_terms(df, text_column, ["Pessoal Adm"], columns))
+    correspondentes = abs(_sum_exact_terms(df, text_column, ["Custo Operacional - Correspondentes"], columns))
+    impostos = abs(_sum_exact_terms(df, text_column, ["Impostos e Taxas - Normais"], columns))
+    outras = max(total - (socios_servico + clt + correspondentes + impostos), 0.0)
     personnel_share = ((socios_servico + clt) / total * 100) if total else 0.0
 
     items = [
@@ -531,8 +548,8 @@ def load_dre_distribution(mes: int, ano: int, kpis: dict[str, Any]) -> dict[str,
             socios_servico,
             total,
             details=[
-                {"name": "Jurídico", "value": _format_currency(abs(_sum_dre_terms(df, text_column, ["juridico"], columns)))} ,
-                {"name": "Processos Trabalhistas", "value": _format_currency(abs(_sum_dre_terms(df, text_column, ["processos trabalhistas"], columns)))} ,
+                {"name": "Jurídico", "value": _format_currency(abs(_sum_exact_terms(df, text_column, ["Custo Operacional - Jurídico"], columns)))},
+                {"name": "Processos Trabalhistas", "value": _format_currency(abs(_sum_exact_terms(df, text_column, ["Custo Operacional - Processos Trabalhistas"], columns)))},
             ],
             color_highlight="green",
         ),
@@ -547,7 +564,7 @@ def load_dre_distribution(mes: int, ano: int, kpis: dict[str, Any]) -> dict[str,
             "Impostos",
             impostos,
             total,
-            details=[{"name": "Impostos", "value": _format_currency(impostos)}],
+            details=[{"name": "Impostos e Taxas - Normais", "value": _format_currency(impostos)}],
         ),
         _build_item(
             "Correspondentes",
@@ -561,22 +578,22 @@ def load_dre_distribution(mes: int, ano: int, kpis: dict[str, Any]) -> dict[str,
             outras,
             total,
             details=[
-                {"name": "Condenações + Glosas", "value": _format_currency(abs(_sum_dre_terms(df, text_column, ["condenações + glosas"], columns)))} ,
-                {"name": "Comunicação", "value": _format_currency(abs(_sum_dre_terms(df, text_column, ["comunicação"], columns)))} ,
-                {"name": "Consumo de Material", "value": _format_currency(abs(_sum_dre_terms(df, text_column, ["consumo de material"], columns)))} ,
-                {"name": "Despesas Gerais", "value": _format_currency(abs(_sum_dre_terms(df, text_column, ["despesas gerais"], columns)))} ,
-                {"name": "Equipamentos", "value": _format_currency(abs(_sum_dre_terms(df, text_column, ["equipamentos"], columns)))} ,
-                {"name": "Localização / Ocupação", "value": _format_currency(abs(_sum_dre_terms(df, text_column, ["localização / ocupação"], columns)))} ,
-                {"name": "Prestadores de Serviço", "value": _format_currency(abs(_sum_dre_terms(df, text_column, ["prestadores de serviço"], columns)))} ,
-                {"name": "Marketing", "value": _format_currency(abs(_sum_dre_terms(df, text_column, ["marketing"], columns)))} ,
-                {"name": "Vendas e Marketing", "value": _format_currency(abs(_sum_dre_terms(df, text_column, ["vendas e marketing"], columns)))} ,
+                {"name": "Condenações + Glosas", "value": _format_currency(abs(_sum_exact_terms(df, text_column, ["Condenações + Glosas"], columns)))},
+                {"name": "Comunicação", "value": _format_currency(abs(_sum_exact_terms(df, text_column, ["Comunicação"], columns)))},
+                {"name": "Consumo de Material", "value": _format_currency(abs(_sum_exact_terms(df, text_column, ["Consumo de Material"], columns)))},
+                {"name": "Despesas Gerais", "value": _format_currency(abs(_sum_exact_terms(df, text_column, ["Despesas Gerais"], columns)))},
+                {"name": "Equipamentos", "value": _format_currency(abs(_sum_exact_terms(df, text_column, ["Equipamentos"], columns)))},
+                {"name": "Localização / Ocupação", "value": _format_currency(abs(_sum_exact_terms(df, text_column, ["Localização / Ocupação"], columns)))},
+                {"name": "Prestadores de Serviço", "value": _format_currency(abs(_sum_exact_terms(df, text_column, ["Prestadores de Serviço"], columns)))},
+                {"name": "Marketing", "value": _format_currency(abs(_sum_exact_terms(df, text_column, ["Marketing"], columns)))},
+                {"name": "Vendas e Marketing", "value": _format_currency(abs(_sum_exact_terms(df, text_column, ["Vendas e Marketing"], columns)))},
             ],
         ),
     ]
 
     return {
         "icon": "📉",
-        "title": "Distribuição de Despesas",
+        "title": "Estrutura de Custos",
         "value": _format_currency(total),
         "subtitle": "Consolidação do DRE por centro de custo",
         "highlight": {
@@ -585,4 +602,121 @@ def load_dre_distribution(mes: int, ano: int, kpis: dict[str, Any]) -> dict[str,
             "caption": "principal grupo de custo",
         },
         "items": items,
+    }
+
+
+def _build_antecipacao_sheet_payload(df: pd.DataFrame, sheet_name: str, company_name: str, short_name: str) -> dict[str, Any]:
+    index_column = _resolve_named_column(df, ["índice", "indice"])
+    level_column = _resolve_named_column(df, ["nível societário", "nivel societario"])
+    base_column = _resolve_named_column(df, ["antecipação mensal de distribuição de lucros", "antecipacao mensal de distribuicao de lucros"])
+    quotas_column = _resolve_named_column(df, ["quotas de serviço", "quotas de servico"])
+    adjustment_column = _resolve_named_column(df, ["ajuste mensal"])
+    final_column = _resolve_named_column(df, ["antecipação mensal de distribuição de lucros final", "antecipacao mensal de distribuicao de lucros final"])
+
+    rows: list[dict[str, Any]] = []
+    totals = {
+        "base": 0.0,
+        "quotas": 0.0,
+        "ajuste": 0.0,
+        "final": 0.0,
+    }
+
+    for _, row in df.iterrows():
+        level_value = row[level_column]
+        if pd.isna(level_value) or not str(level_value).strip():
+            continue
+
+        index_value = _to_float(row[index_column])
+        base_value = _to_float(row[base_column])
+        quotas_value = _to_float(row[quotas_column])
+        adjustment_value = _to_float(row[adjustment_column])
+        final_value = _to_float(row[final_column])
+
+        rows.append(
+            {
+                "index": int(round(index_value)),
+                "level": str(level_value).strip(),
+                "base": base_value,
+                "quotas": int(round(quotas_value)),
+                "adjustment": adjustment_value,
+                "final": final_value,
+            }
+        )
+        totals["base"] += base_value
+        totals["quotas"] += quotas_value
+        totals["ajuste"] += adjustment_value
+        totals["final"] += final_value
+
+    return {
+        "company_name": company_name,
+        "short_name": short_name,
+        "sheet_name": sheet_name,
+        "rows": rows,
+        "row_count": len(rows),
+        "totals": totals,
+    }
+
+
+@st.cache_data(show_spinner=False)
+def load_antecipacao_lucros() -> dict[str, Any]:
+    """Carrega as tabelas de antecipação de lucros para o menu hamburguer."""
+    sheets = [
+        ("Antecipação Lucros GAN", "Gondim Advogados", "GAN"),
+        ("Antecipação Lucros GAA", "Gondim Gestão e Tecnologia", "GAA"),
+    ]
+
+    companies: list[dict[str, Any]] = []
+    totals = {
+        "companies": 0,
+        "rows": 0,
+        "base": 0.0,
+        "quotas": 0.0,
+        "ajuste": 0.0,
+        "final": 0.0,
+    }
+
+    for sheet_name, company_name, short_name in sheets:
+        df = _read_excel_sheet(str(INFO_FILE), sheet_name, header=0).dropna(how="all")
+        payload = _build_antecipacao_sheet_payload(df, sheet_name, company_name, short_name)
+        companies.append(payload)
+        totals["companies"] += 1
+        totals["rows"] += payload["row_count"]
+        totals["base"] += payload["totals"]["base"]
+        totals["quotas"] += payload["totals"]["quotas"]
+        totals["ajuste"] += payload["totals"]["ajuste"]
+        totals["final"] += payload["totals"]["final"]
+
+    return {
+        "title": "AJUSTE / ANTECIPAÇÃO MENSAL DE DISTRIBUIÇÃO DE LUCROS",
+        "subtitle": "FEVEREIRO / 2026 - PAGAMENTO EM ABRIL / 2026",
+        "source": INFO_FILE.name,
+        "metrics": [
+            {
+                "label": "Empresas",
+                "value": str(totals["companies"]),
+                "caption": "painéis carregados",
+            },
+            {
+                "label": "Sócios",
+                "value": str(totals["rows"]),
+                "caption": "linhas da planilha",
+            },
+            {
+                "label": "Base mensal",
+                "value": totals["base"],
+                "caption": "antecipação bruta",
+            },
+            {
+                "label": "Ajuste mensal",
+                "value": totals["ajuste"],
+                "caption": "efeito do rateio",
+            },
+            {
+                "label": "Final projetado",
+                "value": totals["final"],
+                "caption": "valor consolidado",
+            },
+        ],
+        "companies": companies,
+        "totals": totals,
     }

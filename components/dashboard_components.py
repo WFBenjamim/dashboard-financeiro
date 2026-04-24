@@ -12,6 +12,7 @@ import streamlit as st
 from utils.dashboard_metrics import normalize_key
 from utils.number_formatter import formatar_valor_monetario
 from utils.evolution_charts import create_grafico_evolucao_anual, create_grafico_evolucao_mensal
+from utils.data_loader import load_antecipacao_lucros
 
 
 def _parse_valor_brl_e_formata(valor_str: str) -> str:
@@ -362,6 +363,357 @@ def _build_insight_card(tone: str, title: str, description: str) -> str:
     )
 
 
+def _format_antecipacao_currency(value: float, compact: bool = False) -> str:
+    return formatar_valor_monetario(float(value), usar_compacto=compact)
+
+
+def _build_antecipacao_metric_card(label: str, value: str, caption: str) -> str:
+    return (
+        "<div class='ga-metric'>"
+        f"<span class='ga-metric__label'>{escape(label)}</span>"
+        f"<strong class='ga-metric__value'>{escape(value)}</strong>"
+        f"<span class='ga-metric__caption'>{escape(caption)}</span>"
+        "</div>"
+    )
+
+
+def _build_antecipacao_row(row: dict[str, Any]) -> str:
+    return (
+        "<div class='ga-row'>"
+        f"<span class='ga-row__index'>{row['index']}</span>"
+        f"<span class='ga-row__level'>{escape(row['level'])}</span>"
+        f"<span class='ga-row__value'>{escape(_format_antecipacao_currency(row['base']))}</span>"
+        f"<span class='ga-row__quotas'>{row['quotas']}</span>"
+        f"<span class='ga-row__adjustment'>{escape(_format_antecipacao_currency(row['adjustment']))}</span>"
+        f"<span class='ga-row__final'>{escape(_format_antecipacao_currency(row['final']))}</span>"
+        "</div>"
+    )
+
+
+def _build_antecipacao_panel(company: dict[str, Any]) -> str:
+    rows_html = "".join(_build_antecipacao_row(row) for row in company["rows"])
+    totals = company["totals"]
+    return dedent(
+        f"""
+        <section class="ga-panel">
+        <div class="ga-panel__header">
+        <div>
+        <div class="ga-panel__eyebrow">{escape(company['short_name'])}</div>
+        <h3>{escape(company['company_name'])}</h3>
+        <p>{escape(company['sheet_name'])}</p>
+        </div>
+        <div class="ga-panel__totals">
+        <div><span>Base</span><strong>{escape(_format_antecipacao_currency(totals['base'], compact=True))}</strong></div>
+        <div><span>Ajuste</span><strong>{escape(_format_antecipacao_currency(totals['ajuste'], compact=True))}</strong></div>
+        <div><span>Final</span><strong>{escape(_format_antecipacao_currency(totals['final'], compact=True))}</strong></div>
+        </div>
+        </div>
+        <div class="ga-table">
+        <div class="ga-table__head">
+        <span>#</span>
+        <span>Nível societário</span>
+        <span>Antecipação</span>
+        <span>Quotas</span>
+        <span>Ajuste</span>
+        <span>Final</span>
+        </div>
+        <div class="ga-table__body">
+        {rows_html}
+        </div>
+        </div>
+        </section>
+        """
+    ).strip()
+
+
+def _build_antecipacao_html(content: dict[str, Any]) -> str:
+    metrics_html = "".join(
+        _build_antecipacao_metric_card(
+            metric["label"],
+            _format_antecipacao_currency(metric["value"], compact=isinstance(metric["value"], (int, float))),
+            metric["caption"],
+        )
+        for metric in content["metrics"]
+    )
+    panels_html = "".join(_build_antecipacao_panel(company) for company in content["companies"])
+
+    return dedent(
+        f"""
+        <div class="ga-shell">
+        <style>
+        .ga-shell {{
+            background:
+                radial-gradient(circle at top left, rgba(245, 158, 11, 0.14), transparent 30%),
+                linear-gradient(180deg, #0b1220 0%, #08101a 100%);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            border-radius: 28px;
+            padding: 1.5rem;
+            color: #e5eefb;
+            box-shadow: 0 28px 60px rgba(2, 6, 23, 0.45);
+        }}
+
+        .ga-shell * {{ box-sizing: border-box; }}
+
+        .ga-hero {{
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 1rem;
+            align-items: end;
+            margin-bottom: 1.2rem;
+        }}
+
+        .ga-hero__eyebrow {{
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
+            font-size: .74rem;
+            font-weight: 700;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+            color: #fbbf24;
+        }}
+
+        .ga-hero h2 {{
+            margin: .35rem 0 .25rem;
+            font-size: 1.55rem;
+            line-height: 1.1;
+            color: #f8fafc;
+        }}
+
+        .ga-hero p {{
+            margin: 0;
+            color: rgba(226, 232, 240, 0.7);
+            font-size: .95rem;
+        }}
+
+        .ga-source {{
+            padding: .7rem 1rem;
+            border-radius: 999px;
+            border: 1px solid rgba(251, 191, 36, 0.22);
+            background: rgba(15, 23, 42, 0.8);
+            color: #fde68a;
+            font-size: .82rem;
+            white-space: nowrap;
+        }}
+
+        .ga-metrics {{
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: .8rem;
+            margin-bottom: 1rem;
+        }}
+
+        .ga-metric {{
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            border-radius: 18px;
+            padding: .95rem 1rem;
+            background: rgba(15, 23, 42, 0.72);
+            backdrop-filter: blur(6px);
+            min-height: 100px;
+        }}
+
+        .ga-metric__label {{
+            display: block;
+            font-size: .72rem;
+            font-weight: 700;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: rgba(226, 232, 240, 0.6);
+            margin-bottom: .6rem;
+        }}
+
+        .ga-metric__value {{
+            display: block;
+            font-size: 1.45rem;
+            line-height: 1;
+            color: #fff;
+            margin-bottom: .45rem;
+        }}
+
+        .ga-metric__caption {{
+            display: block;
+            font-size: .86rem;
+            color: rgba(226, 232, 240, 0.7);
+        }}
+
+        .ga-panels {{
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1rem;
+        }}
+
+        .ga-panel {{
+            border-radius: 22px;
+            overflow: hidden;
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.96), rgba(8, 15, 26, 0.98));
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+        }}
+
+        .ga-panel__header {{
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            align-items: start;
+            padding: 1.1rem 1.1rem .9rem;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+        }}
+
+        .ga-panel__eyebrow {{
+            font-size: .7rem;
+            font-weight: 800;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            color: #fbbf24;
+            margin-bottom: .25rem;
+        }}
+
+        .ga-panel__header h3 {{
+            margin: 0;
+            font-size: 1.05rem;
+            color: #f8fafc;
+        }}
+
+        .ga-panel__header p {{
+            margin: .25rem 0 0;
+            font-size: .84rem;
+            color: rgba(226, 232, 240, 0.68);
+        }}
+
+        .ga-panel__totals {{
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: .55rem;
+            min-width: 280px;
+        }}
+
+        .ga-panel__totals div {{
+            padding: .65rem .7rem;
+            border-radius: 14px;
+            background: rgba(2, 6, 23, 0.46);
+            border: 1px solid rgba(148, 163, 184, 0.12);
+        }}
+
+        .ga-panel__totals span {{
+            display: block;
+            font-size: .68rem;
+            text-transform: uppercase;
+            letter-spacing: .1em;
+            color: rgba(226, 232, 240, 0.6);
+            margin-bottom: .3rem;
+        }}
+
+        .ga-panel__totals strong {{
+            display: block;
+            font-size: .98rem;
+            color: #fff;
+        }}
+
+        .ga-table {{
+            display: grid;
+            gap: .55rem;
+            padding: 1rem 1.1rem 1.15rem;
+        }}
+
+        .ga-table__head,
+        .ga-row {{
+            display: grid;
+            grid-template-columns: 54px minmax(180px, 1.8fr) minmax(120px, 1fr) 72px minmax(110px, 1fr) minmax(120px, 1fr);
+            gap: .7rem;
+            align-items: center;
+        }}
+
+        .ga-table__head {{
+            padding: 0 .35rem;
+            font-size: .68rem;
+            font-weight: 700;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: rgba(226, 232, 240, 0.55);
+        }}
+
+        .ga-row {{
+            padding: .75rem .85rem;
+            border-radius: 16px;
+            background: rgba(15, 23, 42, 0.66);
+            border: 1px solid rgba(148, 163, 184, 0.12);
+        }}
+
+        .ga-row__index {{
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 999px;
+            background: rgba(251, 191, 36, 0.16);
+            color: #fde68a;
+            font-weight: 800;
+        }}
+
+        .ga-row__level {{
+            color: #f8fafc;
+            font-weight: 600;
+        }}
+
+        .ga-row__value,
+        .ga-row__adjustment,
+        .ga-row__final,
+        .ga-row__quotas {{
+            color: rgba(226, 232, 240, 0.9);
+            font-variant-numeric: tabular-nums;
+        }}
+
+        .ga-row__final {{
+            color: #86efac;
+            font-weight: 800;
+        }}
+
+        @media (max-width: 1100px) {{
+            .ga-metrics {{ grid-template-columns: repeat(2, minmax(0, 1fr)); }}
+            .ga-panels {{ grid-template-columns: 1fr; }}
+        }}
+
+        @media (max-width: 720px) {{
+            .ga-shell {{ padding: 1rem; }}
+            .ga-hero h2 {{ font-size: 1.2rem; }}
+            .ga-metrics {{ grid-template-columns: 1fr; }}
+            .ga-panel__header {{ flex-direction: column; }}
+            .ga-panel__totals {{ width: 100%; min-width: 0; }}
+            .ga-table__head,
+            .ga-row {{
+                grid-template-columns: 42px minmax(150px, 1.4fr) minmax(110px, 1fr);
+            }}
+            .ga-table__head span:nth-child(4),
+            .ga-table__head span:nth-child(5),
+            .ga-table__head span:nth-child(6),
+            .ga-row__quotas,
+            .ga-row__adjustment,
+            .ga-row__final {{
+                display: none;
+            }}
+        }}
+        </style>
+        <div class="ga-hero">
+        <div>
+        <div class="ga-hero__eyebrow">menu hambúrguer • visão financeira</div>
+        <h2>{escape(content['title'])}</h2>
+        <p>{escape(content['subtitle'])}</p>
+        </div>
+        <div class="ga-source">{escape(content['source'])}</div>
+        </div>
+        <div class="ga-metrics">
+        {metrics_html}
+        </div>
+        <div class="ga-panels">
+        {panels_html}
+        </div>
+        </div>
+        """
+    ).strip()
+
+
 def _load_logo_data_uri(logo_file: Path | None) -> str | None:
     if not logo_file or not logo_file.exists():
         return None
@@ -445,7 +797,7 @@ def render_modal_evolucao() -> None:
             unsafe_allow_html=True,
         )
 
-        btn_anual, btn_mensal, btn_close = st.columns([1.1, 1.1, 0.45], gap="small")
+        btn_anual, btn_mensal, btn_antecipacao, btn_close = st.columns([1.1, 1.1, 1.35, 0.45], gap="small")
 
         with btn_anual:
             if st.button(
@@ -467,6 +819,16 @@ def render_modal_evolucao() -> None:
                 st.session_state.gd_evolution_tab = "mensal"
                 st.rerun()
 
+        with btn_antecipacao:
+            if st.button(
+                "Antecipação Lucros",
+                key="evolucao_btn_antecipacao",
+                use_container_width=True,
+                type="primary" if st.session_state.gd_evolution_tab == "antecipacao" else "secondary",
+            ):
+                st.session_state.gd_evolution_tab = "antecipacao"
+                st.rerun()
+
         with btn_close:
             if st.button("✕", key="evolucao_btn_close", use_container_width=True):
                 st.session_state.gd_show_evolution_dialog = False
@@ -477,8 +839,11 @@ def render_modal_evolucao() -> None:
 
         if st.session_state.gd_evolution_tab == "anual":
             st.plotly_chart(create_grafico_evolucao_anual(), use_container_width=True, key="grafico_evolucao_anual_dialog")
-        else:
+        elif st.session_state.gd_evolution_tab == "mensal":
             st.plotly_chart(create_grafico_evolucao_mensal(), use_container_width=True, key="grafico_evolucao_mensal_dialog")
+        else:
+            antecipacao = load_antecipacao_lucros()
+            st.markdown(_build_antecipacao_html(antecipacao), unsafe_allow_html=True)
 
     _dialog()
 

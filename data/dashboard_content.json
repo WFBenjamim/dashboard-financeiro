@@ -1,12 +1,12 @@
 {
   "header": {
     "title": "Encontro de Divulgação de Resultados – Gondim | 2026 (EDR)",
-    "subtitle": "Período acumulado: janeiro e fevereiro de 2026 • comparação com o mesmo período de 2025",
-    "band": "Data de divulgação: 20 de março de 2026"
+    "subtitle": "Período acumulado: 1º tri de 2026 • comparação com o mesmo período de 2025",
+    "band": "Data de divulgação: 27 de março de 2026"
   },
   "revenue_mix": {
     "icon": "💰",
-    "title": "Origem de Receitas",
+    "title": "Mix de Receitas",
     "value": "R$ 7.460.000,00",
     "subtitle": "▼ 12,1% vs 2025 • 104% do orçado",
     "rows": [
@@ -76,7 +76,7 @@
   },
   "cost_structure": {
     "icon": "📉",
-    "title": "Distribuição de Despesas",
+    "title": "Estrutura de Custos",
     "value": "R$ 7.540.000,00",
     "subtitle": "▲ 10,8% vs 2025 • 100,4% do orçado",
     "highlight": {
