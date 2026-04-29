@@ -55,7 +55,7 @@ def build_dashboard_metrics(content: dict[str, Any]) -> DashboardMetrics:
     revenue_total = parse_currency(revenue["value"])
     cost_total = parse_currency(costs["value"])
     operating_result = revenue_total - cost_total
-    revenue_change_pct = extract_primary_percent(revenue["subtitle"])
+    revenue_change_pct = float(revenue.get("comparison_pct", extract_primary_percent(revenue["subtitle"])))
     cost_change_pct = extract_primary_percent(costs["subtitle"])
 
     sucumbency_row = _find_item_by_label(revenue["rows"], "Sucumbência")

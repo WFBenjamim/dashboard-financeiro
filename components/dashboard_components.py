@@ -12,13 +12,124 @@ import streamlit as st
 from utils.dashboard_metrics import normalize_key
 from utils.number_formatter import formatar_valor_monetario
 from utils.evolution_charts import create_grafico_evolucao_anual, create_grafico_evolucao_mensal
-from utils.data_loader import load_antecipacao_lucros
+from etl.loader import MONTH_LABELS, load_antecipacao_lucros
+
+
+TOP_CLIENTS_FILTER_OPEN_KEY = "top_clients_filter_open"
+TOP_CLIENTS_YEAR_KEY = "top_clients_selected_year"
+TOP_CLIENTS_MONTHS_KEY = "top_clients_selected_months"
+TOP_CLIENTS_DIALOG_OPEN_KEY = "top_clients_dialog_open"
+TOP_CLIENTS_DIALOG_YEAR_KEY = "top_clients_dialog_year"
+TOP_CLIENTS_DIALOG_MONTHS_KEY = "top_clients_dialog_months"
+
+
+def init_top_clients_filter_state(default_year: int, default_months: list[int]) -> None:
+    if TOP_CLIENTS_FILTER_OPEN_KEY not in st.session_state:
+        st.session_state[TOP_CLIENTS_FILTER_OPEN_KEY] = False
+    if TOP_CLIENTS_YEAR_KEY not in st.session_state:
+        st.session_state[TOP_CLIENTS_YEAR_KEY] = default_year
+    if TOP_CLIENTS_MONTHS_KEY not in st.session_state:
+        st.session_state[TOP_CLIENTS_MONTHS_KEY] = default_months
+    if TOP_CLIENTS_DIALOG_OPEN_KEY not in st.session_state:
+        st.session_state[TOP_CLIENTS_DIALOG_OPEN_KEY] = False
+
+
+def _open_top_clients_dialog(current_year: int, current_months: list[int]) -> None:
+    st.session_state[TOP_CLIENTS_DIALOG_OPEN_KEY] = True
+    st.session_state[TOP_CLIENTS_DIALOG_YEAR_KEY] = current_year
+    st.session_state[TOP_CLIENTS_DIALOG_MONTHS_KEY] = list(current_months)
+
+
+def _render_top_clients_dialog(default_year: int, default_months: list[int]) -> None:
+    if not st.session_state.get(TOP_CLIENTS_DIALOG_OPEN_KEY, False):
+        return
+
+    year_options = [default_year - 1, default_year, default_year + 1]
+    if TOP_CLIENTS_DIALOG_YEAR_KEY not in st.session_state:
+        st.session_state[TOP_CLIENTS_DIALOG_YEAR_KEY] = default_year
+    if TOP_CLIENTS_DIALOG_MONTHS_KEY not in st.session_state:
+        st.session_state[TOP_CLIENTS_DIALOG_MONTHS_KEY] = list(default_months)
+
+    @st.dialog("Selecionar período", width="large", dismissible=False)
+    def _dialog() -> None:
+        st.markdown("Escolha o ano e os meses que deseja consolidar.")
+
+        year_col, month_col = st.columns([1, 3], vertical_alignment="top")
+        with year_col:
+            st.selectbox(
+                "Ano",
+                year_options,
+                index=year_options.index(st.session_state[TOP_CLIENTS_DIALOG_YEAR_KEY]) if st.session_state[TOP_CLIENTS_DIALOG_YEAR_KEY] in year_options else 1,
+                key=TOP_CLIENTS_DIALOG_YEAR_KEY,
+            )
+        with month_col:
+            st.multiselect(
+                "Meses",
+                options=list(MONTH_LABELS.keys()),
+                default=st.session_state[TOP_CLIENTS_DIALOG_MONTHS_KEY],
+                format_func=lambda month: f"{month:02d} - {MONTH_LABELS[month].title()}",
+                key=TOP_CLIENTS_DIALOG_MONTHS_KEY,
+            )
+
+        st.write("")
+        load_col, cancel_col = st.columns([1, 1], gap="small")
+
+        with load_col:
+            if st.button("Carregar", use_container_width=True, type="primary"):
+                chosen_year = int(st.session_state[TOP_CLIENTS_DIALOG_YEAR_KEY])
+                chosen_months = [int(month) for month in st.session_state[TOP_CLIENTS_DIALOG_MONTHS_KEY]]
+                if not chosen_months:
+                    st.warning("Selecione ao menos um mês.")
+                else:
+                    st.session_state[TOP_CLIENTS_YEAR_KEY] = chosen_year
+                    st.session_state[TOP_CLIENTS_MONTHS_KEY] = chosen_months
+                    st.session_state[TOP_CLIENTS_DIALOG_OPEN_KEY] = False
+                    st.rerun()
+
+        with cancel_col:
+            if st.button("Cancelar", use_container_width=True):
+                st.session_state[TOP_CLIENTS_DIALOG_OPEN_KEY] = False
+                st.rerun()
+
+    _dialog()
+
+
+def render_top_clients_filter(content: dict[str, Any], default_year: int, default_months: list[int]) -> None:
+    """Exibe o card original de Top 5 Clientes com botão de configuração no canto."""
+    init_top_clients_filter_state(default_year, default_months)
+    clients = content["top_clients"]
+
+    st.markdown('<div class="gd-top-clients-spacing"></div>', unsafe_allow_html=True)
+    card_col, button_col = st.columns([12, 1], vertical_alignment="top")
+    with button_col:
+        if st.button("+", key="top_clients_open_dialog_button", help="Alterar período"):
+            _open_top_clients_dialog(st.session_state[TOP_CLIENTS_YEAR_KEY], st.session_state[TOP_CLIENTS_MONTHS_KEY])
+
+    card_header = dedent(
+        f"""
+        <div class="gd-card gd-card--yellow">
+        <div class="gd-title">{escape(clients["icon"])} {escape(clients["title"])}</div>
+        <div class="gd-subline">{escape(clients["subtitle"])}</div>
+        <div class="gd-list gd-list--spaced">
+        """
+    ).strip()
+
+    card_footer = "</div></div>"
+    client_rows = "".join(
+        _build_client_row(index, client["name"], client["value"])
+        for index, client in enumerate(clients["ranking"], start=1)
+    )
+
+    with card_col:
+        st.markdown(f"{card_header}{client_rows}{card_footer}", unsafe_allow_html=True)
+    _render_top_clients_dialog(default_year, default_months)
+    st.markdown('<div class="gd-top-clients-spacing"></div>', unsafe_allow_html=True)
 
 
 def _parse_valor_brl_e_formata(valor_str: str) -> str:
     """
-    Extrai número de string formatada em BRL e retorna em formato compacto.
-    Ex: "R$ 7.460.000,00" → "R$ 7,46M"
+    Extrai número de string formatada em BRL e retorna no formato exibido no dashboard.
+    Ex: "R$ 12,16M" → "R$ 12.160.000,00"
     """
     if not valor_str or not isinstance(valor_str, str):
         return valor_str
@@ -27,10 +138,27 @@ def _parse_valor_brl_e_formata(valor_str: str) -> str:
         return valor_str
 
     numero_str = valor_str.replace("R$", "").replace(" ", "").replace("\xa0", "")
-    numero_str = numero_str.replace(".", "").replace(",", ".")
+    multiplier = 1.0
+    upper_text = numero_str.upper()
+    if upper_text.endswith("MM"):
+        multiplier = 1_000_000_000.0
+        numero_str = numero_str[:-2]
+    elif upper_text.endswith("M"):
+        multiplier = 1_000_000.0
+        numero_str = numero_str[:-1]
+    elif upper_text.endswith("K"):
+        multiplier = 1_000.0
+        numero_str = numero_str[:-1]
+
+    if "," in numero_str and "." in numero_str:
+        numero_str = numero_str.replace(".", "").replace(",", ".")
+    elif "," in numero_str:
+        numero_str = numero_str.replace(".", "").replace(",", ".")
+    else:
+        numero_str = numero_str.replace(".", "")
 
     try:
-        numero = float(numero_str)
+        numero = float(numero_str) * multiplier
         return formatar_valor_monetario(numero, usar_compacto=True)
     except (ValueError, AttributeError):
         return valor_str
@@ -51,11 +179,22 @@ def load_css(css_file: Path) -> None:
 def render_dashboard(content: dict[str, Any], logo_file: Path | None = None) -> None:
     """Renderiza o dashboard executivo completo."""
     logo_data_uri = _load_logo_data_uri(logo_file)
-    html = _build_dashboard_html(content, logo_data_uri=logo_data_uri)
-    st.markdown(html, unsafe_allow_html=True)
+    top_html = _build_dashboard_top_html(content, logo_data_uri=logo_data_uri)
+    bottom_html = _build_dashboard_bottom_html(content)
+    st.markdown(top_html, unsafe_allow_html=True)
+    st.markdown(bottom_html, unsafe_allow_html=True)
 
 
-def _build_dashboard_html(content: dict[str, Any], logo_data_uri: str | None = None) -> str:
+def render_dashboard_top(content: dict[str, Any], logo_file: Path | None = None) -> None:
+    logo_data_uri = _load_logo_data_uri(logo_file)
+    st.markdown(_build_dashboard_top_html(content, logo_data_uri=logo_data_uri), unsafe_allow_html=True)
+
+
+def render_dashboard_bottom(content: dict[str, Any]) -> None:
+    st.markdown(_build_dashboard_bottom_html(content), unsafe_allow_html=True)
+
+
+def _build_dashboard_parts(content: dict[str, Any], logo_data_uri: str | None = None) -> dict[str, str]:
     header = content["header"]
     revenue = content["revenue_mix"]
     costs = content["cost_structure"]
@@ -91,6 +230,11 @@ def _build_dashboard_html(content: dict[str, Any], logo_data_uri: str | None = N
         highlight_value_formatted=highlight_value_formatted,
         highlight_caption=highlight_caption,
     )
+    margin_cards = margins.get("metrics", [])
+    margin_cards_html = "".join(
+        _build_margin_card(item["label"], item["value"], item["caption"])
+        for item in margin_cards
+    )
     people_rows = "".join(
         _build_people_row(row["label"], row["value"], row["share"])
         for row in people["rows"]
@@ -108,6 +252,45 @@ def _build_dashboard_html(content: dict[str, Any], logo_data_uri: str | None = N
     )
     logo_html = _build_logo_html(logo_data_uri)
 
+    return {
+        "header": header,
+        "revenue": revenue,
+        "costs": costs,
+        "result": result,
+        "margins": margins,
+        "people": people,
+        "clients": clients,
+        "revenue_value_formatted": revenue_value_formatted,
+        "costs_value_formatted": costs_value_formatted,
+        "result_value_formatted": result_value_formatted,
+        "margins_value_formatted": margins_value_formatted,
+        "people_value_formatted": people_value_formatted,
+        "highlight_value_formatted": highlight_value_formatted,
+        "highlight_caption": highlight_caption,
+        "revenue_rows": revenue_rows,
+        "cost_cards_reorganizados": cost_cards_reorganizados,
+        "margin_cards_html": margin_cards_html,
+        "people_rows": people_rows,
+        "client_rows": client_rows,
+        "insights": insights,
+        "analysis": analysis,
+        "logo_html": logo_html,
+    }
+
+
+def _build_dashboard_top_html(content: dict[str, Any], logo_data_uri: str | None = None) -> str:
+    parts = _build_dashboard_parts(content, logo_data_uri=logo_data_uri)
+    header = parts["header"]
+    revenue = parts["revenue"]
+    costs = parts["costs"]
+    result = parts["result"]
+    margins = parts["margins"]
+    people = parts["people"]
+    logo_html = parts["logo_html"]
+    revenue_rows = parts["revenue_rows"]
+    cost_cards_reorganizados = parts["cost_cards_reorganizados"]
+    people_rows = parts["people_rows"]
+
     html = dedent(
         f"""
         <div class="gd-shell">
@@ -124,7 +307,7 @@ def _build_dashboard_html(content: dict[str, Any], logo_data_uri: str | None = N
         <div class="gd-card gd-card--blue">
         <div class="gd-card__header">
         <div class="gd-title">{escape(revenue["icon"])} {escape(revenue["title"])}</div>
-        <div class="gd-kpi">{escape(revenue_value_formatted)}</div>
+        <div class="gd-kpi">{escape(parts["revenue_value_formatted"])}</div>
         <div class="gd-subline">{escape(revenue["subtitle"])}</div>
         </div>
         <div class="gd-surface">
@@ -135,37 +318,46 @@ def _build_dashboard_html(content: dict[str, Any], logo_data_uri: str | None = N
         </div>
         <div class="gd-card gd-card--orange gd-card--compact">
         <div class="gd-title">{escape(result["icon"])} {escape(result["title"])}</div>
-        <div class="gd-kpi">{escape(result_value_formatted)}</div>
+        <div class="gd-kpi">{escape(parts["result_value_formatted"])}</div>
         <div class="gd-subline">{escape(result["subtitle"])}</div>
         </div>
         <div class="gd-card gd-card--green">
         <div class="gd-title">{escape(people["icon"])} {escape(people["title"])}</div>
-        <div class="gd-kpi">{escape(people_value_formatted)}</div>
+        <div class="gd-kpi">{escape(parts["people_value_formatted"])}</div>
         <div class="gd-subline">{escape(people["subtitle"])}</div>
         <div class="gd-list">{people_rows}</div>
         </div>
         </div>
-        <div class="gd-top-column">
+        <div class="gd-top-column gd-top-column--right">
         <div class="gd-card gd-card--gray">
         <div class="gd-card__header">
         <div class="gd-title">{escape(costs["icon"])} {escape(costs["title"])}</div>
-        <div class="gd-kpi">{escape(costs_value_formatted)}</div>
+        <div class="gd-kpi">{escape(parts["costs_value_formatted"])}</div>
         <div class="gd-subline">{escape(costs["subtitle"])}</div>
         </div>
         {cost_cards_reorganizados}
         </div>
-        <div class="gd-card gd-card--purple gd-card--compact">
+        <div class="gd-card gd-card--purple gd-card--margins">
         <div class="gd-title">{escape(margins["icon"])} {escape(margins["title"])}</div>
-        <div class="gd-kpi">{escape(margins_value_formatted)}</div>
         <div class="gd-subline">{escape(margins["subtitle"])}</div>
-        </div>
-        <div class="gd-card gd-card--yellow">
-        <div class="gd-title">{escape(clients["icon"])} {escape(clients["title"])}</div>
-        <div class="gd-subline">{escape(clients["subtitle"])}</div>
-        <div class="gd-list gd-list--spaced">{client_rows}</div>
+        <div class="gd-margins-grid">
+        {parts["margin_cards_html"]}
         </div>
         </div>
         </div>
+        </div>
+        """
+    ).strip()
+    return "\n".join(line for line in html.splitlines() if line.strip())
+
+
+def _build_dashboard_bottom_html(content: dict[str, Any], logo_data_uri: str | None = None) -> str:
+    parts = _build_dashboard_parts(content, logo_data_uri=logo_data_uri)
+    insights = parts["insights"]
+    analysis = parts["analysis"]
+
+    html = dedent(
+        f"""
         <div class="gd-bottom-section">
         <div class="gd-insights">
         {insights}
@@ -190,6 +382,18 @@ def _build_logo_html(logo_data_uri: str | None) -> str:
         f"<img class='gd-logo' src='{logo_data_uri}' alt='Logo Gondim'>"
         "</div>"
     )
+
+
+def _build_margin_card(label: str, value: str, caption: str) -> str:
+    return dedent(
+        f"""
+        <div class="gd-margin-card">
+        <div class="gd-margin-card__label">{escape(label)}</div>
+        <div class="gd-margin-card__value">{escape(value)}</div>
+        <div class="gd-margin-card__caption">{escape(caption)}</div>
+        </div>
+        """
+    ).strip()
 
 
 def _build_revenue_row(
@@ -345,11 +549,10 @@ def _build_people_row(label: str, value: str, share: str) -> str:
 
 
 def _build_client_row(index: int, name: str, value: str) -> str:
-    formatted_value = _parse_valor_brl_e_formata(value)
     return (
         "<div class='gd-row gd-row--client'>"
         f"<strong>{index}. {escape(name)}</strong>"
-        f"<span>{escape(formatted_value)}</span>"
+        f"<span>{escape(value)}</span>"
         "</div>"
     )
 

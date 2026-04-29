@@ -2,7 +2,7 @@
 
 Aplicação em **Streamlit** para apresentação financeira executiva, com foco em clareza visual, leitura rápida de indicadores e evolução dos resultados ao longo do período analisado.
 
-O projeto combina **Python + Streamlit + Plotly + HTML/CSS**, com separação por camadas para facilitar manutenção, evolução da interface e futura integração com dados vindos de planilhas.
+O projeto combina **Python + Streamlit + Plotly + HTML/CSS**, com separação por camadas para facilitar manutenção, evolução da interface e integração com dados vindos de planilhas.
 
 ## Visão Geral
 
@@ -22,8 +22,8 @@ O objetivo final é transformar o projeto em um **app completo**, pronto para us
 - **Streamlit**
 - **Plotly**
 - **HTML/CSS** para refinamento visual
-- **JSON** como fonte inicial de conteúdo
-- Estrutura pronta para integração com **CSV/planilhas**
+- **JSON** como conteúdo-base da interface
+- Estrutura voltada para integração com **planilhas Excel**
 
 ## Funcionalidades Atuais
 
@@ -51,11 +51,14 @@ config/
   settings.py
 data/
   dashboard_content.json
-  finance_data.csv
+  Faturamento Allan.xlsx
+  INFORMAÇÕES GERENCIAIS.xlsx
+  Orçamento.xlsx
+etl/
+  loader.py
 utils/
   analysis_generator.py
   dashboard_metrics.py
-  data_loader.py
   evolution_charts.py
   number_formatter.py
 ```
@@ -65,7 +68,8 @@ utils/
 - `app.py`: ponto de entrada da aplicação Streamlit
 - `components/`: composição e renderização dos blocos visuais do dashboard
 - `config/`: parâmetros e configurações gerais do projeto
-- `data/`: dados-base do dashboard e arquivo CSV de referência
+- `data/`: dados-base do dashboard e planilhas de referência
+- `etl/`: carregamento e orquestração dos dados de origem
 - `utils/`: regras de negócio, métricas, formatação e geração de análise
 - `assets/`: estilos visuais e imagens da interface
 
@@ -85,9 +89,9 @@ Central de composição visual. Contém:
 - modal pop-up com gráficos
 - montagem do HTML do dashboard
 
-### `utils/data_loader.py`
+### `etl/loader.py`
 
-Carrega o conteúdo do arquivo JSON e prepara os dados para exibição.
+Carrega o conteúdo do arquivo JSON, lê as planilhas e prepara os dados para exibição.
 
 ### `utils/dashboard_metrics.py`
 
@@ -124,12 +128,25 @@ pip install -r requirements.txt
 ### Execução
 
 ```bash
+run_app.ps1
+```
+
+Também é possível iniciar diretamente com:
+
+```bash
 streamlit run app.py
+```
+
+Se preferir rodar manualmente no PowerShell, use:
+
+```powershell
+Set-ExecutionPolicy -Scope Process Bypass
+.\run_app.ps1
 ```
 
 ## Dados e Evolução
 
-Hoje o projeto já possui base funcional com conteúdo estruturado em JSON e leitura de dados local. O próximo passo do roadmap é integrar os dados que chegam via planilhas para que o sistema:
+Hoje o projeto já possui base funcional com conteúdo estruturado em JSON e leitura de dados local via ETL. O próximo passo do roadmap é consolidar os dados que chegam via planilhas para que o sistema:
 
 - leia as planilhas automaticamente
 - normalize os campos recebidos
