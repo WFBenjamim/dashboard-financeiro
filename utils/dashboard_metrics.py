@@ -104,12 +104,18 @@ def parse_currency(value: str) -> float:
     normalized = normalized.replace("-", "")
 
     multiplier = 1.0
-    if normalized.endswith("MM"):
+    if normalized.endswith("B"):
+        multiplier = 1_000_000_000.0
+        normalized = normalized[:-1]
+    elif normalized.endswith("MM"):
         multiplier = 1_000_000.0
         normalized = normalized[:-2]
     elif normalized.endswith("M"):
         multiplier = 1_000_000.0
         normalized = normalized[:-1]
+    elif normalized.endswith("MIL"):
+        multiplier = 1_000.0
+        normalized = normalized[:-3]
     elif normalized.endswith("K"):
         multiplier = 1_000.0
         normalized = normalized[:-1]
@@ -128,7 +134,7 @@ def parse_percent(value: str) -> float:
 
 
 def extract_currency_from_text(text: str) -> float:
-    matches = re.findall(r"R\$\s*-?\s*[\d\.,]+(?:MM|M|K)?", text, flags=re.IGNORECASE)
+    matches = re.findall(r"R\$\s*-?\s*[\d\.,]+(?:\s*(?:MM|M|MIL|K|B))?", text, flags=re.IGNORECASE)
     if not matches:
         return 0.0
     return parse_currency(matches[-1])
@@ -148,9 +154,19 @@ def extract_primary_percent(text: str) -> float:
 
 def format_brl(value: float) -> str:
     sign = "-" if value < 0 else ""
-    formatted = f"{abs(value):,.2f}"
-    formatted = formatted.replace(",", "X").replace(".", ",").replace("X", ".")
-    return f"R$ {sign}{formatted}"
+    amount = abs(float(value))
+    if amount >= 1_000_000_000:
+        return f"R$ {sign}{_format_compact_number(amount / 1_000_000_000, 1)} B"
+    if amount >= 1_000_000:
+        return f"R$ {sign}{_format_compact_number(amount / 1_000_000, 2)} M"
+    if amount >= 1_000:
+        return f"R$ {sign}{_format_compact_number(amount / 1_000, 1)} mil"
+    return f"R$ {sign}{amount:.0f}".replace(".", ",")
+
+
+def _format_compact_number(value: float, decimals: int) -> str:
+    text = f"{value:.{decimals}f}".rstrip("0").rstrip(".")
+    return text.replace(".", ",")
 
 
 def format_percent(value: float) -> str:

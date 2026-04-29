@@ -13,6 +13,15 @@ from typing import Any, Iterable
 import pandas as pd
 import streamlit as st
 
+from config.settings import (
+    PROFIT_ADVANCE_ADJUSTMENT_PCT,
+    PROFIT_ADVANCE_ADJUSTMENT_PER_QUOTA,
+    PROFIT_ADVANCE_MONTHLY_RESULT,
+    PROFIT_ADVANCE_PAYMENT,
+    PROFIT_ADVANCE_REFERENCE,
+    PROFIT_ADVANCE_TOTAL_ADJUSTMENT,
+    PROFIT_ADVANCE_TOTAL_QUOTAS,
+)
 from utils.analysis_generator import generate_insights, generate_technical_analysis
 from utils.dashboard_metrics import build_dashboard_metrics
 
@@ -30,6 +39,7 @@ def _runtime_root() -> Path:
 DATA_DIR = _runtime_root() / "data"
 TEMPLATE_FILE = DATA_DIR / "dashboard_content.json"
 ORCAMENTO_FILE = DATA_DIR / "Orçamento.xlsx"
+ANTECIPACAO_FILE = DATA_DIR / "Antecipação Lucros.xlsx"
 
 MONTH_LABELS = {
     1: "jan", 2: "fev", 3: "mar", 4: "abr", 
@@ -67,26 +77,45 @@ def _to_float(value: Any) -> float:
 def _format_currency(value: float) -> str:
     amount = abs(float(value))
     prefix = "-" if value < 0 else ""
+    if amount >= 1_000_000_000:
+        return f"R$ {prefix}{_format_compact_number(amount / 1_000_000_000, 1)} B"
     if amount >= 1_000_000:
-        formatted = f"{amount:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
-        return f"R$ {prefix}{formatted}"
+        return f"R$ {prefix}{_format_compact_number(amount / 1_000_000, 2)} M"
     if amount >= 1_000:
-        return f"R$ {prefix}{amount / 1_000:.0f}K"
-    return f"R$ {prefix}{amount:.0f}"
+        return f"R$ {prefix}{_format_compact_number(amount / 1_000, 1)} mil"
+    return f"R$ {prefix}{amount:.0f}".replace(".", ",")
 
 
 def _format_currency_full(value: float) -> str:
+    return _format_currency(value)
+
+
+def _format_currency_precise(value: float) -> str:
     sign = "-" if value < 0 else ""
-    formatted = f"{abs(value):,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    formatted = f"{abs(float(value)):,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
     return f"R$ {sign}{formatted}"
+
+
+def _format_compact_number(value: float, decimals: int) -> str:
+    text = f"{value:.{decimals}f}".rstrip("0").rstrip(".")
+    return text.replace(".", ",")
 
 
 def _format_percent(value: float) -> str:
     return f"{value:.1f}%".replace(".", ",")
 
 
+def _format_signed_percent(value: float) -> str:
+    sign = "+" if value >= 0 else ""
+    return f"{sign}{_format_percent(value * 100)}"
+
+
 def _format_count(value: float) -> str:
     return str(int(round(float(value))))
+
+
+def _format_plain_decimal(value: float, decimals: int = 2) -> str:
+    return f"{float(value):,.{decimals}f}".replace(",", "X").replace(".", ",").replace("X", ".")
 
 
 def _format_months_label(months: list[int], year: int) -> str:
@@ -127,9 +156,116 @@ def _is_date_in_period(col_val, ano, selected_months):
         return False
 
 
+def _sum_row_for_period(df: pd.DataFrame, label: str, header_row: int, ano: int, selected_months: list[int]) -> float:
+    expected = _normalize_text(label)
+    for i in range(len(df)):
+        if _normalize_text(df.iloc[i, 0]) == expected:
+            return sum(
+                _to_float(df.iloc[i, j])
+                for j in range(1, len(df.columns))
+                if _is_date_in_period(df.iloc[header_row, j], ano, selected_months)
+            )
+    return 0.0
+
+
+def _get_row_total_value(df: pd.DataFrame, label: str) -> float:
+    expected = _normalize_text(label)
+    for i in range(len(df)):
+        if _normalize_text(df.iloc[i, 0]) == expected:
+            for j in range(13, 0, -1):
+                value = _to_float(df.iloc[i, j])
+                if value:
+                    return value
+    return 0.0
+
+
+def _get_table_value_by_labels(
+    df: pd.DataFrame,
+    row_label: str,
+    column_label: str,
+    header_row: int = 2,
+) -> float:
+    expected_row = _normalize_text(row_label)
+    expected_col = _normalize_text(column_label)
+    column_index = None
+
+    for j in range(len(df.columns)):
+        if _normalize_text(df.iloc[header_row, j]) == expected_col:
+            column_index = j
+            break
+
+    if column_index is None:
+        return 0.0
+
+    for i in range(header_row + 1, len(df)):
+        if _normalize_text(df.iloc[i, 0]) == expected_row:
+            return _to_float(df.iloc[i, column_index])
+
+    return 0.0
+
+
+def _get_comparativo_2025_period(df: pd.DataFrame, selected_months: list[int]) -> float:
+    """Busca o Realizado 2025 no bloco Receita - Com Sucumbencia.
+
+    A aba Comparativo 26-25 do arquivo atual nao possui colunas mensais; por isso
+    usamos o total anual da linha Total - Gondim proporcional ao periodo filtrado.
+    Se a planilha ganhar granularidade mensal no futuro, este ponto fica isolado.
+    """
+    title_row = None
+    title_col = None
+    for i in range(len(df)):
+        for j in range(len(df.columns)):
+            if _normalize_text(df.iloc[i, j]) == "receita - com sucumbencia":
+                title_row = i
+                title_col = j
+                break
+        if title_row is not None:
+            break
+
+    if title_row is None or title_col is None:
+        return 0.0
+
+    header_row = title_row + 1
+    label_col = None
+    value_col = None
+    for j in range(title_col, len(df.columns)):
+        header = _normalize_text(df.iloc[header_row, j])
+        if header == "carteira":
+            label_col = j
+        elif header == "realizado 2025":
+            value_col = j
+
+    if label_col is None or value_col is None:
+        return 0.0
+
+    annual_total = 0.0
+    for i in range(header_row + 1, len(df)):
+        label = _normalize_text(df.iloc[i, label_col])
+        if label == "total - gondim":
+            annual_total = _to_float(df.iloc[i, value_col])
+            break
+
+    if not annual_total:
+        values = []
+        for i in range(header_row + 1, len(df)):
+            label = _normalize_text(df.iloc[i, label_col])
+            if not label or label.startswith("total"):
+                continue
+            values.append(_to_float(df.iloc[i, value_col]))
+        annual_total = sum(values)
+
+    month_count = len({month for month in selected_months if 1 <= month <= 12})
+    return annual_total * (month_count / 12) if month_count else 0.0
+
+
+def _share(value: float, total: float) -> str:
+    return _format_percent((value / total * 100) if total else 0.0)
+
+
 @st.cache_data(show_spinner=False)
-def get_extracted_data(ano: int, selected_months: list[int]) -> dict:
+def get_extracted_data(ano: int, selected_months: list[int], file_mtime_ns: int | None = None) -> dict:
     """Extrai todos os dados necessários usando mapeamento exato da planilha Orçamento."""
+    _ = file_mtime_ns
     f = str(ORCAMENTO_FILE)
     
     # --- 1. KPI AN (Margens) & 2. KPI AN (Pessoas) ---
@@ -172,6 +308,23 @@ def get_extracted_data(ano: int, selected_months: list[int]) -> dict:
                 if _is_date_in_period(df_resumo.iloc[header_row_resumo, j], ano, selected_months):
                     receita_total += _to_float(df_resumo.iloc[i, j])
             break
+
+    total_despesas = _sum_row_for_period(df_resumo, "TOTAL DESPESAS", header_row_resumo, ano, selected_months)
+    correspondentes = _get_row_total_value(df_resumo, "Correspondentes")
+    socios_servico = 0.0
+    clt = 0.0
+
+    df_resumo_orc = pd.read_excel(f, sheet_name="Resumo Orç 2026", header=None, engine="openpyxl").fillna("")
+    receita_orcada_anual = _get_table_value_by_labels(df_resumo_orc, "Total", "Receitas")
+    pct_orcado = (receita_total / receita_orcada_anual) if receita_orcada_anual else 0.0
+
+    receita_2025_periodo = 0.0
+    try:
+        df_comparativo = pd.read_excel(f, sheet_name="Comparativo 26-25", header=None, engine="openpyxl").fillna("")
+        receita_2025_periodo = _get_comparativo_2025_period(df_comparativo, selected_months)
+    except Exception as exc:
+        print(f"[ETL] Nao foi possivel ler Comparativo 26-25: {exc}")
+    variacao_yoy = ((receita_total - receita_2025_periodo) / receita_2025_periodo) if receita_2025_periodo else 0.0
 
     # --- 4 & 5. Receita -> Faturamento por Cliente & Sucumbência ---
     df_receita = pd.read_excel(f, sheet_name="Receita", header=None, engine="openpyxl").fillna("")
@@ -237,19 +390,30 @@ def get_extracted_data(ano: int, selected_months: list[int]) -> dict:
                     impostos += _to_float(df_impostos.iloc[i, j])
             break
 
-    # Precisamos de um total de despesas pro dashboard não quebrar
-    # Usaremos uma proporção se não houver lógica clara
-    total_despesas = receita_total * 0.7
+    outras_despesas = max(total_despesas - socios_servico - clt - correspondentes, 0.0)
+    total_card_costs = total_despesas + impostos
+    item_sum = impostos + socios_servico + clt + correspondentes + outras_despesas
+    diff = total_card_costs - item_sum
+    if abs(diff) > 0.01:
+        print(f"[ETL] Diferença no card Estrutura de Custos: {diff:.2f}")
     
     return {
         "mo": mo,
         "ml": ml,
         "pessoas": pessoas,
         "receita_total": receita_total,
+        "receita_orcada": receita_orcada_anual,
+        "pct_orcado": pct_orcado,
+        "receita_2025_periodo": receita_2025_periodo,
+        "variacao_yoy": variacao_yoy,
         "sucumb": sucumb,
         "impostos": impostos,
         "top_5": ranking,
         "total_despesas": total_despesas,
+        "socios_servico": socios_servico,
+        "clt": clt,
+        "correspondentes": correspondentes,
+        "outras_despesas": outras_despesas,
         "clientes": clientes
     }
 
@@ -263,9 +427,13 @@ def get_dashboard_data(mes: int, ano: int, selected_months: list[int] | None = N
         
     template = deepcopy(_load_dashboard_template(TEMPLATE_FILE.stat().st_mtime_ns))
     
-    data = get_extracted_data(ano, selected_months)
+    data = get_extracted_data(ano, selected_months, ORCAMENTO_FILE.stat().st_mtime_ns)
     
     receita_total = data["receita_total"]
+    receita_orcada = data["receita_orcada"]
+    pct_orcado = data["pct_orcado"]
+    receita_2025_periodo = data["receita_2025_periodo"]
+    variacao_yoy = data["variacao_yoy"]
     sucumb = data["sucumb"]
     contratuais = receita_total - sucumb if receita_total > sucumb else receita_total
     
@@ -275,7 +443,11 @@ def get_dashboard_data(mes: int, ano: int, selected_months: list[int] | None = N
         "icon": "💰",
         "title": "Mix de Receitas",
         "value": _format_currency(receita_total),
-        "subtitle": "Faturamento acumulado no período",
+        "pct_orcado": pct_orcado,
+        "receita_orcada": receita_orcada,
+        "receita_2025_periodo": receita_2025_periodo,
+        "variacao_yoy": variacao_yoy,
+        "subtitle": f"{_format_percent(pct_orcado * 100)} do orçado anual • 2026  /  {_format_signed_percent(variacao_yoy)} vs 2025",
         "comparison_pct": 0,
         "rows": [
             {
@@ -308,32 +480,38 @@ def get_dashboard_data(mes: int, ano: int, selected_months: list[int] | None = N
         "subtitle": "Impostos e Despesas operacionais estimadas",
         "highlight": {
             "label": "Impostos", 
-            "value": "100.0%", 
+            "value": _share(data["impostos"], data["total_despesas"] + data["impostos"]), 
             "caption": "total de impostos no período"
         },
         "items": [
             {
                 "label": "Impostos", 
                 "value": _format_currency(data["impostos"]), 
-                "share": _format_percent(100), 
+                "share": _share(data["impostos"], data["total_despesas"] + data["impostos"]), 
                 "details": []
             },
             {
                 "label": "Sócios de Serviço", 
-                "value": "R$ 0", 
-                "share": "0.0%", 
+                "value": _format_currency(data["socios_servico"]), 
+                "share": _share(data["socios_servico"], data["total_despesas"] + data["impostos"]), 
+                "details": []
+            },
+            {
+                "label": "CLT", 
+                "value": _format_currency(data["clt"]), 
+                "share": _share(data["clt"], data["total_despesas"] + data["impostos"]), 
                 "details": []
             },
             {
                 "label": "Correspondentes", 
-                "value": "R$ 0", 
-                "share": "0.0%", 
+                "value": _format_currency(data["correspondentes"]), 
+                "share": _share(data["correspondentes"], data["total_despesas"] + data["impostos"]), 
                 "details": []
             },
             {
                 "label": "Outras Despesas", 
-                "value": "R$ 0", 
-                "share": "0.0%", 
+                "value": _format_currency(data["outras_despesas"]), 
+                "share": _share(data["outras_despesas"], data["total_despesas"] + data["impostos"]), 
                 "details": []
             }
         ]
@@ -404,12 +582,125 @@ def get_dashboard_content(
 
 
 def load_antecipacao_lucros() -> dict[str, Any]:
-    """Fallback para manter compatibilidade com a UI."""
+    """Carrega a aba de ajuste/antecipação mensal de lucros."""
+    if not ANTECIPACAO_FILE.exists():
+        return {
+            "title": "AJUSTE / ANTECIPAÇÃO MENSAL DE DISTRIBUIÇÃO DE LUCROS",
+            "subtitle": "Planilha de antecipação não encontrada.",
+            "source": ANTECIPACAO_FILE.name,
+            "metrics": [],
+            "companies": [],
+            "totals": {}
+        }
+
+    companies_config = [
+        {
+            "sheet_name": "Antecipação Lucros GAN",
+            "short_name": "GAN",
+            "company_name": "GONDIM ADVOGADOS",
+        },
+        {
+            "sheet_name": "Antecipação Lucros GAA",
+            "fallback_sheet_name": "Antecipação Lucros GAT",
+            "short_name": "GAA",
+            "company_name": "GONDIM GESTÃO E TECNOLOGIA",
+        },
+    ]
+
+    workbook = pd.ExcelFile(ANTECIPACAO_FILE)
+    companies = []
+    total_adjustment = 0.0
+    total_quotas = 0.0
+    total_final = 0.0
+
+    for config in companies_config:
+        sheet_name = config["sheet_name"]
+        if sheet_name not in workbook.sheet_names:
+            sheet_name = config.get("fallback_sheet_name", sheet_name)
+        if sheet_name not in workbook.sheet_names:
+            continue
+
+        df = pd.read_excel(ANTECIPACAO_FILE, sheet_name=sheet_name, header=0, engine="openpyxl").fillna("")
+        rows = []
+        company_base = 0.0
+        company_adjustment = 0.0
+        company_final = 0.0
+        company_quotas = 0.0
+
+        for index, row in df.iterrows():
+            level = str(row.iloc[1]).strip()
+            if not level:
+                continue
+
+            base = _to_float(row.iloc[2])
+            quotas = _to_float(row.iloc[3])
+            adjustment = _to_float(row.iloc[4])
+            final = _to_float(row.iloc[5])
+
+            company_base += base
+            company_quotas += quotas
+            company_adjustment += adjustment
+            company_final += final
+
+            rows.append({
+                "index": int(index) + 1,
+                "level": level,
+                "base": base,
+                "quotas": quotas,
+                "adjustment": adjustment,
+                "final": final,
+                "base_formatted": _format_currency(base),
+                "adjustment_formatted": _format_currency(adjustment),
+                "final_formatted": _format_currency(final),
+                "quotas_formatted": _format_plain_decimal(quotas),
+            })
+
+        total_quotas += company_quotas
+        total_adjustment += company_adjustment
+        total_final += company_final
+
+        companies.append({
+            **config,
+            "sheet_name": sheet_name,
+            "rows": rows,
+            "totals": {
+                "base": company_base,
+                "quotas": company_quotas,
+                "adjustment": company_adjustment,
+                "final": company_final,
+                "base_formatted": _format_currency(company_base),
+                "adjustment_formatted": _format_currency(company_adjustment),
+                "final_formatted": _format_currency(company_final),
+                "quotas_formatted": _format_plain_decimal(company_quotas),
+            }
+        })
+
+    summary_result = PROFIT_ADVANCE_MONTHLY_RESULT
+    summary_adjustment_pct = PROFIT_ADVANCE_ADJUSTMENT_PCT
+    summary_adjustment = PROFIT_ADVANCE_TOTAL_ADJUSTMENT
+    summary_quotas = PROFIT_ADVANCE_TOTAL_QUOTAS
+    summary_adjustment_per_quota = PROFIT_ADVANCE_ADJUSTMENT_PER_QUOTA
+
     return {
-        "title": "AJUSTE / ANTECIPAÇÃO",
-        "subtitle": "Indisponível no modelo refatorado",
-        "source": "Orçamento.xlsx",
-        "metrics": [],
-        "companies": [],
-        "totals": {}
+        "title": "AJUSTE / ANTECIPAÇÃO MENSAL DE DISTRIBUIÇÃO DE LUCROS",
+        "subtitle": f"Referência: {PROFIT_ADVANCE_REFERENCE} • Pagamento: {PROFIT_ADVANCE_PAYMENT}",
+        "source": ANTECIPACAO_FILE.name,
+        "metrics": [
+            {"label": "Resultado Mensal", "value": _format_currency_precise(summary_result), "raw_value": summary_result},
+            {"label": "% Ajuste Mensal", "value": _format_percent(summary_adjustment_pct), "raw_value": summary_adjustment_pct},
+            {"label": "Total de Ajuste", "value": _format_currency_precise(summary_adjustment), "raw_value": summary_adjustment},
+            {"label": "Total de Quotas", "value": _format_plain_decimal(summary_quotas), "raw_value": summary_quotas},
+            {"label": "Ajuste por Quota", "value": _format_plain_decimal(summary_adjustment_per_quota, 4), "raw_value": summary_adjustment_per_quota},
+        ],
+        "companies": companies,
+        "totals": {
+            "result": summary_result,
+            "adjustment_pct": summary_adjustment_pct,
+            "adjustment": summary_adjustment,
+            "quotas": summary_quotas,
+            "adjustment_per_quota": summary_adjustment_per_quota,
+            "table_final": total_final,
+            "table_adjustment": total_adjustment,
+            "table_quotas": total_quotas,
+        }
     }

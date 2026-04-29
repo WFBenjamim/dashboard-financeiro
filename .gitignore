@@ -7,5 +7,20 @@ data/*.json
 __pycache__/
 *.pyc
 venv/
+.venv/
 .env
 .streamlit/secrets.toml
+
+# Next.js
+frontend/.next/
+frontend/node_modules/
+frontend/.DS_Store
+frontend/*.log
+frontend/dist/
+
+# General
+*.log
+dist/
+build/
+.next/
+node_modules/
