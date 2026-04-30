@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { EvolutionModal } from "@/components/EvolutionModal";
+import { MonthFilter } from "@/components/MonthFilter";
 import { fetchDashboardData } from "@/lib/api";
 import { formatCurrencyText } from "@/lib/formatters";
 
@@ -75,6 +76,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [year, setYear] = useState(2026);
   const [months, setMonths] = useState([1, 2, 3]);
+  const currentMonth = 3;
   const [periodOpen, setPeriodOpen] = useState(false);
   const [evolutionOpen, setEvolutionOpen] = useState(false);
 
@@ -130,6 +132,12 @@ export default function Dashboard() {
         </div>
 
         <Hero header={data.header} />
+
+        <MonthFilter
+          currentMonth={currentMonth}
+          selectedMonths={months}
+          onChange={(nextMonths) => setMonths(sortMonths(nextMonths))}
+        />
 
         <section className="gd-top-section">
           <div className="gd-top-column">
