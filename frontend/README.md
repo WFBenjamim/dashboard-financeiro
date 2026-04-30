@@ -6,6 +6,14 @@ First, run the development server:
 
 ```bash
 npm run dev
+```
+
+O projeto roda em um compartilhamento de rede. Por isso, o script `dev` usa Webpack (`next dev --webpack`), evitando falhas do Turbopack com caminhos UNC.
+
+Se o projeto estiver em um disco local e você quiser testar Turbopack:
+
+```bash
+npm run dev:turbo
 # or
 yarn dev
 # or

@@ -3,6 +3,12 @@ from __future__ import annotations
 
 import plotly.graph_objects as go
 
+from utils.number_formatter import formatar_valor_monetario
+
+
+def _format_million_values(values: list[float]) -> list[str]:
+    return [formatar_valor_monetario(value * 1_000_000) for value in values]
+
 
 def create_grafico_evolucao_anual() -> go.Figure:
     """
@@ -27,6 +33,8 @@ def create_grafico_evolucao_anual() -> go.Figure:
         name='Receita',
         line=dict(color='#3B82F6', width=3),
         marker=dict(size=8),
+        customdata=_format_million_values(receita),
+        hovertemplate='%{fullData.name}: %{customdata}<extra></extra>',
     ))
     
     fig.add_trace(go.Scatter(
@@ -36,6 +44,8 @@ def create_grafico_evolucao_anual() -> go.Figure:
         name='Despesa',
         line=dict(color='#EF4444', width=3),
         marker=dict(size=8),
+        customdata=_format_million_values(despesa),
+        hovertemplate='%{fullData.name}: %{customdata}<extra></extra>',
     ))
     
     fig.add_trace(go.Scatter(
@@ -45,6 +55,8 @@ def create_grafico_evolucao_anual() -> go.Figure:
         name='Resultado',
         line=dict(color='#FBBF24', width=3),
         marker=dict(size=8),
+        customdata=_format_million_values(resultado),
+        hovertemplate='%{fullData.name}: %{customdata}<extra></extra>',
     ))
     
     fig.update_layout(
@@ -98,6 +110,8 @@ def create_grafico_evolucao_mensal() -> go.Figure:
         name='Receita',
         line=dict(color='#3B82F6', width=3),
         marker=dict(size=8),
+        customdata=_format_million_values(receita),
+        hovertemplate='%{fullData.name}: %{customdata}<extra></extra>',
     ))
     
     fig.add_trace(go.Scatter(
@@ -107,6 +121,8 @@ def create_grafico_evolucao_mensal() -> go.Figure:
         name='Despesa',
         line=dict(color='#EF4444', width=3),
         marker=dict(size=8),
+        customdata=_format_million_values(despesa),
+        hovertemplate='%{fullData.name}: %{customdata}<extra></extra>',
     ))
     
     fig.add_trace(go.Scatter(
@@ -116,6 +132,8 @@ def create_grafico_evolucao_mensal() -> go.Figure:
         name='Resultado',
         line=dict(color='#FBBF24', width=3),
         marker=dict(size=8),
+        customdata=_format_million_values(resultado),
+        hovertemplate='%{fullData.name}: %{customdata}<extra></extra>',
     ))
     
     fig.update_layout(

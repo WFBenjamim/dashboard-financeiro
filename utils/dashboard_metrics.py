@@ -5,6 +5,8 @@ import unicodedata
 from dataclasses import dataclass
 from typing import Any
 
+from utils.number_formatter import formatar_valor_monetario
+
 
 @dataclass(frozen=True)
 class BreakdownMetric:
@@ -98,8 +100,14 @@ def build_dashboard_metrics(content: dict[str, Any]) -> DashboardMetrics:
     )
 
 
-def parse_currency(value: str) -> float:
-    normalized = value.upper().replace("R$", "").replace(" ", "")
+def parse_currency(value: str | int | float) -> float:
+    if isinstance(value, (int, float)):
+        return float(value)
+
+    normalized = str(value).upper().replace("R$", "").replace(" ", "")
+    if not any(char.isalpha() for char in normalized):
+        return float(normalized.replace(".", "").replace(",", ".") if "," in normalized else normalized)
+
     sign = -1 if "-" in normalized else 1
     normalized = normalized.replace("-", "")
 
@@ -153,20 +161,7 @@ def extract_primary_percent(text: str) -> float:
 
 
 def format_brl(value: float) -> str:
-    sign = "-" if value < 0 else ""
-    amount = abs(float(value))
-    if amount >= 1_000_000_000:
-        return f"R$ {sign}{_format_compact_number(amount / 1_000_000_000, 1)} B"
-    if amount >= 1_000_000:
-        return f"R$ {sign}{_format_compact_number(amount / 1_000_000, 2)} M"
-    if amount >= 1_000:
-        return f"R$ {sign}{_format_compact_number(amount / 1_000, 1)} mil"
-    return f"R$ {sign}{amount:.0f}".replace(".", ",")
-
-
-def _format_compact_number(value: float, decimals: int) -> str:
-    text = f"{value:.{decimals}f}".rstrip("0").rstrip(".")
-    return text.replace(".", ",")
+    return formatar_valor_monetario(value)
 
 
 def format_percent(value: float) -> str:

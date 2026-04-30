@@ -24,6 +24,7 @@ from config.settings import (
 )
 from utils.analysis_generator import generate_insights, generate_technical_analysis
 from utils.dashboard_metrics import build_dashboard_metrics
+from utils.number_formatter import formatar_valor_monetario
 
 def _runtime_root() -> Path:
     env_root = os.getenv("DASHBOARD_APP_ROOT")
@@ -46,6 +47,13 @@ MONTH_LABELS = {
     5: "mai", 6: "jun", 7: "jul", 8: "ago", 
     9: "set", 10: "out", 11: "nov", 12: "dez"
 }
+
+CLIENT_COST_SHEETS = [
+    "Bradesco", "Santander", "MadeiraMadeira", "Claro", "UOL", "Vivo",
+    "BS2", "Naturgy", "Mercado Livre", "Daycoval", "Enel", "MRS", "XS4",
+    "Banco PAN", "NIO", "Quinto Andar", "Patrimônio", "Resolução de Disputas",
+    "Vero", "Criminal", "Recupera", "Control Jurídica", "Pauta", "Saneamento",
+]
 
 
 def _to_float(value: Any) -> float:
@@ -75,15 +83,7 @@ def _to_float(value: Any) -> float:
 
 
 def _format_currency(value: float) -> str:
-    amount = abs(float(value))
-    prefix = "-" if value < 0 else ""
-    if amount >= 1_000_000_000:
-        return f"R$ {prefix}{_format_compact_number(amount / 1_000_000_000, 1)} B"
-    if amount >= 1_000_000:
-        return f"R$ {prefix}{_format_compact_number(amount / 1_000_000, 2)} M"
-    if amount >= 1_000:
-        return f"R$ {prefix}{_format_compact_number(amount / 1_000, 1)} mil"
-    return f"R$ {prefix}{amount:.0f}".replace(".", ",")
+    return formatar_valor_monetario(value)
 
 
 def _format_currency_full(value: float) -> str:
@@ -94,11 +94,6 @@ def _format_currency_precise(value: float) -> str:
     sign = "-" if value < 0 else ""
     formatted = f"{abs(float(value)):,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
     return f"R$ {sign}{formatted}"
-
-
-def _format_compact_number(value: float, decimals: int) -> str:
-    text = f"{value:.{decimals}f}".rstrip("0").rstrip(".")
-    return text.replace(".", ",")
 
 
 def _format_percent(value: float) -> str:
@@ -166,6 +161,185 @@ def _sum_row_for_period(df: pd.DataFrame, label: str, header_row: int, ano: int,
                 if _is_date_in_period(df.iloc[header_row, j], ano, selected_months)
             )
     return 0.0
+
+
+def _month_columns_from_header(df: pd.DataFrame, header_row: int, ano: int, selected_months: list[int]) -> list[int]:
+    columns = [
+        j
+        for j in range(1, min(13, len(df.columns)))
+        if _is_date_in_period(df.iloc[header_row, j], ano, selected_months)
+    ]
+    if columns:
+        return columns
+
+    return [
+        month
+        for month in selected_months
+        if 1 <= month <= 12 and month < len(df.columns)
+    ]
+
+
+def _sum_fixed_row(df: pd.DataFrame, row_index: int, columns: Iterable[int]) -> float:
+    if row_index >= len(df):
+        return 0.0
+    return sum(_to_float(df.iloc[row_index, column]) for column in columns)
+
+
+def _row_text(df: pd.DataFrame, row_index: int, columns: Iterable[int] = (0, 1)) -> str:
+    parts = []
+    for column in columns:
+        if column < len(df.columns):
+            text = str(df.iloc[row_index, column]).strip()
+            if text and text.lower() != "nan":
+                parts.append(text)
+    return " ".join(parts)
+
+
+def _is_month_label(value: Any, selected_months: list[int]) -> bool:
+    normalized = _normalize_text(value)
+    selected_labels = {MONTH_LABELS[month] for month in selected_months if month in MONTH_LABELS}
+    return normalized in selected_labels
+
+
+def _get_fat_real_cols(df: pd.DataFrame, header_row: int, selected_months: list[int]) -> list[int]:
+    month_row = header_row - 1
+    if month_row < 0:
+        return []
+
+    month_starts = [
+        column
+        for column in range(len(df.columns))
+        if _is_month_label(df.iloc[month_row, column], selected_months)
+    ]
+    if not month_starts:
+        return []
+
+    all_month_starts = [
+        column
+        for column in range(len(df.columns))
+        if _normalize_text(df.iloc[month_row, column]) in set(MONTH_LABELS.values())
+    ]
+    columns = []
+    for month_start in month_starts:
+        next_months = [column for column in all_month_starts if column > month_start]
+        block_end = min(next_months) if next_months else len(df.columns)
+        for column in range(month_start, block_end):
+            if _normalize_text(df.iloc[header_row, column]) in {"fat real", "faturamento real"}:
+                columns.append(column)
+                break
+
+    return columns
+
+
+def _get_cost_header_rows(df: pd.DataFrame) -> list[int]:
+    return [
+        i
+        for i in range(len(df))
+        if any(
+            _normalize_text(df.iloc[i, column]) in {"fat real", "faturamento real"}
+            for column in range(len(df.columns))
+        )
+    ]
+
+
+def _get_cost_block_end(df: pd.DataFrame, start_row: int, next_header_row: int | None) -> int:
+    end = next_header_row if next_header_row is not None else len(df)
+    for row_index in range(start_row + 1, end):
+        label = _normalize_text(_row_text(df, row_index))
+        if "total despesas diretas" in label or "total receita" in label:
+            return row_index
+    return end
+
+
+def _is_cost_row_excluded(label: str) -> bool:
+    if not label or label == "nan":
+        return True
+    excluded_fragments = [
+        "total",
+        "receita",
+        "margem",
+        "distribuicao",
+        "distribuição",
+        "ajuste mensal",
+        "calculo aproximado",
+        "cálculo aproximado",
+    ]
+    return any(fragment in label for fragment in excluded_fragments)
+
+
+def _extract_client_costs(
+    workbook_path: str,
+    selected_months: list[int],
+    sheets: Iterable[str] = CLIENT_COST_SHEETS,
+) -> dict[str, float]:
+    workbook = pd.ExcelFile(workbook_path)
+    totals = {
+        "correspondentes": 0.0,
+        "outras_despesas": 0.0,
+        "impostos": 0.0,
+    }
+
+    for sheet in sheets:
+        if sheet not in workbook.sheet_names:
+            print(f"[ETL Custos] {sheet}: aba nao encontrada")
+            continue
+
+        df = pd.read_excel(workbook_path, sheet_name=sheet, header=None, engine="openpyxl").fillna("")
+        header_rows = _get_cost_header_rows(df)
+        sheet_totals = {
+            "correspondentes": 0.0,
+            "outras_despesas": 0.0,
+            "impostos": 0.0,
+        }
+
+        for header_index, header_row in enumerate(header_rows):
+            fat_real_cols = _get_fat_real_cols(df, header_row, selected_months)
+            if not fat_real_cols:
+                continue
+
+            next_header_row = header_rows[header_index + 1] if header_index + 1 < len(header_rows) else None
+            block_end = _get_cost_block_end(df, header_row, next_header_row)
+
+            for row_index in range(header_row + 4, block_end):
+                label = _normalize_text(_row_text(df, row_index))
+                value = _sum_fixed_row(df, row_index, fat_real_cols)
+                if not value:
+                    continue
+
+                if "correspondente" in label:
+                    sheet_totals["correspondentes"] += value
+                elif label == "impostos" or label.startswith("impostos "):
+                    sheet_totals["impostos"] += value
+                elif not _is_cost_row_excluded(label):
+                    sheet_totals["outras_despesas"] += value
+
+        for key in totals:
+            totals[key] += sheet_totals[key]
+
+        print(
+            "[ETL Custos] "
+            f"{sheet}: correspondentes={sheet_totals['correspondentes']:.2f}; "
+            f"outras={sheet_totals['outras_despesas']:.2f}; "
+            f"impostos={sheet_totals['impostos']:.2f}"
+        )
+
+    totals["socios_servico"] = 0.0
+    totals["clt"] = 0.0
+    totals["total"] = (
+        totals["correspondentes"]
+        + totals["outras_despesas"]
+        + totals["impostos"]
+        + totals["socios_servico"]
+        + totals["clt"]
+    )
+    print(
+        "[ETL Custos] TOTAL: "
+        f"correspondentes={totals['correspondentes']:.2f}; "
+        f"outras={totals['outras_despesas']:.2f}; "
+        f"impostos={totals['impostos']:.2f}; "
+        f"total={totals['total']:.2f}"
+    )
+    return totals
 
 
 def _get_row_total_value(df: pd.DataFrame, label: str) -> float:
@@ -297,22 +471,27 @@ def get_extracted_data(ano: int, selected_months: list[int], file_mtime_ns: int 
         if receita_kpi > 0:
             ml = resultado_kpi / receita_kpi
 
-    # --- 3. Resumo -> Receita Total ---
-    df_resumo = pd.read_excel(f, sheet_name="Resumo", header=None, engine="openpyxl").fillna("")
-    receita_total = 0.0
-    header_row_resumo = 2 # Linha com as datas no Resumo
-    
-    for i in range(len(df_resumo)):
-        if _normalize_text(df_resumo.iloc[i, 0]) == "receita":
-            for j in range(1, len(df_resumo.columns)):
-                if _is_date_in_period(df_resumo.iloc[header_row_resumo, j], ano, selected_months):
-                    receita_total += _to_float(df_resumo.iloc[i, j])
-            break
+    # --- 3. Resumo -> Custos e Receita -> Mix de Receitas ---
+    df_receita = pd.read_excel(f, sheet_name="Receita", header=None, engine="openpyxl").fillna("")
+    receita_month_columns = _month_columns_from_header(df_receita, 7, ano, selected_months)
+    contratuais = _sum_fixed_row(df_receita, 370, receita_month_columns)
+    sucumb_1 = _sum_fixed_row(df_receita, 373, receita_month_columns)
+    sucumb_2 = _sum_fixed_row(df_receita, 377, receita_month_columns)
+    outras_linhas = [372, 374, 375, 376, 378, 379, 380]
+    outras_receitas = sum(_sum_fixed_row(df_receita, row_index, receita_month_columns) for row_index in outras_linhas)
+    sucumb = sucumb_1 + sucumb_2
+    receita_total = contratuais + sucumb + outras_receitas
+    pct_contratual = (contratuais / receita_total) if receita_total else 0.0
+    pct_sucumbencia = (sucumb / receita_total) if receita_total else 0.0
+    pct_outras = (outras_receitas / receita_total) if receita_total else 0.0
 
-    total_despesas = _sum_row_for_period(df_resumo, "TOTAL DESPESAS", header_row_resumo, ano, selected_months)
-    correspondentes = _get_row_total_value(df_resumo, "Correspondentes")
-    socios_servico = 0.0
-    clt = 0.0
+    cost_totals = _extract_client_costs(f, selected_months)
+    total_despesas = cost_totals["total"]
+    correspondentes = cost_totals["correspondentes"]
+    outras_despesas = cost_totals["outras_despesas"]
+    impostos = cost_totals["impostos"]
+    socios_servico = cost_totals["socios_servico"]
+    clt = cost_totals["clt"]
 
     df_resumo_orc = pd.read_excel(f, sheet_name="Resumo Orç 2026", header=None, engine="openpyxl").fillna("")
     receita_orcada_anual = _get_table_value_by_labels(df_resumo_orc, "Total", "Receitas")
@@ -327,9 +506,7 @@ def get_extracted_data(ano: int, selected_months: list[int], file_mtime_ns: int 
     variacao_yoy = ((receita_total - receita_2025_periodo) / receita_2025_periodo) if receita_2025_periodo else 0.0
 
     # --- 4 & 5. Receita -> Faturamento por Cliente & Sucumbência ---
-    df_receita = pd.read_excel(f, sheet_name="Receita", header=None, engine="openpyxl").fillna("")
     clientes = []
-    sucumb = 0.0
     
     current_client = ""
     header_row_rec = -1
@@ -350,12 +527,6 @@ def get_extracted_data(ano: int, selected_months: list[int], file_mtime_ns: int 
                     except:
                         pass
         
-        # Extrai SUCUMBÊNCIAS daquele bloco
-        if "SUCUMB" in val0.upper() and header_row_rec != -1:
-            for j in range(1, len(df_receita.columns)):
-                if _is_date_in_period(df_receita.iloc[header_row_rec, j], ano, selected_months):
-                    sucumb += _to_float(df_receita.iloc[i, j])
-                    
         # Extrai o TOTAL daquele bloco
         if val0.upper() == "TOTAL" and current_client and header_row_rec != -1:
             cliente_total = 0.0
@@ -378,20 +549,7 @@ def get_extracted_data(ano: int, selected_months: list[int], file_mtime_ns: int 
     if outros > 0:
         ranking.append({"name": "Outros", "value": _format_currency_full(outros)})
 
-    # --- 6. Impostos -> Total ---
-    df_impostos = pd.read_excel(f, sheet_name="Impostos", header=None, engine="openpyxl").fillna("")
-    impostos = 0.0
-    header_row_imp = 2
-    
-    for i in range(len(df_impostos)):
-        if "impostos total" in _normalize_text(df_impostos.iloc[i, 0]):
-            for j in range(1, len(df_impostos.columns)):
-                if _is_date_in_period(df_impostos.iloc[header_row_imp, j], ano, selected_months):
-                    impostos += _to_float(df_impostos.iloc[i, j])
-            break
-
-    outras_despesas = max(total_despesas - socios_servico - clt - correspondentes, 0.0)
-    total_card_costs = total_despesas + impostos
+    total_card_costs = total_despesas
     item_sum = impostos + socios_servico + clt + correspondentes + outras_despesas
     diff = total_card_costs - item_sum
     if abs(diff) > 0.01:
@@ -402,6 +560,12 @@ def get_extracted_data(ano: int, selected_months: list[int], file_mtime_ns: int 
         "ml": ml,
         "pessoas": pessoas,
         "receita_total": receita_total,
+        "contratuais": contratuais,
+        "sucumbencia": sucumb,
+        "outras_receitas": outras_receitas,
+        "pct_contratual": pct_contratual,
+        "pct_sucumbencia": pct_sucumbencia,
+        "pct_outras": pct_outras,
         "receita_orcada": receita_orcada_anual,
         "pct_orcado": pct_orcado,
         "receita_2025_periodo": receita_2025_periodo,
@@ -434,15 +598,26 @@ def get_dashboard_data(mes: int, ano: int, selected_months: list[int] | None = N
     pct_orcado = data["pct_orcado"]
     receita_2025_periodo = data["receita_2025_periodo"]
     variacao_yoy = data["variacao_yoy"]
-    sucumb = data["sucumb"]
-    contratuais = receita_total - sucumb if receita_total > sucumb else receita_total
+    contratuais = data["contratuais"]
+    sucumb = data["sucumbencia"]
+    outras_receitas = data["outras_receitas"]
+    pct_contratual = data["pct_contratual"]
+    pct_sucumbencia = data["pct_sucumbencia"]
+    pct_outras = data["pct_outras"]
     
     template["header"]["subtitle"] = f"Período acumulado: {_format_months_label(selected_months, ano)} • dados do Orçamento.xlsx"
     
     template["revenue_mix"] = {
         "icon": "💰",
         "title": "Mix de Receitas",
-        "value": _format_currency(receita_total),
+        "value": receita_total,
+        "contratual": contratuais,
+        "sucumbencia": sucumb,
+        "outras": outras_receitas,
+        "outras_receitas": outras_receitas,
+        "pct_contratual": pct_contratual,
+        "pct_sucumbencia": pct_sucumbencia,
+        "pct_outras": pct_outras,
         "pct_orcado": pct_orcado,
         "receita_orcada": receita_orcada,
         "receita_2025_periodo": receita_2025_periodo,
@@ -453,12 +628,17 @@ def get_dashboard_data(mes: int, ano: int, selected_months: list[int] | None = N
             {
                 "label": "Contratuais", 
                 "value": _format_currency(contratuais), 
-                "share": _format_percent((contratuais/receita_total*100) if receita_total else 0)
+                "share": _format_percent(pct_contratual * 100)
             },
             {
                 "label": "Sucumbência", 
                 "value": _format_currency(sucumb), 
-                "share": _format_percent((sucumb/receita_total*100) if receita_total else 0)
+                "share": _format_percent(pct_sucumbencia * 100)
+            },
+            {
+                "label": "Outras Receitas", 
+                "value": _format_currency(outras_receitas), 
+                "share": _format_percent(pct_outras * 100)
             }
         ],
         "expansions": [
@@ -473,45 +653,53 @@ def get_dashboard_data(mes: int, ano: int, selected_months: list[int] | None = N
         ]
     }
     
+    cost_total = data["total_despesas"]
+
     template["cost_structure"] = {
         "icon": "📉",
         "title": "Estrutura de Custos",
-        "value": _format_currency(data["total_despesas"] + data["impostos"]),
+        "total": cost_total,
+        "correspondentes": data["correspondentes"],
+        "outras_despesas": data["outras_despesas"],
+        "impostos": data["impostos"],
+        "socios_servico": data["socios_servico"],
+        "clt": data["clt"],
+        "value": _format_currency(cost_total),
         "subtitle": "Impostos e Despesas operacionais estimadas",
         "highlight": {
             "label": "Impostos", 
-            "value": _share(data["impostos"], data["total_despesas"] + data["impostos"]), 
+            "value": _share(data["impostos"], cost_total), 
             "caption": "total de impostos no período"
         },
         "items": [
             {
                 "label": "Impostos", 
                 "value": _format_currency(data["impostos"]), 
-                "share": _share(data["impostos"], data["total_despesas"] + data["impostos"]), 
+                "share": _share(data["impostos"], cost_total), 
                 "details": []
             },
             {
                 "label": "Sócios de Serviço", 
                 "value": _format_currency(data["socios_servico"]), 
-                "share": _share(data["socios_servico"], data["total_despesas"] + data["impostos"]), 
+                "share": _share(data["socios_servico"], cost_total), 
                 "details": []
             },
             {
                 "label": "CLT", 
                 "value": _format_currency(data["clt"]), 
-                "share": _share(data["clt"], data["total_despesas"] + data["impostos"]), 
+                "share": _share(data["clt"], cost_total), 
                 "details": []
             },
             {
                 "label": "Correspondentes", 
                 "value": _format_currency(data["correspondentes"]), 
-                "share": _share(data["correspondentes"], data["total_despesas"] + data["impostos"]), 
+                "share": _share(data["correspondentes"], cost_total), 
                 "details": []
             },
             {
                 "label": "Outras Despesas", 
                 "value": _format_currency(data["outras_despesas"]), 
-                "share": _share(data["outras_despesas"], data["total_despesas"] + data["impostos"]), 
+                "share": _share(data["outras_despesas"], cost_total), 
                 "details": []
             }
         ]

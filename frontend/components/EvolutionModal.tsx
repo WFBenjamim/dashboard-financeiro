@@ -97,7 +97,7 @@ function EvolutionChart({ chart }: { chart: any }) {
           <YAxis
             stroke="rgba(226,232,240,0.68)"
             tick={{ fill: "rgba(226,232,240,0.68)" }}
-            tickFormatter={(value) => formatCurrency(Number(value) * 1_000_000).replace("R$ ", "")}
+            tickFormatter={(value) => formatCurrency(Number(value) * 1_000_000)}
           />
           <Tooltip
             formatter={(value, name) => [formatCurrency(Number(value) * 1_000_000), String(name)]}

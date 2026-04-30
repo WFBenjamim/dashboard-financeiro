@@ -19,9 +19,21 @@ export function formatCurrency(value: number): string {
 
 export function parseCurrency(value: unknown): number | null {
   if (typeof value === "number" && Number.isFinite(value)) return value;
-  if (typeof value !== "string" || !value.includes("R$")) return null;
+  if (typeof value !== "string") return null;
 
-  const normalized = value
+  const trimmedValue = value.trim();
+  if (!trimmedValue) return null;
+
+  if (!trimmedValue.includes("R$")) {
+    if (/^[+-]?\d+(?:\.\d+)?$/.test(trimmedValue)) {
+      return Number(trimmedValue);
+    }
+
+    const parsedNumber = Number(trimmedValue.replace(/\./g, "").replace(",", "."));
+    return Number.isFinite(parsedNumber) ? parsedNumber : null;
+  }
+
+  const normalized = trimmedValue
     .toUpperCase()
     .replace("R$", "")
     .trim();
