@@ -1,0 +1,79 @@
+{
+  "view": "monthly",
+  "title": "Evolucao Mensal (2026): Receita vs Despesa vs Resultado",
+  "unit": "R$ Milhoes",
+  "data": [
+    {
+      "label": "Jan",
+      "receita": 3.8,
+      "despesa": 3.6,
+      "resultado": 0.2
+    },
+    {
+      "label": "Fev",
+      "receita": 7.46,
+      "despesa": 7.54,
+      "resultado": -0.08
+    },
+    {
+      "label": "Mar",
+      "receita": 7.5,
+      "despesa": 7.6,
+      "resultado": -0.1
+    },
+    {
+      "label": "Abr",
+      "receita": 7.6,
+      "despesa": 7.7,
+      "resultado": -0.1
+    },
+    {
+      "label": "Mai",
+      "receita": 7.7,
+      "despesa": 7.8,
+      "resultado": -0.1
+    },
+    {
+      "label": "Jun",
+      "receita": 7.8,
+      "despesa": 7.9,
+      "resultado": -0.1
+    },
+    {
+      "label": "Jul",
+      "receita": 7.9,
+      "despesa": 8.0,
+      "resultado": -0.1
+    },
+    {
+      "label": "Ago",
+      "receita": 8.0,
+      "despesa": 8.1,
+      "resultado": -0.1
+    },
+    {
+      "label": "Set",
+      "receita": 8.1,
+      "despesa": 8.2,
+      "resultado": -0.1
+    },
+    {
+      "label": "Out",
+      "receita": 8.2,
+      "despesa": 8.3,
+      "resultado": -0.1
+    },
+    {
+      "label": "Nov",
+      "receita": 8.3,
+      "despesa": 8.4,
+      "resultado": -0.1
+    },
+    {
+      "label": "Dez",
+      "receita": 8.4,
+      "despesa": 8.5,
+      "resultado": -0.1
+    }
+  ]
+}

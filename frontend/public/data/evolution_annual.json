@@ -1,0 +1,37 @@
+{
+  "view": "annual",
+  "title": "Evolucao Anual: Receita vs Despesa vs Resultado",
+  "unit": "R$ Milhoes",
+  "data": [
+    {
+      "label": "2022",
+      "receita": 5.8,
+      "despesa": 5.5,
+      "resultado": 0.3
+    },
+    {
+      "label": "2023",
+      "receita": 6.2,
+      "despesa": 6.0,
+      "resultado": 0.2
+    },
+    {
+      "label": "2024",
+      "receita": 7.1,
+      "despesa": 6.8,
+      "resultado": 0.3
+    },
+    {
+      "label": "2025",
+      "receita": 8.5,
+      "despesa": 6.8,
+      "resultado": 1.7
+    },
+    {
+      "label": "2026",
+      "receita": 7.46,
+      "despesa": 7.54,
+      "resultado": -0.08
+    }
+  ]
+}

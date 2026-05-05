@@ -1,7 +1,10 @@
-# Ignorar dados sensíveis
+# Ignorar dados sensíveis (fontes brutas — nunca vão ao GitHub)
 data/*.csv
 data/*.xlsx
 data/*.json
+
+# Os JSONs gerados em frontend/public/data/ SÃO commitados (snapshot público)
+!frontend/public/data/*.json
 
 # Ignorar cache do Python e ambientes virtuais
 __pycache__/

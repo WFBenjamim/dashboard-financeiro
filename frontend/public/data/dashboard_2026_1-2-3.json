@@ -1,0 +1,221 @@
+{
+  "header": {
+    "title": "Encontro de Divulgação de Resultados – Gondim | 2026 (EDR)",
+    "subtitle": "Período acumulado: jan, fev e mar/26 • dados do Orçamento.xlsx",
+    "band": "Data de divulgação: 27 de março de 2026"
+  },
+  "revenue_mix": {
+    "icon": "💰",
+    "title": "Mix de Receitas",
+    "value": 12158774.184,
+    "contratual": 10257152.074,
+    "sucumbencia": 1332563.7100000002,
+    "outras": 569058.4,
+    "outras_receitas": 569058.4,
+    "pct_contratual": 0.8436008366285487,
+    "pct_sucumbencia": 0.10959687957306997,
+    "pct_outras": 0.0468022837983813,
+    "pct_orcado": 0.22389843514517493,
+    "receita_orcada": 54304864.5075,
+    "receita_2025_periodo": 13608525.982813,
+    "variacao_yoy": -0.10653261055929027,
+    "subtitle": "22,4% do orçado anual • 2026  /  -10,7% vs 2025",
+    "comparison_pct": 0,
+    "rows": [
+      {
+        "label": "Contratuais",
+        "value": "R$ 10,26 M",
+        "share": "84,4%"
+      },
+      {
+        "label": "Sucumbência",
+        "value": "R$ 1,33 M",
+        "share": "11,0%"
+      },
+      {
+        "label": "Outras Receitas",
+        "value": "R$ 569,1 mil",
+        "share": "4,7%"
+      }
+    ],
+    "expansions": [
+      {
+        "title": "Contratuais",
+        "items": [
+          {
+            "name": "SANEAMENTO",
+            "value": "R$ 1,74 M"
+          },
+          {
+            "name": "SANTANDER",
+            "value": "R$ 1,62 M"
+          },
+          {
+            "name": "RECUPERA",
+            "value": "R$ 1,22 M"
+          },
+          {
+            "name": "MRS",
+            "value": "R$ 1,11 M"
+          },
+          {
+            "name": "UOL",
+            "value": "R$ 1,09 M"
+          }
+        ]
+      },
+      {
+        "title": "Sucumbência",
+        "items": []
+      }
+    ]
+  },
+  "cost_structure": {
+    "icon": "📉",
+    "title": "Estrutura de Custos",
+    "total": 11256332.40457166,
+    "correspondentes": 463824.246991,
+    "outras_despesas": 8389673.687267367,
+    "impostos": 2402834.470313295,
+    "socios_servico": 0.0,
+    "clt": 0.0,
+    "value": "R$ 11,26 M",
+    "subtitle": "Impostos e Despesas operacionais estimadas",
+    "highlight": {
+      "label": "Impostos",
+      "value": "21,3%",
+      "caption": "total de impostos no período"
+    },
+    "items": [
+      {
+        "label": "Impostos",
+        "value": "R$ 2,4 M",
+        "share": "21,3%",
+        "details": []
+      },
+      {
+        "label": "Sócios de Serviço",
+        "value": "R$ 0",
+        "share": "0,0%",
+        "details": []
+      },
+      {
+        "label": "CLT",
+        "value": "R$ 0",
+        "share": "0,0%",
+        "details": []
+      },
+      {
+        "label": "Correspondentes",
+        "value": "R$ 463,8 mil",
+        "share": "4,1%",
+        "details": []
+      },
+      {
+        "label": "Outras Despesas",
+        "value": "R$ 8,39 M",
+        "share": "74,5%",
+        "details": []
+      }
+    ]
+  },
+  "net_result": {
+    "icon": "📊",
+    "title": "Resultado Líquido",
+    "value": "R$ 710 mil",
+    "subtitle": "Projeção via Margem Líquida"
+  },
+  "margins": {
+    "icon": "📈",
+    "title": "Margens",
+    "value": "27,6%",
+    "subtitle": "Indicadores baseados no KPI AN",
+    "metrics": [
+      {
+        "label": "Margem Operacional",
+        "value": "27,6%",
+        "caption": "KPI AN"
+      },
+      {
+        "label": "Margem Líquida",
+        "value": "5,8%",
+        "caption": "KPI AN"
+      }
+    ]
+  },
+  "people": {
+    "icon": "👥",
+    "title": "Pessoas",
+    "value": "451",
+    "subtitle": "Quantidade de profissionais (KPI AN)",
+    "rows": []
+  },
+  "top_clients": {
+    "icon": "🏆",
+    "title": "Top 5 Clientes",
+    "subtitle": "Faturamento em jan, fev e mar/26",
+    "ranking": [
+      {
+        "name": "SANEAMENTO",
+        "value": "R$ 1,74 M"
+      },
+      {
+        "name": "SANTANDER",
+        "value": "R$ 1,62 M"
+      },
+      {
+        "name": "RECUPERA",
+        "value": "R$ 1,22 M"
+      },
+      {
+        "name": "MRS",
+        "value": "R$ 1,11 M"
+      },
+      {
+        "name": "UOL",
+        "value": "R$ 1,09 M"
+      },
+      {
+        "name": "Outros",
+        "value": "R$ 5,33 M"
+      }
+    ]
+  },
+  "insights": [
+    {
+      "tone": "red",
+      "title": "Efeito tesoura",
+      "description": "Receita e custos seguem em direções distintas, mas ainda preservam resultado operacional de R$ 898,8 mil."
+    },
+    {
+      "tone": "yellow",
+      "title": "Sócios de Serviço concentra 0,0%",
+      "description": "A principal linha de custo soma R$ 0 e segue como o eixo prioritário de produtividade e revisão de eficiência."
+    },
+    {
+      "tone": "green",
+      "title": "Estrutura de pessoas",
+      "description": "A base segue concentrada em pessoas, com , o que reforça uma estrutura mais rígida no curto prazo."
+    },
+    {
+      "tone": "blue",
+      "title": "Top 5 clientes",
+      "description": "SANEAMENTO lidera um grupo que soma R$ 12,11 M e mantém concentração moderada na frente comercial."
+    }
+  ],
+  "technical_analysis": {
+    "title": "Análise técnica",
+    "paragraphs": [
+      "No acumulado do período, a receita somou R$ 12,16 M e a estrutura de custos atingiu R$ 11,26 M, produzindo resultado operacional positivo de R$ 898,8 mil. O ritmo entre receita e despesas segue relativamente equilibrado.",
+      "A comparação interanual de período acumulado: jan, fev e mar/26 deve ser lida com cautela, mas já evidencia um descompasso mais moderado entre receita e custos. Como o painel observa um recorte parcial do ano, o efeito de base, sazonalidade e timing de reconhecimento das linhas pode ampliar ou suavizar a fotografia do período.",
+      "Mesmo sem considerar a sucumbência, o resultado líquido permaneceria em R$ 0, sugerindo que a geração recorrente ainda se sustenta com menor dependência de receitas extraordinárias.",
+      "O principal vetor de rigidez está na estrutura de pessoas: o desembolso com essa frente responde por 21,3% do total de custos, patamar moderada. Em paralelo, a linha de Sócios de Serviço concentra 0,0%, o que reforça a necessidade de disciplina sobre capacidade, alocação e produtividade.",
+      "Na camada complementar, correspondentes somam R$ 463,8 mil (4,1%) e outras despesas atingem R$ 8,39 M (74,5%). Juntas, essas rubricas representam R$ 8,85 M e 78,6% dos custos, oferecendo espaço para ajustes táticos sem alterar a espinha dorsal da operação.",
+      "Na frente comercial, o faturamento segue concentrado no top 5 clientes, formado por SANEAMENTO, SANTANDER, RECUPERA, MRS, UOL, que juntos somam R$ 12,11 M. A liderança de SANEAMENTO, com 14,4% desse bloco, sinaliza um nível relevante de concentração comercial e mantém a diversificação da carteira como agenda prioritária."
+    ],
+    "meta": {
+      "mode": "template",
+      "provider": null
+    }
+  }
+}
