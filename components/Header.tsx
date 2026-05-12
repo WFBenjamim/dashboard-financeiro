@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Download, Moon, Sun, Calendar } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 interface HeaderProps {
   title: string;

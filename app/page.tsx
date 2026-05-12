@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { EvolutionModal } from "@/components/EvolutionModal";
 import { MonthFilter } from "@/components/MonthFilter";
@@ -114,7 +115,7 @@ export default function Dashboard() {
       <main className="gd-app gd-app--centered">
         <div className="gd-error">
           <h1>Erro de conexão</h1>
-          <p>Não foi possível carregar os dados. Confirme se o backend FastAPI está rodando na porta 8000.</p>
+          <p>Não foi possível carregar os dados do dashboard. Confira os arquivos em public/data.</p>
         </div>
       </main>
     );
@@ -128,7 +129,7 @@ export default function Dashboard() {
 
       <div className="gd-shell">
         <div className="gd-logo-wrap">
-          <img className="gd-logo" src="/logo.png" alt="Logo Gondim" />
+          <Image className="gd-logo" src="/logo.png" alt="Logo Gondim" width={420} height={160} priority />
         </div>
 
         <Hero header={data.header} />

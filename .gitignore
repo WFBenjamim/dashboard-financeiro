@@ -1,29 +1,39 @@
-# Ignorar dados sensíveis (fontes brutas — nunca vão ao GitHub)
+# Raw source data stays local.
 data/*.csv
 data/*.xlsx
 data/*.json
 
-# Os JSONs gerados em frontend/public/data/ SÃO commitados (snapshot público)
-!frontend/public/data/*.json
+# Generated dashboard snapshots are public app assets.
+!public/data/*.json
 
-# Ignorar cache do Python e ambientes virtuais
+# Python
 __pycache__/
 *.pyc
 venv/
 .venv/
 .env
-.streamlit/secrets.toml
 
 # Next.js
-frontend/.next/
-frontend/node_modules/
-frontend/.DS_Store
-frontend/*.log
-frontend/dist/
-
-# General
-*.log
-dist/
-build/
 .next/
 node_modules/
+out/
+dist/
+build/
+
+# Logs and local files
+*.log
+.DS_Store
+*.pem
+
+# Package manager logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts

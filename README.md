@@ -1,50 +1,47 @@
-## Dados e Evolução
+# Dashboard Financeiro
 
-Hoje o projeto já possui base funcional com conteúdo estruturado em JSON e leitura de dados local via ETL. O próximo passo do roadmap é consolidar os dados que chegam via planilhas para que o sistema:
+Aplicação Next.js do dashboard financeiro executivo, preparada para rodar localmente e para deploy no Vercel.
 
-- leia as planilhas automaticamente
-- normalize os campos recebidos
-- atualize o conteúdo do dashboard sem retrabalho manual
-- mantenha consistência entre dados brutos e dados de apresentação
+## Desenvolvimento
 
-Isso deve evoluir o projeto de um dashboard estático para um **app financeiro dinâmico**.
+Instale as dependências e rode o servidor local:
 
-## Direção de Produto
+```bash
+npm install
+npm run dev
+```
 
-O projeto deve continuar evoluindo com foco em:
+Abra [http://localhost:3000](http://localhost:3000).
 
-- experiência executiva de apresentação
-- manutenção simples e incremental
-- atualização automática do conteúdo
-- visual premium e profissional
-- prontidão para uso como app final
+O projeto roda em um compartilhamento de rede. Por isso, o script `dev` usa Webpack (`next dev --webpack`), evitando falhas do Turbopack com caminhos UNC. Em disco local, `npm run dev:turbo` também fica disponível.
 
-## Skills Foco
+## Dados
 
-Áreas que mais importam para a continuação do projeto:
+As planilhas mensais ficam em `data/` e continuam fora do Git por segurança. A planilha principal esperada pela esteira é `data/Orçamento.xlsx`.
 
-- integração de planilhas e ETL
-- modelagem de dados financeiros
-- Streamlit e construção de interface
-- Plotly para visualização interativa
-- arquitetura de código modular
-- formatação monetária e padronização visual
-- preparação do projeto para uso como app final
+Para atualizar o dashboard depois de trocar ou atualizar a planilha:
 
-## Roadmap Sugerido
+```bash
+uv run --with pandas --with openpyxl python scripts/generate_static_data.py
+```
 
-1. Integrar a leitura das planilhas recebidas
-2. Normalizar e mapear os campos para o modelo do dashboard
-3. Atualizar o conteúdo exibido com base em dados reais
-4. Consolidar a navegação e os gráficos de evolução
-5. Preparar o app para apresentação final e publicação
+Esse comando lê `data/Orçamento.xlsx`, processa as abas mapeadas no ETL e recria os snapshots JSON em `public/data`. O app Next.js consome esses JSONs localmente e no Vercel.
 
-## Observações
+Se um backend for criado no futuro, configure `NEXT_PUBLIC_API_URL` para usar as rotas de API esperadas pela camada `lib/api.ts`.
 
-- A aplicação foi pensada para ser incrementada sem refazer toda a base.
-- O layout e a estrutura priorizam leitura rápida e apresentação executiva.
-- O projeto já está em um ponto bom para evoluir de forma segura para uma solução mais automatizada.
+## Build
 
-## Licença
+```bash
+npm run lint
+npm run build
+npm run start
+```
 
-Uso interno / projeto em desenvolvimento.
+## Deploy no Vercel
+
+No Vercel, use as configurações padrão de projeto Next.js:
+
+- Framework Preset: Next.js
+- Build Command: `npm run build`
+- Install Command: `npm install`
+- Output Directory: `.next`

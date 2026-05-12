@@ -3,7 +3,7 @@ generate_static_data.py
 -----------------------
 Gera arquivos JSON estaticos com os dados do dashboard para todas as
 combinacoes de meses disponiveis. Os arquivos sao salvos em
-frontend/public/data/ e consumidos pelo Next.js em modo estatico (GitHub Pages).
+public/data/ e consumidos pelo app Next.js.
 
 Como usar:
     python scripts/generate_static_data.py
@@ -20,7 +20,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from etl.loader import get_dashboard_content, load_antecipacao_lucros  # noqa: E402
 
-OUTPUT_DIR = PROJECT_ROOT / "frontend" / "public" / "data"
+OUTPUT_DIR = PROJECT_ROOT / "public" / "data"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # ─── Configuracao ─────────────────────────────────────────────────────────────
@@ -125,4 +125,4 @@ if __name__ == "__main__":
     print("\n[3/3] Gerando dados de antecipacao de lucros...")
     generate_profit_advance_json()
 
-    print("\n[OK] Concluido! Arquivos salvos em frontend/public/data/")
+    print("\n[OK] Concluido! Arquivos salvos em public/data/")

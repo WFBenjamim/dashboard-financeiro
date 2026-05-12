@@ -1,7 +1,7 @@
 "use client";
 
 import { Card } from "./Card";
-import { TrendingUp, PieChart } from "lucide-react";
+import { TrendingUp } from "lucide-react";
 
 interface RevenueCardProps {
   data: any;

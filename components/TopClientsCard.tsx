@@ -1,7 +1,6 @@
 "use client";
 
 import { Card } from "./Card";
-import { Trophy } from "lucide-react";
 
 interface TopClientsCardProps {
   data: any;

@@ -9,9 +9,9 @@ import os
 import sys
 from pathlib import Path
 from typing import Any, Iterable
+from functools import wraps
 
 import pandas as pd
-import streamlit as st
 
 from config.settings import (
     PROFIT_ADVANCE_ADJUSTMENT_PCT,
@@ -40,6 +40,7 @@ def _runtime_root() -> Path:
 DATA_DIR = _runtime_root() / "data"
 TEMPLATE_FILE = DATA_DIR / "dashboard_content.json"
 ORCAMENTO_FILE = DATA_DIR / "Orçamento.xlsx"
+FOLHA_FILE = DATA_DIR / "Resumo - folha.xlsx"
 ANTECIPACAO_FILE = DATA_DIR / "Antecipação Lucros.xlsx"
 
 MONTH_LABELS = {
@@ -54,6 +55,18 @@ CLIENT_COST_SHEETS = [
     "Banco PAN", "NIO", "Quinto Andar", "Patrimônio", "Resolução de Disputas",
     "Vero", "Criminal", "Recupera", "Control Jurídica", "Pauta", "Saneamento",
 ]
+
+
+def cache_data(*_args, **_kwargs):
+    """No-op cache decorator kept for compatibility with the ETL API."""
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            return func(*args, **kwargs)
+
+        return wrapper
+
+    return decorator
 
 
 def _to_float(value: Any) -> float:
@@ -131,7 +144,7 @@ def _normalize_text(value: Any) -> str:
     return re.sub(r"\s+", " ", text).strip().lower()
 
 
-@st.cache_data(show_spinner=False)
+@cache_data(show_spinner=False)
 def _load_dashboard_template(file_mtime_ns: int) -> dict[str, Any]:
     return json.loads(TEMPLATE_FILE.read_text(encoding="utf-8"))
 
@@ -436,7 +449,68 @@ def _share(value: float, total: float) -> str:
     return _format_percent((value / total * 100) if total else 0.0)
 
 
-@st.cache_data(show_spinner=False)
+def _get_folha_row(df: pd.DataFrame, label: str) -> pd.Series:
+    expected = _normalize_text(label)
+    labels = df.iloc[:, 1].astype(str).map(_normalize_text)
+    rows = df[labels.str.contains(expected, regex=False, na=False)]
+    if rows.empty:
+        raise ValueError(f"Linha '{label}' nao encontrada em {FOLHA_FILE.name}.")
+    return rows.iloc[0]
+
+
+def _load_people_and_payroll_data() -> dict[str, Any]:
+    """Le pessoas e valores de folha em data/Resumo - folha.xlsx."""
+    if not FOLHA_FILE.exists():
+        return {
+            "people": {
+                "total": 0,
+                "socios": {"qtd": 0, "pct": 0.0},
+                "clt": {"qtd": 0, "pct": 0.0},
+                "estagiarios": {"qtd": 0, "pct": 0.0},
+            },
+            "socios_servico_val": 0.0,
+            "clt_val": 0.0,
+        }
+
+    df = pd.read_excel(FOLHA_FILE, sheet_name="Planilha1", header=None, engine="openpyxl").fillna("")
+
+    socios_gan = _get_folha_row(df, "Sócios de serviço GAN")
+    socios_gat = _get_folha_row(df, "Sócios de serviço GAT")
+    socios_gaa = _get_folha_row(df, "Sócios de serviço GAA")
+    clt = _get_folha_row(df, "Celetista")
+
+    socios_total_qtd = (
+        _to_float(socios_gan.iloc[2])
+        + _to_float(socios_gat.iloc[2])
+        + _to_float(socios_gaa.iloc[2])
+    )
+    socios_total_val = (
+        _to_float(socios_gan.iloc[3])
+        + _to_float(socios_gat.iloc[3])
+        + _to_float(socios_gaa.iloc[3])
+    )
+    clt_qtd = _to_float(clt.iloc[2])
+    clt_val = _to_float(clt.iloc[3])
+
+    total_pessoas = _to_float(df.iloc[:, 2].replace("", pd.NA).dropna().iloc[-1])
+    est_qtd = max(total_pessoas - socios_total_qtd - clt_qtd, 0.0)
+
+    def pct(value: float) -> float:
+        return (value / total_pessoas) if total_pessoas else 0.0
+
+    return {
+        "people": {
+            "total": int(round(total_pessoas)),
+            "socios": {"qtd": int(round(socios_total_qtd)), "pct": pct(socios_total_qtd)},
+            "clt": {"qtd": int(round(clt_qtd)), "pct": pct(clt_qtd)},
+            "estagiarios": {"qtd": int(round(est_qtd)), "pct": pct(est_qtd)},
+        },
+        "socios_servico_val": socios_total_val,
+        "clt_val": clt_val,
+    }
+
+
+@cache_data(show_spinner=False)
 def get_extracted_data(ano: int, selected_months: list[int], file_mtime_ns: int | None = None) -> dict:
     """Extrai todos os dados necessários usando mapeamento exato da planilha Orçamento."""
     _ = file_mtime_ns
@@ -485,13 +559,15 @@ def get_extracted_data(ano: int, selected_months: list[int], file_mtime_ns: int 
     pct_sucumbencia = (sucumb / receita_total) if receita_total else 0.0
     pct_outras = (outras_receitas / receita_total) if receita_total else 0.0
 
+    folha_data = _load_people_and_payroll_data()
+
     cost_totals = _extract_client_costs(f, selected_months)
-    total_despesas = cost_totals["total"]
     correspondentes = cost_totals["correspondentes"]
     outras_despesas = cost_totals["outras_despesas"]
     impostos = cost_totals["impostos"]
-    socios_servico = cost_totals["socios_servico"]
-    clt = cost_totals["clt"]
+    socios_servico = folha_data["socios_servico_val"]
+    clt = folha_data["clt_val"]
+    total_despesas = correspondentes + outras_despesas + impostos + socios_servico + clt
 
     df_resumo_orc = pd.read_excel(f, sheet_name="Resumo Orç 2026", header=None, engine="openpyxl").fillna("")
     receita_orcada_anual = _get_table_value_by_labels(df_resumo_orc, "Total", "Receitas")
@@ -558,7 +634,8 @@ def get_extracted_data(ano: int, selected_months: list[int], file_mtime_ns: int 
     return {
         "mo": mo,
         "ml": ml,
-        "pessoas": pessoas,
+        "pessoas": folha_data["people"]["total"] or pessoas,
+        "people": folha_data["people"],
         "receita_total": receita_total,
         "contratuais": contratuais,
         "sucumbencia": sucumb,
@@ -734,9 +811,29 @@ def get_dashboard_data(mes: int, ano: int, selected_months: list[int] | None = N
     template["people"] = {
         "icon": "👥",
         "title": "Pessoas",
-        "value": _format_count(data["pessoas"]),
-        "subtitle": "Quantidade de profissionais (KPI AN)",
-        "rows": []
+        "value": _format_count(data["people"]["total"]),
+        "total": data["people"]["total"],
+        "socios": data["people"]["socios"],
+        "clt": data["people"]["clt"],
+        "estagiarios": data["people"]["estagiarios"],
+        "subtitle": f"Resumo da folha: {FOLHA_FILE.name}",
+        "rows": [
+            {
+                "label": "Sócios de Serviço",
+                "value": _format_count(data["people"]["socios"]["qtd"]),
+                "share": _format_percent(data["people"]["socios"]["pct"] * 100),
+            },
+            {
+                "label": "CLT",
+                "value": _format_count(data["people"]["clt"]["qtd"]),
+                "share": _format_percent(data["people"]["clt"]["pct"] * 100),
+            },
+            {
+                "label": "Estagiários",
+                "value": _format_count(data["people"]["estagiarios"]["qtd"]),
+                "share": _format_percent(data["people"]["estagiarios"]["pct"] * 100),
+            },
+        ]
     }
     
     template["top_clients"] = {

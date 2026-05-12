@@ -73,48 +73,48 @@
   "cost_structure": {
     "icon": "📉",
     "title": "Estrutura de Custos",
-    "total": 3387072.871337772,
+    "total": 5149317.531337772,
     "correspondentes": 151561.402168,
     "outras_despesas": 2481863.15336599,
     "impostos": 753648.3158037817,
-    "socios_servico": 0.0,
-    "clt": 0.0,
-    "value": "R$ 3,39 M",
+    "socios_servico": 1544357.73,
+    "clt": 217886.93,
+    "value": "R$ 5,15 M",
     "subtitle": "Impostos e Despesas operacionais estimadas",
     "highlight": {
       "label": "Impostos",
-      "value": "22,3%",
+      "value": "14,6%",
       "caption": "total de impostos no período"
     },
     "items": [
       {
         "label": "Impostos",
         "value": "R$ 753,6 mil",
-        "share": "22,3%",
+        "share": "14,6%",
         "details": []
       },
       {
         "label": "Sócios de Serviço",
-        "value": "R$ 0",
-        "share": "0,0%",
+        "value": "R$ 1,54 M",
+        "share": "30,0%",
         "details": []
       },
       {
         "label": "CLT",
-        "value": "R$ 0",
-        "share": "0,0%",
+        "value": "R$ 217,9 mil",
+        "share": "4,2%",
         "details": []
       },
       {
         "label": "Correspondentes",
         "value": "R$ 151,6 mil",
-        "share": "4,5%",
+        "share": "2,9%",
         "details": []
       },
       {
         "label": "Outras Despesas",
         "value": "R$ 2,48 M",
-        "share": "73,3%",
+        "share": "48,2%",
         "details": []
       }
     ]
@@ -146,9 +146,38 @@
   "people": {
     "icon": "👥",
     "title": "Pessoas",
-    "value": "451",
-    "subtitle": "Quantidade de profissionais (KPI AN)",
-    "rows": []
+    "value": "602",
+    "total": 602,
+    "socios": {
+      "qtd": 441,
+      "pct": 0.7325581395348837
+    },
+    "clt": {
+      "qtd": 124,
+      "pct": 0.2059800664451827
+    },
+    "estagiarios": {
+      "qtd": 37,
+      "pct": 0.061461794019933555
+    },
+    "subtitle": "Resumo da folha: Resumo - folha.xlsx",
+    "rows": [
+      {
+        "label": "Sócios de Serviço",
+        "value": "441",
+        "share": "73,3%"
+      },
+      {
+        "label": "CLT",
+        "value": "124",
+        "share": "20,6%"
+      },
+      {
+        "label": "Estagiários",
+        "value": "37",
+        "share": "6,1%"
+      }
+    ]
   },
   "top_clients": {
     "icon": "🏆",
@@ -185,17 +214,17 @@
     {
       "tone": "red",
       "title": "Efeito tesoura",
-      "description": "Receita e custos seguem em direções distintas, mas ainda preservam resultado operacional de R$ 233,7 mil."
+      "description": "Receita recua 0,0% enquanto custos avançam 0,0%, pressionando R$ 1,53 M no operacional."
     },
     {
       "tone": "yellow",
-      "title": "Sócios de Serviço concentra 0,0%",
-      "description": "A principal linha de custo soma R$ 0 e segue como o eixo prioritário de produtividade e revisão de eficiência."
+      "title": "Sócios de Serviço concentra 30,0%",
+      "description": "A principal linha de custo soma R$ 1,54 M e segue como o eixo prioritário de produtividade e revisão de eficiência."
     },
     {
       "tone": "green",
       "title": "Estrutura de pessoas",
-      "description": "A base segue concentrada em pessoas, com , o que reforça uma estrutura mais rígida no curto prazo."
+      "description": "A base segue concentrada em pessoas, com Sócios de Serviço 73,3%, CLT 20,6%, Estagiários 6,1%, o que reforça uma estrutura mais rígida no curto prazo."
     },
     {
       "tone": "blue",
@@ -206,11 +235,11 @@
   "technical_analysis": {
     "title": "Análise técnica",
     "paragraphs": [
-      "No acumulado do período, a receita somou R$ 3,62 M e a estrutura de custos atingiu R$ 3,39 M, produzindo resultado operacional positivo de R$ 233,7 mil. O ritmo entre receita e despesas segue relativamente equilibrado.",
+      "No acumulado do período, a receita somou R$ 3,62 M e ficou 0,0% abaixo da base comparativa, enquanto a estrutura de custos alcançou R$ 5,15 M após avanço de 0,0%. Esse descompasso levou o resultado operacional a uma pressão estimada de R$ 1,53 M.",
       "A comparação interanual de período acumulado: fev/26 deve ser lida com cautela, mas já evidencia um descompasso mais moderado entre receita e custos. Como o painel observa um recorte parcial do ano, o efeito de base, sazonalidade e timing de reconhecimento das linhas pode ampliar ou suavizar a fotografia do período.",
       "Mesmo sem considerar a sucumbência, o resultado líquido permaneceria em R$ 0, sugerindo que a geração recorrente ainda se sustenta com menor dependência de receitas extraordinárias.",
-      "O principal vetor de rigidez está na estrutura de pessoas: o desembolso com essa frente responde por 22,3% do total de custos, patamar moderada. Em paralelo, a linha de Sócios de Serviço concentra 0,0%, o que reforça a necessidade de disciplina sobre capacidade, alocação e produtividade.",
-      "Na camada complementar, correspondentes somam R$ 151,6 mil (4,5%) e outras despesas atingem R$ 2,48 M (73,3%). Juntas, essas rubricas representam R$ 2,63 M e 77,8% dos custos, oferecendo espaço para ajustes táticos sem alterar a espinha dorsal da operação.",
+      "O principal vetor de rigidez está na estrutura de pessoas: o desembolso com essa frente responde por 14,6% do total de custos, patamar moderada. Em paralelo, a linha de Sócios de Serviço concentra 30,0%, o que reforça a necessidade de disciplina sobre capacidade, alocação e produtividade.",
+      "Na camada complementar, correspondentes somam R$ 151,6 mil (2,9%) e outras despesas atingem R$ 2,48 M (48,2%). Juntas, essas rubricas representam R$ 2,63 M e 51,1% dos custos, oferecendo espaço para ajustes táticos sem alterar a espinha dorsal da operação.",
       "Na frente comercial, o faturamento segue concentrado no top 5 clientes, formado por MRS, SANTANDER, RECUPERA, VIVO, CLARO, que juntos somam R$ 3,62 M. A liderança de MRS, com 16,1% desse bloco, sinaliza um nível relevante de concentração comercial e mantém a diversificação da carteira como agenda prioritária."
     ],
     "meta": {
