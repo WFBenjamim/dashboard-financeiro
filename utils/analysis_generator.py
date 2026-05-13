@@ -112,7 +112,7 @@ def _generate_insights_with_template(metrics: DashboardMetrics) -> list[dict[str
             "tone": "yellow",
             "title": f"Sócios de Serviço concentra {metrics.socios_de_servico.share}",
             "description": (
-                f"A principal linha de custo soma {metrics.socios_de_servico.value} e segue como o eixo prioritário "
+                f"A linha de Sócios de Serviço soma {metrics.socios_de_servico.value} e segue como eixo prioritário "
                 f"de produtividade e revisão de eficiência."
             ),
         },
@@ -193,9 +193,9 @@ def _build_net_result_paragraph(metrics: DashboardMetrics) -> str:
 
 def _build_people_costs_paragraph(metrics: DashboardMetrics) -> str:
     intensity = (
-        "muito elevada" if metrics.people_share_pct >= 65 else
+        "muito elevado" if metrics.people_share_pct >= 65 else
         "relevante" if metrics.people_share_pct >= 50 else
-        "moderada"
+        "moderado"
     )
     return (
         f"O principal vetor de rigidez está na estrutura de pessoas: o desembolso com essa frente responde "

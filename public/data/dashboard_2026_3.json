@@ -84,9 +84,9 @@
     "value": "R$ 6,06 M",
     "subtitle": "",
     "highlight": {
-      "label": "Impostos",
-      "value": "13,3%",
-      "caption": ""
+      "label": "Outras Despesas",
+      "value": "56,0%",
+      "caption": "principal grupo de custo"
     },
     "items": [
       {
@@ -221,7 +221,7 @@
     {
       "tone": "yellow",
       "title": "Sócios de Serviço concentra 25,5%",
-      "description": "A principal linha de custo soma R$ 1,54 M e segue como o eixo prioritário de produtividade e revisão de eficiência."
+      "description": "A linha de Sócios de Serviço soma R$ 1,54 M e segue como eixo prioritário de produtividade e revisão de eficiência."
     },
     {
       "tone": "green",
@@ -240,7 +240,7 @@
       "No acumulado do período, a receita somou R$ 4,7 M e ficou 3,5% abaixo da base comparativa, enquanto a estrutura de custos alcançou R$ 6,06 M após avanço de 117,3%. Esse descompasso levou o resultado operacional a uma pressão estimada de R$ 1,36 M.",
       "A comparação interanual de período acumulado: mar/26 deve ser lida com cautela, mas já evidencia um descolamento relevante entre receita e custos. Como o painel observa um recorte parcial do ano, o efeito de base, sazonalidade e timing de reconhecimento das linhas pode ampliar ou suavizar a fotografia do período.",
       "Mesmo sem considerar a sucumbência, o resultado líquido permaneceria em R$ 0, sugerindo que a geração recorrente ainda se sustenta com menor dependência de receitas extraordinárias.",
-      "O principal vetor de rigidez está na estrutura de pessoas: o desembolso com essa frente responde por 13,3% do total de custos, patamar moderada. Em paralelo, a linha de Sócios de Serviço concentra 25,5%, o que reforça a necessidade de disciplina sobre capacidade, alocação e produtividade.",
+      "O principal vetor de rigidez está na estrutura de pessoas: o desembolso com essa frente responde por 29,0% do total de custos, patamar moderado. Em paralelo, a linha de Sócios de Serviço concentra 25,5%, o que reforça a necessidade de disciplina sobre capacidade, alocação e produtividade.",
       "Na camada complementar, correspondentes somam R$ 98,6 mil (1,6%) e outras despesas atingem R$ 3,39 M (56,0%). Juntas, essas rubricas representam R$ 3,49 M e 57,6% dos custos, oferecendo espaço para ajustes táticos sem alterar a espinha dorsal da operação.",
       "Na frente comercial, o faturamento segue concentrado no top 5 clientes, formado por MERCADO LIVRE, SANEAMENTO, RECUPERA, SANTANDER, UOL, que juntos somam R$ 4,66 M. A liderança de MERCADO LIVRE, com 15,5% desse bloco, sinaliza um nível relevante de concentração comercial e mantém a diversificação da carteira como agenda prioritária."
     ],

@@ -788,6 +788,14 @@ def get_dashboard_data(mes: int, ano: int, selected_months: list[int] | None = N
     }
     
     cost_total = data["total_despesas"]
+    cost_groups = [
+        {"label": "Impostos", "amount": data["impostos"]},
+        {"label": "Sócios de Serviço", "amount": data["socios_servico"]},
+        {"label": "CLT", "amount": data["clt"]},
+        {"label": "Correspondentes", "amount": data["correspondentes"]},
+        {"label": "Outras Despesas", "amount": data["outras_despesas"]},
+    ]
+    main_cost_group = max(cost_groups, key=lambda item: item["amount"])
 
     template["cost_structure"] = {
         "icon": "📉",
@@ -803,9 +811,9 @@ def get_dashboard_data(mes: int, ano: int, selected_months: list[int] | None = N
         "value": _format_currency(cost_total),
         "subtitle": "",
         "highlight": {
-            "label": "Impostos", 
-            "value": _share(data["impostos"], cost_total), 
-            "caption": ""
+            "label": main_cost_group["label"],
+            "value": _share(main_cost_group["amount"], cost_total),
+            "caption": "principal grupo de custo"
         },
         "items": [
             {

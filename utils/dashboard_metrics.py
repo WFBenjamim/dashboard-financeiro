@@ -68,9 +68,14 @@ def build_dashboard_metrics(content: dict[str, Any]) -> DashboardMetrics:
     sucumbency_row = _find_item_by_label(revenue["rows"], "Sucumbência")
     sucumbency_share_pct = parse_percent(sucumbency_row["share"])
     net_without_sucumbency = extract_currency_from_text(result["subtitle"])
-    people_share_pct = parse_percent(costs["highlight"]["value"])
 
     socios_de_servico = _to_breakdown_metric(_find_item_by_label(costs["items"], "Sócios de Serviço"))
+    clt_cost = _to_breakdown_metric(_find_item_by_label(costs["items"], "CLT"))
+    people_share_pct = (
+        (socios_de_servico.amount + clt_cost.amount) / cost_total * 100
+        if cost_total
+        else socios_de_servico.share_pct + clt_cost.share_pct
+    )
     taxes = _to_breakdown_metric(_find_item_by_label(costs["items"], "Impostos"))
     correspondents = _to_breakdown_metric(_find_item_by_label(costs["items"], "Correspondentes"))
     other_expenses = _to_breakdown_metric(_find_item_by_label(costs["items"], "Outras Despesas"))

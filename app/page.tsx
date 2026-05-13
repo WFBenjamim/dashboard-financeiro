@@ -83,6 +83,12 @@ function OptionalCaption({ value }: { value: unknown }) {
   return text ? <div className="gd-margin-card__caption">{text}</div> : null;
 }
 
+function parseShareValue(value: unknown): number {
+  const text = cleanText(value).replace("%", "").trim();
+  if (!text) return 0;
+  return Number(text.replace(/\./g, "").replace(",", ".")) || 0;
+}
+
 export default function Dashboard() {
   const [showOpening, setShowOpening] = useState(true);
   const [data, setData] = useState<DashboardData | null>(null);
@@ -257,6 +263,8 @@ function RevenueRow({ row, items }: { row: any; items: any[] }) {
 
 function CostCard({ data }: { data: any }) {
   const items = data?.items || [];
+  const fallbackHighlight = [...items].sort((a: any, b: any) => parseShareValue(b?.share) - parseShareValue(a?.share))[0];
+  const highlight = data?.highlight || fallbackHighlight || {};
   const special = items.filter((item: any) => {
     const label = normalizeKey(item.label);
     return label.includes("socios de servico") || label === "clt";
@@ -273,10 +281,12 @@ function CostCard({ data }: { data: any }) {
       <div className="gd-cost-layout">
         <div className="gd-cost-layout__left">
           <div className="gd-cost gd-cost--highlight">
-            <div className="gd-cost__label">{cleanText(data?.highlight?.label || "Impostos")}</div>
-            <div className="gd-cost__value gd-cost__value--xl">{cleanText(data?.highlight?.value || "0,0%")}</div>
-            {cleanText(data?.highlight?.caption) && (
-              <div className="gd-cost__caption">{cleanText(data?.highlight?.caption)}</div>
+            <div className="gd-cost__label">{cleanText(highlight?.label || "Principal grupo")}</div>
+            <div className="gd-cost__value gd-cost__value--xl">{cleanText(highlight?.value || highlight?.share || "0,0%")}</div>
+            {cleanText(highlight?.caption || (fallbackHighlight ? "principal grupo de custo" : "")) && (
+              <div className="gd-cost__caption">
+                {cleanText(highlight?.caption || (fallbackHighlight ? "principal grupo de custo" : ""))}
+              </div>
             )}
           </div>
           <div className="gd-cost-list">
