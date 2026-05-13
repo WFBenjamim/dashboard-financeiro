@@ -16,10 +16,39 @@ import { formatCurrency } from "@/lib/formatters";
 
 type EvolutionView = "annual" | "monthly" | "profitAdvance";
 
+type ProfitAdvanceSummary = {
+  resultadoMensal?: number;
+  percentualAjusteMensalLucros?: number;
+  totalAjusteMensalLucros?: number;
+  totalQuotas?: number;
+  ajusteMensalPorQuota?: number;
+};
+
+type ProfitAdvancePartnerRow = {
+  index?: number;
+  nivelSocietario?: string;
+  level?: string;
+  quotasServico?: number;
+  quotas?: number;
+  ajusteMensal?: number;
+  adjustment?: number;
+  antecipacaoFinal?: number;
+  final?: number;
+};
+
+type ProfitAdvancePayload = {
+  title?: string;
+  summary?: ProfitAdvanceSummary;
+  gan?: ProfitAdvancePartnerRow[];
+  gaa?: ProfitAdvancePartnerRow[];
+};
+
 interface EvolutionModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
+
+const MAX_VISIBLE_PROFIT_ADVANCE_ROWS = 13;
 
 export function EvolutionModal({ open, onOpenChange }: EvolutionModalProps) {
   const [view, setView] = useState<EvolutionView>("annual");
@@ -73,8 +102,8 @@ export function EvolutionModal({ open, onOpenChange }: EvolutionModalProps) {
         <div className="gd-chart-panel">
           {loading && <div className="gd-chart-state">Carregando dados...</div>}
           {!loading && view !== "profitAdvance" && payload?.data && <EvolutionChart chart={payload} />}
-          {!loading && view === "profitAdvance" && payload?.companies && <ProfitAdvance data={payload} />}
-          {!loading && !payload?.data && !payload?.companies && (
+          {!loading && view === "profitAdvance" && payload?.summary && <ProfitAdvance data={payload} />}
+          {!loading && !payload?.data && !payload?.summary && (
             <div className="gd-chart-state">Não foi possível carregar os dados de evolução.</div>
           )}
         </div>
@@ -118,55 +147,63 @@ function EvolutionChart({ chart }: { chart: any }) {
   );
 }
 
-function ProfitAdvance({ data }: { data: any }) {
+const brCurrency = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
+const brNumber = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 2 });
+const brPercent = new Intl.NumberFormat("pt-BR", {
+  style: "percent",
+  minimumFractionDigits: 1,
+  maximumFractionDigits: 1,
+});
+const brQuota = new Intl.NumberFormat("pt-BR", { minimumFractionDigits: 4, maximumFractionDigits: 4 });
+
+function getRowLevel(row: ProfitAdvancePartnerRow) {
+  return row.nivelSocietario || row.level || "";
+}
+
+function ProfitAdvance({ data }: { data: ProfitAdvancePayload }) {
+  const summary = data.summary || {};
+
   return (
-    <section className="ga-shell-next">
-      <header className="ga-hero-next">
-        <h3>{data.title}</h3>
-        <p>{data.subtitle}</p>
-      </header>
+    <div className="profit-advance-scroll">
+      <section className="profit-advance" aria-label={data.title || "Antecipação mensal de distribuição de lucros"}>
+        <div className="profit-advance__summary-value profit-advance__summary-value--resultado">
+          {brCurrency.format(Number(summary.resultadoMensal || 0))}
+        </div>
+        <div className="profit-advance__summary-value profit-advance__summary-value--percentual">
+          {brPercent.format(Number(summary.percentualAjusteMensalLucros || 0))}
+        </div>
+        <div className="profit-advance__summary-value profit-advance__summary-value--total-ajuste">
+          {brCurrency.format(Number(summary.totalAjusteMensalLucros || 0))}
+        </div>
+        <div className="profit-advance__summary-value profit-advance__summary-value--total-quotas">
+          {brNumber.format(Number(summary.totalQuotas || 0))}
+        </div>
+        <div className="profit-advance__summary-value profit-advance__summary-value--ajuste-quota">
+          {brQuota.format(Number(summary.ajusteMensalPorQuota || 0))}
+        </div>
 
-      <div className="ga-summary-next">
-        {(data.metrics || []).map((metric: any) => (
-          <div className="ga-summary-card" key={metric.label}>
-            <span>{metric.label}</span>
-            <strong>{metric.value}</strong>
-          </div>
-        ))}
-      </div>
+        <ProfitAdvanceTable variant="gan" rows={data.gan || []} />
+        <ProfitAdvanceTable variant="gaa" rows={data.gaa || []} />
+      </section>
+    </div>
+  );
+}
 
-      <div className="ga-company-grid">
-        {(data.companies || []).map((company: any) => (
-          <article className="ga-company-panel" key={company.short_name}>
-            <div className="ga-company-head">
-              <span>{company.short_name}</span>
-              <h4>{company.company_name}</h4>
-            </div>
-            <div className="ga-table-next">
-              <div className="ga-table-head">
-                <span>Nível Societário</span>
-                <span>Quotas</span>
-                <span>Ajuste Mensal</span>
-                <span>Antecipação Final</span>
-              </div>
-              {(company.rows || []).map((row: any) => (
-                <div className="ga-table-row" key={`${company.short_name}-${row.index}`}>
-                  <span>{row.level}</span>
-                  <span>{row.quotas_formatted}</span>
-                  <span>{row.adjustment_formatted}</span>
-                  <strong>{row.final_formatted}</strong>
-                </div>
-              ))}
-              <div className="ga-table-row ga-table-row--total">
-                <span>Total</span>
-                <span>{company.totals?.quotas_formatted}</span>
-                <span>{company.totals?.adjustment_formatted}</span>
-                <strong>{company.totals?.final_formatted}</strong>
-              </div>
-            </div>
-          </article>
-        ))}
-      </div>
-    </section>
+function ProfitAdvanceTable({ variant, rows }: { variant: "gan" | "gaa"; rows: ProfitAdvancePartnerRow[] }) {
+  const visibleRows = rows.slice(0, MAX_VISIBLE_PROFIT_ADVANCE_ROWS);
+
+  return (
+    <div className={`profit-advance__table profit-advance__table--${variant}`}>
+      {visibleRows.map((row, index) => (
+        <div className="profit-advance__row" key={`${variant}-${row.index || index}`}>
+          <span className="profit-advance__cell profit-advance__cell--level">{getRowLevel(row)}</span>
+          <span className="profit-advance__cell">{brNumber.format(Number(row.quotasServico ?? row.quotas ?? 0))}</span>
+          <span className="profit-advance__cell">{brCurrency.format(Number(row.ajusteMensal ?? row.adjustment ?? 0))}</span>
+          <span className="profit-advance__cell profit-advance__cell--final">
+            {brCurrency.format(Number(row.antecipacaoFinal ?? row.final ?? 0))}
+          </span>
+        </div>
+      ))}
+    </div>
   );
 }

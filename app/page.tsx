@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { EvolutionModal } from "@/components/EvolutionModal";
 import { MonthFilter } from "@/components/MonthFilter";
+import { ResultOpeningScreen } from "@/components/ResultOpeningScreen";
 import { fetchDashboardData } from "@/lib/api";
 import { formatCurrencyText } from "@/lib/formatters";
 
@@ -72,7 +73,18 @@ function sortMonths(months: number[]) {
   return [...months].sort((a, b) => a - b);
 }
 
+function OptionalSubline({ value }: { value: unknown }) {
+  const text = cleanText(value);
+  return text ? <div className="gd-subline">{text}</div> : null;
+}
+
+function OptionalCaption({ value }: { value: unknown }) {
+  const text = cleanText(value);
+  return text ? <div className="gd-margin-card__caption">{text}</div> : null;
+}
+
 export default function Dashboard() {
+  const [showOpening, setShowOpening] = useState(true);
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [year, setYear] = useState(2026);
@@ -100,6 +112,10 @@ export default function Dashboard() {
   }, [year, months]);
 
   const yearOptions = useMemo(() => [year - 1, year, year + 1], [year]);
+
+  if (showOpening) {
+    return <ResultOpeningScreen onEnter={() => setShowOpening(false)} />;
+  }
 
   if (loading) {
     return (
@@ -199,7 +215,7 @@ function RevenueCard({ data }: { data: any }) {
       <div className="gd-card__header">
         <div className="gd-title">💰 {cleanText(data?.title || "Mix de Receitas")}</div>
         <div className="gd-kpi">{formatCurrencyText(cleanText(data?.value))}</div>
-        <div className="gd-subline">{cleanText(data?.subtitle)}</div>
+        <OptionalSubline value={data?.subtitle} />
       </div>
       <div className="gd-surface">
         <div className="gd-revenue-list">
@@ -252,14 +268,16 @@ function CostCard({ data }: { data: any }) {
       <div className="gd-card__header">
         <div className="gd-title">📉 {cleanText(data?.title || "Estrutura de Custos")}</div>
         <div className="gd-kpi">{formatCurrencyText(cleanText(data?.value))}</div>
-        <div className="gd-subline">{cleanText(data?.subtitle)}</div>
+        <OptionalSubline value={data?.subtitle} />
       </div>
       <div className="gd-cost-layout">
         <div className="gd-cost-layout__left">
           <div className="gd-cost gd-cost--highlight">
             <div className="gd-cost__label">{cleanText(data?.highlight?.label || "Impostos")}</div>
             <div className="gd-cost__value gd-cost__value--xl">{cleanText(data?.highlight?.value || "0,0%")}</div>
-            <div className="gd-cost__caption">{cleanText(data?.highlight?.caption || "principal grupo de custo")}</div>
+            {cleanText(data?.highlight?.caption) && (
+              <div className="gd-cost__caption">{cleanText(data?.highlight?.caption)}</div>
+            )}
           </div>
           <div className="gd-cost-list">
             {special.map((item: any) => (
@@ -308,7 +326,7 @@ function ResultCard({ data }: { data: any }) {
     <article className="gd-card gd-card--orange gd-card--compact">
       <div className="gd-title">📊 {cleanText(data?.title || "Resultado Líquido")}</div>
       <div className="gd-kpi">{formatCurrencyText(cleanText(data?.value))}</div>
-      <div className="gd-subline">{cleanText(data?.subtitle)}</div>
+      <OptionalSubline value={data?.subtitle} />
     </article>
   );
 }
@@ -318,7 +336,7 @@ function PeopleCard({ data }: { data: any }) {
     <article className="gd-card gd-card--green gd-card--compact">
       <div className="gd-title">👥 {cleanText(data?.title || "Pessoas")}</div>
       <div className="gd-kpi">{cleanText(data?.value)}</div>
-      <div className="gd-subline">{cleanText(data?.subtitle)}</div>
+      <OptionalSubline value={data?.subtitle} />
       {!!data?.rows?.length && (
         <div className="gd-list">
           {data.rows.map((row: any) => (
@@ -340,13 +358,13 @@ function MarginsCard({ data }: { data: any }) {
   return (
     <article className="gd-card gd-card--purple gd-card--margins">
       <div className="gd-title">📈 {cleanText(data?.title || "Margens")}</div>
-      <div className="gd-subline">{cleanText(data?.subtitle)}</div>
+      <OptionalSubline value={data?.subtitle} />
       <div className="gd-margins-grid">
         {(data?.metrics || []).map((metric: any) => (
           <div className="gd-margin-card" key={cleanText(metric.label)}>
             <div className="gd-margin-card__label">{cleanText(metric.label)}</div>
             <div className="gd-margin-card__value">{cleanText(metric.value)}</div>
-            <div className="gd-margin-card__caption">{cleanText(metric.caption)}</div>
+            <OptionalCaption value={metric.caption} />
           </div>
         ))}
       </div>

@@ -1,7 +1,7 @@
 {
   "header": {
     "title": "Encontro de Divulgação de Resultados – Gondim | 2026 (EDR)",
-    "subtitle": "Período acumulado: jan/26 • dados do Orçamento.xlsx",
+    "subtitle": "Período acumulado: jan/26",
     "band": "Data de divulgação: 27 de março de 2026"
   },
   "revenue_mix": {
@@ -20,7 +20,7 @@
     "receita_2025_periodo": 4536175.327604333,
     "variacao_yoy": -0.15367954659118038,
     "subtitle": "7,1% do orçado anual • 2026  /  -15,4% vs 2025",
-    "comparison_pct": 0,
+    "comparison_pct": -15.367954659118038,
     "rows": [
       {
         "label": "Contratuais",
@@ -79,12 +79,14 @@
     "impostos": 843944.9716818808,
     "socios_servico": 1544357.73,
     "clt": 217886.93,
+    "cost_total_anterior": 2788745.836272138,
+    "variacao_custos_yoy": 0.9127730475266853,
     "value": "R$ 5,33 M",
-    "subtitle": "Impostos e Despesas operacionais estimadas",
+    "subtitle": "",
     "highlight": {
       "label": "Impostos",
       "value": "15,8%",
-      "caption": "total de impostos no período"
+      "caption": ""
     },
     "items": [
       {
@@ -123,23 +125,23 @@
     "icon": "📊",
     "title": "Resultado Líquido",
     "value": "R$ 224,2 mil",
-    "subtitle": "Projeção via Margem Líquida"
+    "subtitle": ""
   },
   "margins": {
     "icon": "📈",
     "title": "Margens",
     "value": "27,6%",
-    "subtitle": "Indicadores baseados no KPI AN",
+    "subtitle": "",
     "metrics": [
       {
         "label": "Margem Operacional",
         "value": "27,6%",
-        "caption": "KPI AN"
+        "caption": ""
       },
       {
         "label": "Margem Líquida",
         "value": "5,8%",
-        "caption": "KPI AN"
+        "caption": ""
       }
     ]
   },
@@ -160,7 +162,7 @@
       "qtd": 37,
       "pct": 0.061461794019933555
     },
-    "subtitle": "Resumo da folha: Resumo - folha.xlsx",
+    "subtitle": "",
     "rows": [
       {
         "label": "Sócios de Serviço",
@@ -214,7 +216,7 @@
     {
       "tone": "red",
       "title": "Efeito tesoura",
-      "description": "Receita recua 0,0% enquanto custos avançam 0,0%, pressionando R$ 1,49 M no operacional."
+      "description": "Receita recua 15,4% enquanto custos avançam 91,1%, pressionando R$ 1,49 M no operacional."
     },
     {
       "tone": "yellow",
@@ -235,8 +237,8 @@
   "technical_analysis": {
     "title": "Análise técnica",
     "paragraphs": [
-      "No acumulado do período, a receita somou R$ 3,84 M e ficou 0,0% abaixo da base comparativa, enquanto a estrutura de custos alcançou R$ 5,33 M após avanço de 0,0%. Esse descompasso levou o resultado operacional a uma pressão estimada de R$ 1,49 M.",
-      "A comparação interanual de período acumulado: jan/26 deve ser lida com cautela, mas já evidencia um descompasso mais moderado entre receita e custos. Como o painel observa um recorte parcial do ano, o efeito de base, sazonalidade e timing de reconhecimento das linhas pode ampliar ou suavizar a fotografia do período.",
+      "No acumulado do período, a receita somou R$ 3,84 M e ficou 15,4% abaixo da base comparativa, enquanto a estrutura de custos alcançou R$ 5,33 M após avanço de 91,1%. Esse descompasso levou o resultado operacional a uma pressão estimada de R$ 1,49 M.",
+      "A comparação interanual de período acumulado: jan/26 deve ser lida com cautela, mas já evidencia um descolamento relevante entre receita e custos. Como o painel observa um recorte parcial do ano, o efeito de base, sazonalidade e timing de reconhecimento das linhas pode ampliar ou suavizar a fotografia do período.",
       "Mesmo sem considerar a sucumbência, o resultado líquido permaneceria em R$ 0, sugerindo que a geração recorrente ainda se sustenta com menor dependência de receitas extraordinárias.",
       "O principal vetor de rigidez está na estrutura de pessoas: o desembolso com essa frente responde por 15,8% do total de custos, patamar moderada. Em paralelo, a linha de Sócios de Serviço concentra 29,0%, o que reforça a necessidade de disciplina sobre capacidade, alocação e produtividade.",
       "Na camada complementar, correspondentes somam R$ 213,7 mil (4,0%) e outras despesas atingem R$ 2,51 M (47,1%). Juntas, essas rubricas representam R$ 2,72 M e 51,1% dos custos, oferecendo espaço para ajustes táticos sem alterar a espinha dorsal da operação.",

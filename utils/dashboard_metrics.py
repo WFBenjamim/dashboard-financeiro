@@ -58,7 +58,12 @@ def build_dashboard_metrics(content: dict[str, Any]) -> DashboardMetrics:
     cost_total = parse_currency(costs["value"])
     operating_result = revenue_total - cost_total
     revenue_change_pct = float(revenue.get("comparison_pct", extract_primary_percent(revenue["subtitle"])))
-    cost_change_pct = extract_primary_percent(costs["subtitle"])
+    cost_total_anterior = float(costs.get("cost_total_anterior") or 0.0)
+    cost_change_pct = (
+        ((cost_total - cost_total_anterior) / cost_total_anterior) * 100
+        if cost_total_anterior
+        else extract_primary_percent(costs["subtitle"])
+    )
 
     sucumbency_row = _find_item_by_label(revenue["rows"], "Sucumbência")
     sucumbency_share_pct = parse_percent(sucumbency_row["share"])
