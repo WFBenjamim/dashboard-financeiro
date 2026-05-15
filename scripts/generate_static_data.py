@@ -40,6 +40,58 @@ def month_file_key(months: list) -> str:
     return "-".join(str(m) for m in sorted(months))
 
 
+def excel_date(value):
+    if isinstance(value, datetime):
+        return value
+    try:
+        if pd.isna(value):
+            return None
+        return datetime(1899, 12, 30) + timedelta(days=int(value))
+    except Exception:
+        return None
+
+
+def to_number(value) -> float:
+    if value is None or pd.isna(value):
+        return 0.0
+    return float(value)
+
+
+def load_totais_df() -> pd.DataFrame:
+    df = pd.read_excel(
+        INFORMACOES_GERENCIAIS_FILE,
+        sheet_name="TOTAIS  20 E 21",
+        header=0,
+        index_col=0,
+        engine="openpyxl",
+    )
+    df.columns = [excel_date(col) for col in df.columns]
+    return df[[col for col in df.columns if col is not None]]
+
+
+def build_cost_subtitle(selected_months: list[int], year: int = YEAR) -> str:
+    df = load_totais_df()
+    despesas_label = "CUSTOS E DESPESAS SEM INTERCOMPANY"
+    despesas = df.loc[despesas_label]
+
+    despesas_atual = sum(
+        to_number(despesas.get(col, 0))
+        for col in df.columns
+        if col.year == year and col.month in selected_months
+    )
+    despesas_anterior = sum(
+        to_number(despesas.get(col, 0))
+        for col in df.columns
+        if col.year == year - 1 and col.month in selected_months
+    )
+
+    if not despesas_anterior:
+        return ""
+
+    variacao_custos = (despesas_atual - despesas_anterior) / despesas_anterior
+    return f"{variacao_custos:+.1%}".replace(".", ",") + f" vs {year - 1}"
+
+
 def generate_dashboard_jsons() -> None:
     print(f"\n[Saida] Salvando em: {OUTPUT_DIR}\n")
 
@@ -54,6 +106,10 @@ def generate_dashboard_jsons() -> None:
         print(f"  -> dashboard_{YEAR}_{key}.json  (meses: {months})")
         try:
             data = get_dashboard_content(YEAR, months)
+            cost_subtitle = build_cost_subtitle(months, YEAR)
+            data["cost_subtitle"] = cost_subtitle
+            data["cost_structure"]["subtitle"] = cost_subtitle
+            data["cost_structure"]["cost_subtitle"] = cost_subtitle
             with open(filename, "w", encoding="utf-8") as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
         except Exception as exc:
@@ -61,27 +117,7 @@ def generate_dashboard_jsons() -> None:
 
 
 def generate_evolution_jsons() -> None:
-    df = pd.read_excel(
-        INFORMACOES_GERENCIAIS_FILE,
-        sheet_name="TOTAIS  20 E 21",
-        header=0,
-        index_col=0,
-        engine="openpyxl",
-    )
-
-    def excel_date(value):
-        if isinstance(value, datetime):
-            return value
-        try:
-            if pd.isna(value):
-                return None
-            return datetime(1899, 12, 30) + timedelta(days=int(value))
-        except Exception:
-            return None
-
-    cols_parsed = [excel_date(col) for col in df.columns]
-    df.columns = cols_parsed
-    df = df[[col for col in df.columns if col is not None]]
+    df = load_totais_df()
 
     receita_label = "RECEITA SEM INTERCOMPANY"
     despesas_label = "CUSTOS E DESPESAS SEM INTERCOMPANY"
@@ -96,11 +132,6 @@ def generate_evolution_jsons() -> None:
         5: "mai", 6: "jun", 7: "jul", 8: "ago",
         9: "set", 10: "out", 11: "nov", 12: "dez",
     }
-
-    def to_number(value) -> float:
-        if value is None or pd.isna(value):
-            return 0.0
-        return float(value)
 
     monthly = []
     for col in df.columns:

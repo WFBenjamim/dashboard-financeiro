@@ -82,7 +82,7 @@
     "cost_total_anterior": 2788745.836272138,
     "variacao_custos_yoy": 1.1728444745292166,
     "value": "R$ 6,06 M",
-    "subtitle": "",
+    "subtitle": "+13,1% vs 2025",
     "highlight": {
       "label": "Outras Despesas",
       "value": "56,0%",
@@ -119,7 +119,8 @@
         "share": "56,0%",
         "details": []
       }
-    ]
+    ],
+    "cost_subtitle": "+13,1% vs 2025"
   },
   "net_result": {
     "icon": "📊",
@@ -248,5 +249,6 @@
       "mode": "template",
       "provider": null
     }
-  }
+  },
+  "cost_subtitle": "+13,1% vs 2025"
 }

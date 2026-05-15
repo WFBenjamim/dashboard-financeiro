@@ -1,6 +1,24 @@
 @import "tailwindcss";
 
 :root {
+  --color-bg: #0f0e0c;
+  --color-surface: #1a1814;
+  --color-surface-2: #222018;
+  --color-border: #2e2b24;
+  --color-gold: #f0b429;
+  --color-gold-dim: #c48f1a;
+  --color-blue: #2563eb;
+  --color-blue-dark: #1d4ed8;
+  --color-red: #b91c1c;
+  --color-red-dark: #991b1b;
+  --color-green: #059669;
+  --color-green-dark: #047857;
+  --color-orange: #ea580c;
+  --color-purple: #7c3aed;
+  --color-amber: #d97706;
+  --color-text: #f5f0e8;
+  --color-text-muted: #9c9587;
+  --color-text-dim: #6b6358;
   --bg-start: #121316;
   --bg-mid: #211b12;
   --bg-end: #33220d;
@@ -244,6 +262,39 @@ button {
   align-items: stretch;
 }
 
+.gd-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+  align-items: stretch;
+}
+
+.gd-kpi-row .gd-card {
+  align-self: stretch;
+  height: 100%;
+}
+
+.gd-top-section .gd-card {
+  align-self: stretch;
+  height: 100%;
+}
+
+.gd-top-section .gd-card--blue {
+  display: flex;
+  flex-direction: column;
+}
+
+.gd-top-section .gd-card--blue .gd-surface {
+  margin-top: 0.5rem;
+}
+
+.gd-top-section .gd-card--blue .gd-revenue-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  justify-content: flex-start;
+}
+
 .gd-top-column {
   display: grid;
   gap: 1.25rem;
@@ -261,35 +312,50 @@ button {
   overflow: hidden;
   display: grid;
   gap: 1rem;
+  align-self: start;
+  height: fit-content;
   border-radius: 26px;
   padding: 1.45rem;
   color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: var(--shadow-strong);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: default;
+  animation: gd-card-enter 350ms ease both;
+  transition: transform 0.2s ease;
+  will-change: transform;
+}
+
+.gd-card:hover {
+  transform: translateY(-4px);
 }
 
 .gd-card--blue {
   background: linear-gradient(145deg, #1e40af, #60a5fa);
+  box-shadow: 0 8px 32px rgba(37, 99, 235, 0.3);
 }
 
 .gd-card--gray {
   background: linear-gradient(145deg, #8f3324, #bf4830);
+  box-shadow: 0 8px 32px rgba(185, 28, 28, 0.3);
 }
 
 .gd-card--orange {
   background: linear-gradient(145deg, #c2410c, #fb923c);
+  box-shadow: 0 8px 32px rgba(234, 88, 12, 0.3);
 }
 
 .gd-card--green {
   background: linear-gradient(145deg, #047857, #34d399);
+  box-shadow: 0 8px 32px rgba(5, 150, 105, 0.3);
 }
 
 .gd-card--purple {
   background: linear-gradient(145deg, #6d28d9, #a78bfa);
+  box-shadow: 0 8px 32px rgba(124, 58, 237, 0.3);
 }
 
 .gd-card--yellow {
   background: linear-gradient(145deg, #b45309, #fbbf24);
+  box-shadow: 0 8px 32px rgba(217, 119, 6, 0.3);
 }
 
 .gd-card--compact {
@@ -301,7 +367,9 @@ button {
   flex: 1;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   gap: 1rem;
+  height: 100%;
 }
 
 .gd-card__header {
@@ -312,9 +380,11 @@ button {
 .gd-title {
   position: relative;
   z-index: 1;
-  font-size: 1.24rem;
+  font-size: 0.82rem;
   font-weight: 800;
   letter-spacing: 0;
+  line-height: 1.35;
+  text-transform: uppercase;
 }
 
 .gd-kpi {
@@ -322,7 +392,7 @@ button {
   z-index: 1;
   font-size: clamp(2.25rem, 3.45vw, 3.55rem);
   line-height: 1;
-  font-weight: 800;
+  font-weight: 900;
   letter-spacing: 0;
   overflow-wrap: anywhere;
 }
@@ -330,9 +400,12 @@ button {
 .gd-subline {
   position: relative;
   z-index: 1;
-  font-size: 0.98rem;
+  font-size: 0.78rem;
   line-height: 1.5;
-  color: rgba(255, 255, 255, 0.92);
+  color: rgba(255, 255, 255, 0.88);
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
 }
 
 .gd-surface {
@@ -379,7 +452,14 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 1rem 0;
+  padding: 0.9rem 1rem;
+  border-radius: 14px;
+  transition: background-color 0.2s ease;
+}
+
+.gd-revenue-line--static:hover,
+.gd-revenue-line__summary:hover {
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .gd-revenue-line__summary {
@@ -414,12 +494,14 @@ button {
   font-size: 0.98rem;
   font-weight: 700;
   color: #fff;
+  text-align: left;
 }
 
 .gd-revenue-line__metrics {
   display: flex;
   align-items: center;
   gap: 0.7rem;
+  margin-left: auto;
   padding-right: 1.6rem;
 }
 
@@ -441,7 +523,12 @@ button {
   padding: 0.85rem 0.95rem;
   border-radius: 14px;
   background: rgba(7, 17, 29, 0.18);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: background-color 0.2s ease;
+}
+
+.gd-mini-row:hover {
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .gd-mini-row__label {
@@ -479,7 +566,7 @@ button {
 .gd-cost-rect,
 .gd-margin-card,
 .gd-row {
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .gd-cost {
@@ -491,6 +578,11 @@ button {
   text-align: left;
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.14);
+  transition: background-color 0.2s ease;
+}
+
+.gd-cost:hover {
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .gd-cost--highlight {
@@ -528,6 +620,11 @@ button {
   padding: 1rem 1.05rem;
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.12);
+  transition: background-color 0.2s ease;
+}
+
+.gd-cost-rect:hover {
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .gd-cost-rect--expandable {
@@ -542,6 +639,11 @@ button {
   gap: 0.55rem;
   padding: 1rem 1.05rem;
   cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.gd-cost-rect__summary:hover {
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .gd-cost-rect__summary::after {
@@ -577,6 +679,7 @@ button {
   grid-template-rows: repeat(2, minmax(0, 1fr));
   gap: 0.95rem;
   flex: 1;
+  align-content: center;
 }
 
 .gd-margin-card {
@@ -586,11 +689,17 @@ button {
   border-radius: 20px;
   background: rgba(255, 255, 255, 0.14);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transition: background-color 0.2s ease;
+}
+
+.gd-margin-card:hover {
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .gd-margin-card__label {
-  font-size: 0.92rem;
-  font-weight: 700;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.9);
 }
@@ -598,7 +707,7 @@ button {
 .gd-margin-card__value {
   font-size: clamp(2rem, 3vw, 2.75rem);
   line-height: 1;
-  font-weight: 800;
+  font-weight: 900;
   letter-spacing: 0;
 }
 
@@ -616,6 +725,11 @@ button {
   padding: 0.95rem 1rem;
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.12);
+  transition: background-color 0.2s ease;
+}
+
+.gd-row:hover {
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .gd-row--client strong,
@@ -624,8 +738,10 @@ button {
 }
 
 .gd-row__label {
-  font-size: 0.98rem;
-  font-weight: 600;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
 }
 
 .gd-row__value-group {
@@ -689,25 +805,37 @@ button {
   padding: 1.05rem 1.1rem 1.15rem;
   border-radius: 20px;
   background: linear-gradient(180deg, rgba(20, 24, 33, 0.92), rgba(15, 19, 28, 0.88));
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  box-shadow: var(--shadow-soft);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px rgba(37, 99, 235, 0.18);
   color: #f8fafc;
+  animation: gd-card-enter 350ms ease both;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  will-change: transform;
+}
+
+.gd-insight:hover {
+  transform: translateY(-4px);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .gd-insight--red {
   border-top: 3px solid #ef4444;
+  box-shadow: 0 8px 32px rgba(185, 28, 28, 0.22);
 }
 
 .gd-insight--yellow {
   border-top: 3px solid #f5b12a;
+  box-shadow: 0 8px 32px rgba(217, 119, 6, 0.22);
 }
 
 .gd-insight--green {
   border-top: 3px solid #34d399;
+  box-shadow: 0 8px 32px rgba(5, 150, 105, 0.22);
 }
 
 .gd-insight--blue {
   border-top: 3px solid #60a5fa;
+  box-shadow: 0 8px 32px rgba(37, 99, 235, 0.22);
 }
 
 .gd-insight__title {
@@ -726,8 +854,15 @@ button {
   padding: 1.6rem 1.55rem;
   border-radius: 26px;
   background: linear-gradient(180deg, rgba(7, 17, 29, 0.98), rgba(15, 23, 42, 0.92));
-  border: 1px solid rgba(148, 163, 184, 0.16);
-  box-shadow: var(--shadow-strong);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px rgba(217, 119, 6, 0.18);
+  animation: gd-card-enter 350ms ease both;
+  transition: transform 0.2s ease;
+  will-change: transform;
+}
+
+.gd-technical:hover {
+  transform: translateY(-4px);
 }
 
 .gd-technical h2 {
@@ -747,6 +882,78 @@ button {
   margin-bottom: 0;
 }
 
+.gd-top-section .gd-card:nth-child(1) {
+  animation-delay: 0ms;
+}
+
+.gd-top-section .gd-card:nth-child(2) {
+  animation-delay: 80ms;
+}
+
+.gd-kpi-row .gd-card:nth-child(1) {
+  animation-delay: 160ms;
+}
+
+.gd-kpi-row .gd-card:nth-child(2) {
+  animation-delay: 240ms;
+}
+
+.gd-kpi-row .gd-card:nth-child(3) {
+  animation-delay: 320ms;
+}
+
+.gd-top-clients-row .gd-card {
+  animation-delay: 400ms;
+}
+
+.gd-insight:nth-child(1) {
+  animation-delay: 480ms;
+}
+
+.gd-insight:nth-child(2) {
+  animation-delay: 560ms;
+}
+
+.gd-insight:nth-child(3) {
+  animation-delay: 640ms;
+}
+
+.gd-insight:nth-child(4) {
+  animation-delay: 720ms;
+}
+
+.gd-technical {
+  animation-delay: 800ms;
+}
+
+@keyframes gd-card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gd-card,
+  .gd-insight,
+  .gd-technical {
+    animation: none;
+    transition: none;
+    will-change: auto;
+  }
+
+  .gd-card:hover,
+  .gd-insight:hover,
+  .gd-technical:hover {
+    transform: none;
+  }
+}
+
 .gd-dialog-backdrop {
   position: fixed;
   inset: 0;
@@ -755,7 +962,6 @@ button {
   place-items: center;
   padding: 1rem;
   background: rgba(2, 6, 23, 0.68);
-  backdrop-filter: blur(10px);
 }
 
 .gd-dialog,
@@ -1180,6 +1386,7 @@ button {
 
 @media (max-width: 1180px) {
   .gd-top-section,
+  .gd-kpi-row,
   .gd-insights {
     grid-template-columns: 1fr;
   }

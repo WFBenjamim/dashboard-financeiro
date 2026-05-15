@@ -2,11 +2,12 @@
 
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
+import CountUp from "react-countup";
 import { EvolutionModal } from "@/components/EvolutionModal";
 import { MonthFilter } from "@/components/MonthFilter";
 import { ResultOpeningScreen } from "@/components/ResultOpeningScreen";
 import { fetchDashboardData } from "@/lib/api";
-import { formatCurrencyText } from "@/lib/formatters";
+import { formatCurrency, formatCurrencyText, parseCurrency } from "@/lib/formatters";
 
 const MONTHS = [
   { value: 1, label: "Jan" },
@@ -81,6 +82,58 @@ function OptionalSubline({ value }: { value: unknown }) {
 function OptionalCaption({ value }: { value: unknown }) {
   const text = cleanText(value);
   return text ? <div className="gd-margin-card__caption">{text}</div> : null;
+}
+
+function AnimatedCurrencyKpi({ value }: { value: unknown }) {
+  const text = formatCurrencyText(cleanText(value));
+  const parsed = parseCurrency(text);
+
+  if (parsed === null) return <>{text}</>;
+
+  return (
+    <CountUp
+      end={parsed}
+      duration={1.35}
+      formattingFn={(number) => formatCurrency(number)}
+      redraw
+    />
+  );
+}
+
+function AnimatedNumberKpi({ value }: { value: unknown }) {
+  const text = cleanText(value);
+  const parsed = Number(text.replace(/\./g, "").replace(",", "."));
+
+  if (!Number.isFinite(parsed)) return <>{text}</>;
+
+  return (
+    <CountUp
+      end={parsed}
+      duration={1.15}
+      decimals={Number.isInteger(parsed) ? 0 : 1}
+      decimal=","
+      separator="."
+      redraw
+    />
+  );
+}
+
+function AnimatedPercentKpi({ value }: { value: unknown }) {
+  const text = cleanText(value);
+  const parsed = Number(text.replace("%", "").replace(/\./g, "").replace(",", "."));
+
+  if (!Number.isFinite(parsed)) return <>{text}</>;
+
+  return (
+    <CountUp
+      end={parsed}
+      duration={1.15}
+      decimals={1}
+      decimal=","
+      suffix="%"
+      redraw
+    />
+  );
 }
 
 function parseShareValue(value: unknown): number {
@@ -163,15 +216,14 @@ export default function Dashboard() {
         />
 
         <section className="gd-top-section">
-          <div className="gd-top-column">
-            <RevenueCard data={data.revenue_mix} />
-            <ResultCard data={data.net_result} />
-            <PeopleCard data={data.people} />
-          </div>
-          <div className="gd-top-column gd-top-column--right">
-            <CostCard data={data.cost_structure} />
-            <MarginsCard data={data.margins} />
-          </div>
+          <RevenueCard data={data.revenue_mix} />
+          <CostCard data={data.cost_structure} />
+        </section>
+
+        <section className="gd-kpi-row">
+          <ResultCard data={data.net_result} />
+          <PeopleCard data={data.people} />
+          <MarginsCard data={data.margins} />
         </section>
 
         <TopClientsCard
@@ -220,7 +272,7 @@ function RevenueCard({ data }: { data: any }) {
     <article className="gd-card gd-card--blue">
       <div className="gd-card__header">
         <div className="gd-title">💰 {cleanText(data?.title || "Mix de Receitas")}</div>
-        <div className="gd-kpi">{formatCurrencyText(cleanText(data?.value))}</div>
+        <div className="gd-kpi"><AnimatedCurrencyKpi value={data?.value} /></div>
         <OptionalSubline value={data?.subtitle} />
       </div>
       <div className="gd-surface">
@@ -275,7 +327,7 @@ function CostCard({ data }: { data: any }) {
     <article className="gd-card gd-card--gray">
       <div className="gd-card__header">
         <div className="gd-title">📉 {cleanText(data?.title || "Estrutura de Custos")}</div>
-        <div className="gd-kpi">{formatCurrencyText(cleanText(data?.value))}</div>
+        <div className="gd-kpi"><AnimatedCurrencyKpi value={data?.value} /></div>
         <OptionalSubline value={data?.subtitle} />
       </div>
       <div className="gd-cost-layout">
@@ -335,7 +387,7 @@ function ResultCard({ data }: { data: any }) {
   return (
     <article className="gd-card gd-card--orange gd-card--compact">
       <div className="gd-title">📊 {cleanText(data?.title || "Resultado Líquido")}</div>
-      <div className="gd-kpi">{formatCurrencyText(cleanText(data?.value))}</div>
+      <div className="gd-kpi"><AnimatedCurrencyKpi value={data?.value} /></div>
       <OptionalSubline value={data?.subtitle} />
     </article>
   );
@@ -345,7 +397,7 @@ function PeopleCard({ data }: { data: any }) {
   return (
     <article className="gd-card gd-card--green gd-card--compact">
       <div className="gd-title">👥 {cleanText(data?.title || "Pessoas")}</div>
-      <div className="gd-kpi">{cleanText(data?.value)}</div>
+      <div className="gd-kpi"><AnimatedNumberKpi value={data?.value} /></div>
       <OptionalSubline value={data?.subtitle} />
       {!!data?.rows?.length && (
         <div className="gd-list">
@@ -373,7 +425,7 @@ function MarginsCard({ data }: { data: any }) {
         {(data?.metrics || []).map((metric: any) => (
           <div className="gd-margin-card" key={cleanText(metric.label)}>
             <div className="gd-margin-card__label">{cleanText(metric.label)}</div>
-            <div className="gd-margin-card__value">{cleanText(metric.value)}</div>
+            <div className="gd-margin-card__value"><AnimatedPercentKpi value={metric.value} /></div>
             <OptionalCaption value={metric.caption} />
           </div>
         ))}
