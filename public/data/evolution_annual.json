@@ -1,37 +1,56 @@
-{
-  "view": "annual",
-  "title": "Evolucao Anual: Receita vs Despesa vs Resultado",
-  "unit": "R$ Milhoes",
-  "data": [
-    {
-      "label": "2022",
-      "receita": 5.8,
-      "despesa": 5.5,
-      "resultado": 0.3
-    },
-    {
-      "label": "2023",
-      "receita": 6.2,
-      "despesa": 6.0,
-      "resultado": 0.2
-    },
-    {
-      "label": "2024",
-      "receita": 7.1,
-      "despesa": 6.8,
-      "resultado": 0.3
-    },
-    {
-      "label": "2025",
-      "receita": 8.5,
-      "despesa": 6.8,
-      "resultado": 1.7
-    },
-    {
-      "label": "2026",
-      "receita": 7.46,
-      "despesa": 7.54,
-      "resultado": -0.08
-    }
-  ]
-}
+[
+  {
+    "year": 2018,
+    "receita": 18814874.04,
+    "despesa": 16813400.19,
+    "resultado": 2001473.85
+  },
+  {
+    "year": 2019,
+    "receita": 21540043.6,
+    "despesa": 19307880.69,
+    "resultado": 2232162.91
+  },
+  {
+    "year": 2020,
+    "receita": 26655034.05,
+    "despesa": 19186428.15,
+    "resultado": 7468605.91
+  },
+  {
+    "year": 2021,
+    "receita": 27312154.67,
+    "despesa": 21274089.79,
+    "resultado": 6038064.88
+  },
+  {
+    "year": 2022,
+    "receita": 28890804.36,
+    "despesa": 25036061.84,
+    "resultado": 3854742.52
+  },
+  {
+    "year": 2023,
+    "receita": 36585307.41,
+    "despesa": 30125751.63,
+    "resultado": 6459555.78
+  },
+  {
+    "year": 2024,
+    "receita": 47575758.74,
+    "despesa": 36285553.58,
+    "resultado": 11290205.16
+  },
+  {
+    "year": 2025,
+    "receita": 54434103.93,
+    "despesa": 44234668.59,
+    "resultado": 10199435.35
+  },
+  {
+    "year": 2026,
+    "receita": 12158774.18,
+    "despesa": 11448754.8,
+    "resultado": 710019.38
+  }
+]

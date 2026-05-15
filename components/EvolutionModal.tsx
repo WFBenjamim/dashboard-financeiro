@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   CartesianGrid,
   Legend,
@@ -15,6 +15,21 @@ import { fetchEvolutionData, fetchProfitAdvanceData } from "@/lib/api";
 import { formatCurrency } from "@/lib/formatters";
 
 type EvolutionView = "annual" | "monthly" | "profitAdvance";
+
+type EvolutionPoint = {
+  label: string;
+  year?: number;
+  month_num?: number;
+  receita: number;
+  despesa: number;
+  resultado: number;
+};
+
+type EvolutionPayload = {
+  title: string;
+  unit: string;
+  data: EvolutionPoint[];
+};
 
 type ProfitAdvanceSummary = {
   resultadoMensal?: number;
@@ -54,6 +69,10 @@ export function EvolutionModal({ open, onOpenChange }: EvolutionModalProps) {
   const [view, setView] = useState<EvolutionView>("annual");
   const [payload, setPayload] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const chartPayload = useMemo(
+    () => view === "profitAdvance" ? null : normalizeEvolutionPayload(view, payload),
+    [payload, view],
+  );
 
   useEffect(() => {
     if (!open) return;
@@ -101,9 +120,12 @@ export function EvolutionModal({ open, onOpenChange }: EvolutionModalProps) {
 
         <div className="gd-chart-panel">
           {loading && <div className="gd-chart-state">Carregando dados...</div>}
-          {!loading && view !== "profitAdvance" && payload?.data && <EvolutionChart chart={payload} />}
+          {!loading && view !== "profitAdvance" && chartPayload?.data.length ? <EvolutionChart chart={chartPayload} /> : null}
           {!loading && view === "profitAdvance" && payload?.summary && <ProfitAdvance data={payload} />}
-          {!loading && !payload?.data && !payload?.summary && (
+          {!loading && view !== "profitAdvance" && !chartPayload?.data.length && (
+            <div className="gd-chart-state">NÃ£o foi possÃ­vel carregar os dados de evoluÃ§Ã£o.</div>
+          )}
+          {!loading && view === "profitAdvance" && !payload?.summary && (
             <div className="gd-chart-state">Não foi possível carregar os dados de evolução.</div>
           )}
         </div>
@@ -112,7 +134,37 @@ export function EvolutionModal({ open, onOpenChange }: EvolutionModalProps) {
   );
 }
 
-function EvolutionChart({ chart }: { chart: any }) {
+function normalizeEvolutionPayload(view: EvolutionView, payload: any): EvolutionPayload | null {
+  if (!payload) return null;
+
+  const rawData = Array.isArray(payload) ? payload : payload.data;
+  if (!Array.isArray(rawData)) return null;
+
+  const data = rawData.map((item: any) => ({
+    label: String(item.label ?? item.month ?? item.year ?? ""),
+    year: typeof item.year === "number" ? item.year : Number(item.year) || undefined,
+    month_num: typeof item.month_num === "number" ? item.month_num : Number(item.month_num) || undefined,
+    receita: Number(item.receita || 0),
+    despesa: Number(item.despesa || 0),
+    resultado: Number(item.resultado || 0),
+  }));
+
+  const sortedData = view === "monthly"
+    ? data
+        .sort((a, b) => Number(a.year || 0) - Number(b.year || 0) || Number(a.month_num || 0) - Number(b.month_num || 0))
+        .slice(-24)
+    : data.sort((a, b) => Number(a.year || a.label) - Number(b.year || b.label));
+
+  return {
+    title: view === "monthly"
+      ? "Evolucao Mensal: Receita vs Despesa vs Resultado"
+      : "Evolucao Anual: Receita vs Despesa vs Resultado",
+    unit: "R$",
+    data: sortedData,
+  };
+}
+
+function EvolutionChart({ chart }: { chart: EvolutionPayload }) {
   return (
     <>
       <div className="gd-chart-title">
@@ -126,10 +178,10 @@ function EvolutionChart({ chart }: { chart: any }) {
           <YAxis
             stroke="rgba(226,232,240,0.68)"
             tick={{ fill: "rgba(226,232,240,0.68)" }}
-            tickFormatter={(value) => formatCurrency(Number(value) * 1_000_000)}
+            tickFormatter={(value) => formatCurrency(Number(value))}
           />
           <Tooltip
-            formatter={(value, name) => [formatCurrency(Number(value) * 1_000_000), String(name)]}
+            formatter={(value, name) => [formatCurrency(Number(value)), String(name)]}
             contentStyle={{
               background: "#0f172a",
               border: "1px solid rgba(148,163,184,0.22)",
