@@ -25,6 +25,7 @@ from etl.loader import get_dashboard_content, load_antecipacao_lucros  # noqa: E
 
 OUTPUT_DIR = PROJECT_ROOT / "public" / "data"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+ORCAMENTO_FILE = PROJECT_ROOT / "data" / "Orçamento.xlsx"
 INFORMACOES_GERENCIAIS_FILE = PROJECT_ROOT / "data" / "INFORMAÇÕES GERENCIAIS.xlsx"
 
 # ─── Configuracao ─────────────────────────────────────────────────────────────
@@ -70,6 +71,14 @@ def load_totais_df() -> pd.DataFrame:
 
 
 def build_cost_subtitle(selected_months: list[int], year: int = YEAR) -> str:
+    variacao_custos = calculate_cost_variation(selected_months, year)
+    if variacao_custos is None:
+        return ""
+
+    return f"{variacao_custos:+.1%}".replace(".", ",") + f" vs {year - 1}"
+
+
+def calculate_cost_variation(selected_months: list[int], year: int = YEAR) -> float | None:
     df = load_totais_df()
     despesas_label = "CUSTOS E DESPESAS SEM INTERCOMPANY"
     despesas = df.loc[despesas_label]
@@ -86,10 +95,128 @@ def build_cost_subtitle(selected_months: list[int], year: int = YEAR) -> str:
     )
 
     if not despesas_anterior:
-        return ""
+        return None
 
-    variacao_custos = (despesas_atual - despesas_anterior) / despesas_anterior
-    return f"{variacao_custos:+.1%}".replace(".", ",") + f" vs {year - 1}"
+    return (despesas_atual - despesas_anterior) / despesas_anterior
+
+
+def load_budget_totals() -> dict[str, float]:
+    df_orc = pd.read_excel(
+        ORCAMENTO_FILE,
+        sheet_name="Resumo Orç 2026",
+        header=2,
+        engine="openpyxl",
+    ).fillna("")
+    total_row = df_orc[df_orc.iloc[:, 0].astype(str).str.strip() == "Total"]
+    if total_row.empty:
+        return {"receita": 0.0, "despesas": 0.0, "ml": 0.0}
+
+    row = total_row.iloc[0]
+    return {
+        "receita": to_number(row.get("Receitas", 0)),
+        "despesas": to_number(row.get("Despesas", 0)),
+        "ml": to_number(row.get("ML", 0)),
+    }
+
+
+def _month_columns_from_section(df: pd.DataFrame, section_label: str, selected_months: list[int]) -> tuple[int, list[int]]:
+    month_labels = {
+        1: "jan", 2: "fev", 3: "mar", 4: "abr",
+        5: "mai", 6: "jun", 7: "jul", 8: "ago",
+        9: "set", 10: "out", 11: "nov", 12: "dez",
+    }
+    selected_labels = {month_labels[month] for month in selected_months}
+
+    for row_index in range(len(df)):
+        label = str(df.iloc[row_index, 0]).strip().lower()
+        if label == section_label.lower():
+            columns = [
+                column
+                for column in range(1, len(df.columns))
+                if str(df.iloc[row_index, column]).strip().lower() in selected_labels
+            ]
+            return row_index, columns
+
+    return -1, []
+
+
+def _sum_result_row(df: pd.DataFrame, header_row: int, columns: list[int]) -> float:
+    if header_row < 0 or not columns:
+        return 0.0
+
+    for row_index in range(header_row + 1, len(df)):
+        label = str(df.iloc[row_index, 0]).strip().lower()
+        if label == "resultado":
+            return sum(to_number(df.iloc[row_index, column]) for column in columns)
+        if label in {"sucumbência", "sucumbencia", "total geral"}:
+            break
+
+    return 0.0
+
+
+def enrich_net_result(data: dict, selected_months: list[int], year: int = YEAR) -> None:
+    budget_totals = load_budget_totals()
+    ml_orcado_anual = budget_totals["ml"]
+    resultado_orcado_periodo = ml_orcado_anual / 12 * len(selected_months) if ml_orcado_anual else 0.0
+
+    df_res = pd.read_excel(
+        ORCAMENTO_FILE,
+        sheet_name="Resultado - Sucumb - Sem Sucumb",
+        header=None,
+        engine="openpyxl",
+    ).fillna("")
+    total_header_row, total_columns = _month_columns_from_section(df_res, "Total Geral", selected_months)
+    sem_sucumb_header_row, sem_sucumb_columns = _month_columns_from_section(df_res, "Sem Sucumbência", selected_months)
+    resultado_real = _sum_result_row(df_res, total_header_row, total_columns)
+    resultado_sem_sucumb = _sum_result_row(df_res, sem_sucumb_header_row, sem_sucumb_columns)
+
+    df_tot = load_totais_df()
+    resultado = df_tot.loc["RESULTADO SEM INTERCOMPANY"]
+    resultado_2025 = sum(
+        to_number(resultado.get(column, 0))
+        for column in df_tot.columns
+        if column.year == year - 1 and column.month in selected_months
+    )
+
+    pct_vs_orcado = resultado_real / resultado_orcado_periodo if resultado_orcado_periodo else 0.0
+    variacao_2025 = (resultado_real - resultado_2025) / abs(resultado_2025) if resultado_2025 else 0.0
+    pct_ano = resultado_real / ml_orcado_anual if ml_orcado_anual else 0.0
+    resultado_operacional = data["revenue_mix"]["value"] - (
+        data["cost_structure"]["total"] - data["cost_structure"]["impostos"]
+    )
+
+    data["net_result"].update({
+        "value": resultado_real,
+        "sem_sucumbencia": resultado_sem_sucumb,
+        "resultado_orcado": resultado_orcado_periodo,
+        "resultado_2025": resultado_2025,
+        "pct_vs_orcado": pct_vs_orcado,
+        "variacao_2025": variacao_2025,
+        "pct_ano": pct_ano,
+        "resultado_operacional": resultado_operacional,
+    })
+
+
+def enrich_revenue_and_cost_metrics(data: dict, selected_months: list[int], year: int = YEAR) -> None:
+    budget_totals = load_budget_totals()
+    cost_variation = calculate_cost_variation(selected_months, year)
+    custo_orcado_anual = budget_totals["despesas"]
+    cost_total = data["cost_structure"]["total"]
+
+    data["revenue_mix"].update({
+        "receita_orcada_anual": budget_totals["receita"] or data["revenue_mix"].get("receita_orcada", 0),
+        "variacao_2025": data["revenue_mix"].get("variacao_yoy", 0),
+    })
+
+    data["cost_structure"].update({
+        "custo_orcado_anual": custo_orcado_anual,
+        "pct_orcado_custos": (
+            cost_total / custo_orcado_anual * (12 / len(selected_months))
+            if custo_orcado_anual and selected_months
+            else 0.0
+        ),
+        "variacao_2025": cost_variation if cost_variation is not None else data["cost_structure"].get("variacao_custos_yoy", 0),
+    })
 
 
 def generate_dashboard_jsons() -> None:
@@ -110,6 +237,8 @@ def generate_dashboard_jsons() -> None:
             data["cost_subtitle"] = cost_subtitle
             data["cost_structure"]["subtitle"] = cost_subtitle
             data["cost_structure"]["cost_subtitle"] = cost_subtitle
+            enrich_net_result(data, months, YEAR)
+            enrich_revenue_and_cost_metrics(data, months, YEAR)
             with open(filename, "w", encoding="utf-8") as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
         except Exception as exc:

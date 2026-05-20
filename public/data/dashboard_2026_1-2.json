@@ -2,7 +2,7 @@
   "header": {
     "title": "Encontro de Divulgação de Resultados – Gondim | 2026 (EDR)",
     "subtitle": "Período acumulado: jan e fev/26",
-    "band": "Data de divulgação: 27 de março de 2026"
+    "band": "DATA DE DIVULGAÇÃO: 22 DE MAIO DE 2026"
   },
   "revenue_mix": {
     "icon": "💰",
@@ -68,65 +68,77 @@
         "title": "Sucumbência",
         "items": []
       }
-    ]
+    ],
+    "receita_orcada_anual": 54304864.5075,
+    "variacao_2025": -0.1774125214488465
   },
   "cost_structure": {
     "icon": "📉",
     "title": "Estrutura de Custos",
-    "total": 8721310.743361384,
+    "total": 4376739.433385291,
     "correspondentes": 365248.071425,
-    "outras_despesas": 4996224.724450721,
+    "outras_despesas": 651653.4144746283,
     "impostos": 1597593.287485663,
     "socios_servico": 1544357.73,
     "clt": 217886.93,
     "cost_total_anterior": 5577491.672544276,
-    "variacao_custos_yoy": 0.5636618134802156,
-    "value": "R$ 8,72 M",
+    "variacao_custos_yoy": -0.2152853486218187,
+    "value": "R$ 4,38 M",
     "subtitle": "+10,8% vs 2025",
     "highlight": {
-      "label": "Outras Despesas",
-      "value": "57,3%",
+      "label": "Impostos",
+      "value": "36,5%",
       "caption": "principal grupo de custo"
     },
     "items": [
       {
         "label": "Impostos",
         "value": "R$ 1,6 M",
-        "share": "18,3%",
+        "share": "36,5%",
         "details": []
       },
       {
         "label": "Sócios de Serviço",
         "value": "R$ 1,54 M",
-        "share": "17,7%",
+        "share": "35,3%",
         "details": []
       },
       {
         "label": "CLT",
         "value": "R$ 217,9 mil",
-        "share": "2,5%",
+        "share": "5,0%",
         "details": []
       },
       {
         "label": "Correspondentes",
         "value": "R$ 365,2 mil",
-        "share": "4,2%",
+        "share": "8,3%",
         "details": []
       },
       {
         "label": "Outras Despesas",
-        "value": "R$ 5 M",
-        "share": "57,3%",
+        "value": "R$ 651,7 mil",
+        "share": "14,9%",
         "details": []
       }
     ],
-    "cost_subtitle": "+10,8% vs 2025"
+    "cost_subtitle": "+10,8% vs 2025",
+    "custo_orcado_anual": 28243188.09342022,
+    "pct_orcado_custos": 0.9297971784718457,
+    "variacao_2025": 0.1079348419296363
   },
   "net_result": {
     "icon": "📊",
     "title": "Resultado Líquido",
-    "value": "R$ 435,8 mil",
-    "subtitle": ""
+    "value": -82165.3932214278,
+    "subtitle": "",
+    "sem_sucumbencia": -721198.8851724282,
+    "resultado_orcado": 803444.4926122032,
+    "resultado_2025": 1678970.3448862652,
+    "pct_vs_orcado": -0.10226642160964615,
+    "variacao_2025": -1.048937965742923,
+    "pct_ano": -0.01704440360160769,
+    "resultado_operacional": 4683655.904100373
   },
   "margins": {
     "icon": "📈",
@@ -217,11 +229,11 @@
     {
       "tone": "red",
       "title": "Efeito tesoura",
-      "description": "Receita recua 17,7% enquanto custos avançam 56,3%, pressionando R$ 1,26 M no operacional."
+      "description": "Receita e custos seguem em direções distintas, mas ainda preservam resultado operacional de R$ 3,08 M."
     },
     {
       "tone": "yellow",
-      "title": "Sócios de Serviço concentra 17,7%",
+      "title": "Sócios de Serviço concentra 35,3%",
       "description": "A linha de Sócios de Serviço soma R$ 1,54 M e segue como eixo prioritário de produtividade e revisão de eficiência."
     },
     {
@@ -238,11 +250,11 @@
   "technical_analysis": {
     "title": "Análise técnica",
     "paragraphs": [
-      "No acumulado do período, a receita somou R$ 7,46 M e ficou 17,7% abaixo da base comparativa, enquanto a estrutura de custos alcançou R$ 8,72 M após avanço de 56,3%. Esse descompasso levou o resultado operacional a uma pressão estimada de R$ 1,26 M.",
-      "A comparação interanual de período acumulado: jan e fev/26 deve ser lida com cautela, mas já evidencia um descolamento relevante entre receita e custos. Como o painel observa um recorte parcial do ano, o efeito de base, sazonalidade e timing de reconhecimento das linhas pode ampliar ou suavizar a fotografia do período.",
+      "No acumulado do período, a receita somou R$ 7,46 M e a estrutura de custos atingiu R$ 4,38 M, produzindo resultado operacional positivo de R$ 3,08 M. O ritmo entre receita e despesas segue relativamente equilibrado.",
+      "A comparação interanual de período acumulado: jan e fev/26 deve ser lida com cautela, mas já evidencia um descompasso mais moderado entre receita e custos. Como o painel observa um recorte parcial do ano, o efeito de base, sazonalidade e timing de reconhecimento das linhas pode ampliar ou suavizar a fotografia do período.",
       "Mesmo sem considerar a sucumbência, o resultado líquido permaneceria em R$ 0, sugerindo que a geração recorrente ainda se sustenta com menor dependência de receitas extraordinárias.",
-      "O principal vetor de rigidez está na estrutura de pessoas: o desembolso com essa frente responde por 20,2% do total de custos, patamar moderado. Em paralelo, a linha de Sócios de Serviço concentra 17,7%, o que reforça a necessidade de disciplina sobre capacidade, alocação e produtividade.",
-      "Na camada complementar, correspondentes somam R$ 365,2 mil (4,2%) e outras despesas atingem R$ 5 M (57,3%). Juntas, essas rubricas representam R$ 5,37 M e 61,5% dos custos, oferecendo espaço para ajustes táticos sem alterar a espinha dorsal da operação.",
+      "O principal vetor de rigidez está na estrutura de pessoas: o desembolso com essa frente responde por 40,1% do total de custos, patamar moderado. Em paralelo, a linha de Sócios de Serviço concentra 35,3%, o que reforça a necessidade de disciplina sobre capacidade, alocação e produtividade.",
+      "Na camada complementar, correspondentes somam R$ 365,2 mil (8,3%) e outras despesas atingem R$ 651,7 mil (14,9%). Juntas, essas rubricas representam R$ 1,02 M e 23,2% dos custos, oferecendo espaço para ajustes táticos sem alterar a espinha dorsal da operação.",
       "Na frente comercial, o faturamento segue concentrado no top 5 clientes, formado por SANTANDER, SANEAMENTO, MRS, UOL, CLARO, que juntos somam R$ 7,44 M. A liderança de SANTANDER, com 14,6% desse bloco, sinaliza um nível relevante de concentração comercial e mantém a diversificação da carteira como agenda prioritária."
     ],
     "meta": {

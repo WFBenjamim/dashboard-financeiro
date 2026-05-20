@@ -134,6 +134,88 @@ export function EvolutionModal({ open, onOpenChange }: EvolutionModalProps) {
   );
 }
 
+export function EvolutionDashboardSections() {
+  const [annualPayload, setAnnualPayload] = useState<any>(null);
+  const [monthlyPayload, setMonthlyPayload] = useState<any>(null);
+  const [profitPayload, setProfitPayload] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  const annualChart = useMemo(
+    () => normalizeEvolutionPayload("annual", annualPayload),
+    [annualPayload],
+  );
+  const monthlyChart = useMemo(
+    () => normalizeEvolutionPayload("monthly", monthlyPayload),
+    [monthlyPayload],
+  );
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadData() {
+      setLoading(true);
+      const [annual, monthly, profit] = await Promise.all([
+        fetchEvolutionData("annual"),
+        fetchEvolutionData("monthly"),
+        fetchProfitAdvanceData(),
+      ]);
+
+      if (mounted) {
+        setAnnualPayload(annual);
+        setMonthlyPayload(monthly);
+        setProfitPayload(profit);
+        setLoading(false);
+      }
+    }
+
+    loadData();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  return (
+    <>
+      <section className="gd-evolution-section" aria-label="Evolução financeira">
+        <article className="gd-dashboard-chart-card">
+          <div className="gd-dashboard-section-title">Evolução Anual</div>
+          <div className="gd-chart-panel">
+            {loading && <div className="gd-chart-state">Carregando dados...</div>}
+            {!loading && annualChart?.data.length ? <EvolutionChart chart={annualChart} height={360} /> : null}
+            {!loading && !annualChart?.data.length && (
+              <div className="gd-chart-state">Não foi possível carregar os dados de evolução anual.</div>
+            )}
+          </div>
+        </article>
+
+        <article className="gd-dashboard-chart-card">
+          <div className="gd-dashboard-section-title">Evolução Mensal</div>
+          <div className="gd-chart-panel">
+            {loading && <div className="gd-chart-state">Carregando dados...</div>}
+            {!loading && monthlyChart?.data.length ? <EvolutionChart chart={monthlyChart} height={360} /> : null}
+            {!loading && !monthlyChart?.data.length && (
+              <div className="gd-chart-state">Não foi possível carregar os dados de evolução mensal.</div>
+            )}
+          </div>
+        </article>
+      </section>
+
+      <section className="gd-profit-section" aria-label="Antecipação de lucros">
+        <article className="gd-dashboard-chart-card gd-dashboard-chart-card--profit">
+          <div className="gd-dashboard-section-title">Antecipação de Lucros</div>
+          <div className="gd-chart-panel gd-profit-inline">
+            {loading && <div className="gd-chart-state">Carregando dados...</div>}
+            {!loading && profitPayload?.summary && <ProfitAdvance data={profitPayload} />}
+            {!loading && !profitPayload?.summary && (
+              <div className="gd-chart-state">Não foi possível carregar os dados de antecipação de lucros.</div>
+            )}
+          </div>
+        </article>
+      </section>
+    </>
+  );
+}
+
 function normalizeEvolutionPayload(view: EvolutionView, payload: any): EvolutionPayload | null {
   if (!payload) return null;
 
@@ -164,14 +246,14 @@ function normalizeEvolutionPayload(view: EvolutionView, payload: any): Evolution
   };
 }
 
-function EvolutionChart({ chart }: { chart: EvolutionPayload }) {
+function EvolutionChart({ chart, height = 390 }: { chart: EvolutionPayload; height?: number }) {
   return (
     <>
       <div className="gd-chart-title">
         <strong>{chart.title}</strong>
         <span>{chart.unit}</span>
       </div>
-      <ResponsiveContainer width="100%" height={390}>
+      <ResponsiveContainer width="100%" height={height}>
         <LineChart data={chart.data} margin={{ top: 24, right: 28, left: 8, bottom: 8 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="rgba(226,232,240,0.12)" />
           <XAxis dataKey="label" stroke="rgba(226,232,240,0.68)" tick={{ fill: "rgba(226,232,240,0.68)" }} />
@@ -218,6 +300,9 @@ function ProfitAdvance({ data }: { data: ProfitAdvancePayload }) {
   return (
     <div className="profit-advance-scroll">
       <section className="profit-advance" aria-label={data.title || "Antecipação mensal de distribuição de lucros"}>
+        <div className="profit-advance__period-text">
+          ABRIL / 2026 - PAGAMENTO EM JUNHO / 2026
+        </div>
         <div className="profit-advance__summary-value profit-advance__summary-value--resultado">
           {brCurrency.format(Number(summary.resultadoMensal || 0))}
         </div>

@@ -1,28 +1,13 @@
 ﻿"use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import CountUp from "react-countup";
-import { EvolutionModal } from "@/components/EvolutionModal";
+import { EvolutionDashboardSections } from "@/components/EvolutionModal";
 import { MonthFilter } from "@/components/MonthFilter";
 import { ResultOpeningScreen } from "@/components/ResultOpeningScreen";
 import { fetchDashboardData } from "@/lib/api";
 import { formatCurrency, formatCurrencyText, parseCurrency } from "@/lib/formatters";
-
-const MONTHS = [
-  { value: 1, label: "Jan" },
-  { value: 2, label: "Fev" },
-  { value: 3, label: "Mar" },
-  { value: 4, label: "Abr" },
-  { value: 5, label: "Mai" },
-  { value: 6, label: "Jun" },
-  { value: 7, label: "Jul" },
-  { value: 8, label: "Ago" },
-  { value: 9, label: "Set" },
-  { value: 10, label: "Out" },
-  { value: 11, label: "Nov" },
-  { value: 12, label: "Dez" },
-];
 
 type DashboardData = Record<string, any>;
 
@@ -142,15 +127,35 @@ function parseShareValue(value: unknown): number {
   return Number(text.replace(/\./g, "").replace(",", ".")) || 0;
 }
 
+function isFiniteNumber(value: unknown): value is number {
+  return typeof value === "number" && Number.isFinite(value);
+}
+
+function formatPercentMetric(value: unknown): string {
+  if (!isFiniteNumber(value)) return "";
+  return `${(value * 100).toLocaleString("pt-BR", {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  })}%`;
+}
+
+function formatSignedPercentMetric(value: unknown): string {
+  const formatted = formatPercentMetric(value);
+  return isFiniteNumber(value) && value > 0 ? `+${formatted}` : formatted;
+}
+
+function findInsight(insights: any[] | undefined, title: string) {
+  const expected = normalizeKey(title);
+  return (insights || []).find((insight) => normalizeKey(insight?.title).includes(expected));
+}
+
 export default function Dashboard() {
   const [showOpening, setShowOpening] = useState(true);
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [year, setYear] = useState(2026);
+  const year = 2026;
   const [months, setMonths] = useState([1, 2, 3]);
   const currentMonth = 3;
-  const [periodOpen, setPeriodOpen] = useState(false);
-  const [evolutionOpen, setEvolutionOpen] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -169,8 +174,6 @@ export default function Dashboard() {
       isMounted = false;
     };
   }, [year, months]);
-
-  const yearOptions = useMemo(() => [year - 1, year, year + 1], [year]);
 
   if (showOpening) {
     return <ResultOpeningScreen onEnter={() => setShowOpening(false)} />;
@@ -196,12 +199,13 @@ export default function Dashboard() {
     );
   }
 
+  const revenueInsight = findInsight(data.insights, "Top 5 clientes");
+  const costInsight = findInsight(data.insights, "Sócios de Serviço");
+  const resultInsight = findInsight(data.insights, "Efeito tesoura");
+  const peopleInsight = findInsight(data.insights, "Estrutura de pessoas");
+
   return (
     <main className="gd-app">
-      <button className="gd-evolution-fab" onClick={() => setEvolutionOpen(true)} title="Abrir evolução">
-        ☰
-      </button>
-
       <div className="gd-shell">
         <div className="gd-logo-wrap">
           <Image className="gd-logo" src="/logo.png" alt="Logo Gondim" width={420} height={160} priority />
@@ -216,36 +220,18 @@ export default function Dashboard() {
         />
 
         <section className="gd-top-section">
-          <RevenueCard data={data.revenue_mix} />
-          <CostCard data={data.cost_structure} />
+          <RevenueCard data={data.revenue_mix} insight={revenueInsight} />
+          <CostCard data={data.cost_structure} insight={costInsight} />
         </section>
 
         <section className="gd-kpi-row">
-          <ResultCard data={data.net_result} />
-          <PeopleCard data={data.people} />
+          <ResultCard data={data.net_result} insight={resultInsight} />
+          <PeopleCard data={data.people} insight={peopleInsight} />
           <MarginsCard data={data.margins} />
         </section>
 
-        <TopClientsCard
-          data={data.top_clients}
-          year={year}
-          months={months}
-          yearOptions={yearOptions}
-          isOpen={periodOpen}
-          onOpen={() => setPeriodOpen(true)}
-          onClose={() => setPeriodOpen(false)}
-          onApply={(newYear, newMonths) => {
-            setYear(newYear);
-            setMonths(sortMonths(newMonths));
-            setPeriodOpen(false);
-          }}
-        />
-
-        <Insights insights={data.insights} />
-        <TechnicalAnalysis data={data.technical_analysis} />
+        <EvolutionDashboardSections />
       </div>
-
-      <EvolutionModal open={evolutionOpen} onOpenChange={setEvolutionOpen} />
     </main>
   );
 }
@@ -257,16 +243,20 @@ function Hero({ header }: { header: any }) {
         <h1>{cleanText(header?.title || "Encontro de Divulgação de Resultados – Gondim | 2026 (EDR)")}</h1>
         <p className="gd-hero__subtitle">{cleanText(header?.subtitle || "Período acumulado")}</p>
       </div>
-      <div className="gd-hero__band">{cleanText(header?.band || "Data de divulgação: 27 de março de 2026")}</div>
+      <div className="gd-hero__band">{cleanText(header?.band || "DATA DE DIVULGAÇÃO: 22 DE MAIO DE 2026")}</div>
     </section>
   );
 }
 
-function RevenueCard({ data }: { data: any }) {
+function RevenueCard({ data, insight }: { data: any; insight?: any }) {
   const rows = data?.rows || [];
   const expansions = new Map(
     (data?.expansions || []).map((item: any) => [normalizeKey(item.title), item.items || []])
   );
+  const receitaOrcadaAnual = data?.receita_orcada_anual ?? data?.receita_orcada;
+  const hasMetrics = isFiniteNumber(receitaOrcadaAnual)
+    || isFiniteNumber(data?.variacao_2025)
+    || isFiniteNumber(data?.pct_orcado);
 
   return (
     <article className="gd-card gd-card--blue">
@@ -274,6 +264,17 @@ function RevenueCard({ data }: { data: any }) {
         <div className="gd-title">💰 {cleanText(data?.title || "Mix de Receitas")}</div>
         <div className="gd-kpi"><AnimatedCurrencyKpi value={data?.value} /></div>
         <OptionalSubline value={data?.subtitle} />
+        {hasMetrics && (
+          <MetricaGrid>
+            <MetricaMini label="Orçado anual" value={isFiniteNumber(receitaOrcadaAnual) ? formatCurrency(receitaOrcadaAnual) : ""} />
+            <MetricaMini
+              label="vs 2025"
+              value={formatSignedPercentMetric(data?.variacao_2025)}
+              tone={isFiniteNumber(data?.variacao_2025) && data.variacao_2025 < 0 ? "red" : "green"}
+            />
+            <MetricaMini label="% do orçado" value={formatPercentMetric(data?.pct_orcado)} />
+          </MetricaGrid>
+        )}
       </div>
       <div className="gd-surface">
         <div className="gd-revenue-list">
@@ -286,6 +287,7 @@ function RevenueCard({ data }: { data: any }) {
           ))}
         </div>
       </div>
+      <InsightNote insight={insight} />
     </article>
   );
 }
@@ -313,7 +315,7 @@ function RevenueRow({ row, items }: { row: any; items: any[] }) {
   );
 }
 
-function CostCard({ data }: { data: any }) {
+function CostCard({ data, insight }: { data: any; insight?: any }) {
   const items = data?.items || [];
   const fallbackHighlight = [...items].sort((a: any, b: any) => parseShareValue(b?.share) - parseShareValue(a?.share))[0];
   const highlight = data?.highlight || fallbackHighlight || {};
@@ -322,6 +324,9 @@ function CostCard({ data }: { data: any }) {
     return label.includes("socios de servico") || label === "clt";
   });
   const remaining = items.filter((item: any) => !special.includes(item));
+  const hasMetrics = isFiniteNumber(data?.custo_orcado_anual)
+    || isFiniteNumber(data?.variacao_2025)
+    || isFiniteNumber(data?.pct_orcado_custos);
 
   return (
     <article className="gd-card gd-card--gray">
@@ -329,6 +334,21 @@ function CostCard({ data }: { data: any }) {
         <div className="gd-title">📉 {cleanText(data?.title || "Estrutura de Custos")}</div>
         <div className="gd-kpi"><AnimatedCurrencyKpi value={data?.value} /></div>
         <OptionalSubline value={data?.subtitle} />
+        {hasMetrics && (
+          <MetricaGrid>
+            <MetricaMini label="Orçado anual" value={isFiniteNumber(data?.custo_orcado_anual) ? formatCurrency(data.custo_orcado_anual) : ""} />
+            <MetricaMini
+              label="vs 2025"
+              value={formatSignedPercentMetric(data?.variacao_2025)}
+              tone={isFiniteNumber(data?.variacao_2025) && data.variacao_2025 > 0 ? "red" : "green"}
+            />
+            <MetricaMini
+              label="% do orçado"
+              value={formatPercentMetric(data?.pct_orcado_custos)}
+              tone={isFiniteNumber(data?.pct_orcado_custos) && data.pct_orcado_custos > 1 ? "red" : "green"}
+            />
+          </MetricaGrid>
+        )}
       </div>
       <div className="gd-cost-layout">
         <div className="gd-cost-layout__left">
@@ -355,6 +375,7 @@ function CostCard({ data }: { data: any }) {
           </div>
         </div>
       </div>
+      <InsightNote insight={insight} />
     </article>
   );
 }
@@ -383,17 +404,51 @@ function CostItem({ item }: { item: any }) {
   );
 }
 
-function ResultCard({ data }: { data: any }) {
+function ResultCard({ data, insight }: { data: any; insight?: any }) {
+  const hasMetrics = isFiniteNumber(data?.resultado_orcado)
+    || isFiniteNumber(data?.variacao_2025)
+    || isFiniteNumber(data?.pct_vs_orcado);
+
   return (
     <article className="gd-card gd-card--orange gd-card--compact">
       <div className="gd-title">📊 {cleanText(data?.title || "Resultado Líquido")}</div>
       <div className="gd-kpi"><AnimatedCurrencyKpi value={data?.value} /></div>
-      <OptionalSubline value={data?.subtitle} />
+      {isFiniteNumber(data?.sem_sucumbencia) && (
+        <div className="gd-result-submetric">
+          Resultado sem sucumbência: {formatCurrency(data.sem_sucumbencia)}
+        </div>
+      )}
+      {hasMetrics && (
+        <MetricaGrid>
+          <MetricaMini label="Orçado" value={isFiniteNumber(data?.resultado_orcado) ? formatCurrency(data.resultado_orcado) : ""} />
+          <MetricaMini
+            label="vs 2025"
+            value={formatSignedPercentMetric(data?.variacao_2025)}
+            tone={isFiniteNumber(data?.variacao_2025) && data.variacao_2025 < 0 ? "red" : "green"}
+          />
+          <MetricaMini label="% Orçado" value={formatPercentMetric(data?.pct_vs_orcado)} />
+        </MetricaGrid>
+      )}
+      {!isFiniteNumber(data?.sem_sucumbencia) && <OptionalSubline value={data?.subtitle} />}
+      <InsightNote insight={insight} />
     </article>
   );
 }
 
-function PeopleCard({ data }: { data: any }) {
+function MetricaGrid({ children }: { children: ReactNode }) {
+  return <div className="gd-result-mini-grid">{children}</div>;
+}
+
+function MetricaMini({ label, value, tone }: { label: string; value: string; tone?: "red" | "green" }) {
+  return (
+    <div className="gd-result-mini">
+      <span>{label}</span>
+      <strong className={tone ? `gd-result-mini__value--${tone}` : undefined}>{value}</strong>
+    </div>
+  );
+}
+
+function PeopleCard({ data, insight }: { data: any; insight?: any }) {
   return (
     <article className="gd-card gd-card--green gd-card--compact">
       <div className="gd-title">👥 {cleanText(data?.title || "Pessoas")}</div>
@@ -412,6 +467,7 @@ function PeopleCard({ data }: { data: any }) {
           ))}
         </div>
       )}
+      <InsightNote insight={insight} />
     </article>
   );
 }
@@ -434,150 +490,14 @@ function MarginsCard({ data }: { data: any }) {
   );
 }
 
-function TopClientsCard({
-  data,
-  year,
-  months,
-  yearOptions,
-  isOpen,
-  onOpen,
-  onClose,
-  onApply,
-}: {
-  data: any;
-  year: number;
-  months: number[];
-  yearOptions: number[];
-  isOpen: boolean;
-  onOpen: () => void;
-  onClose: () => void;
-  onApply: (year: number, months: number[]) => void;
-}) {
-  return (
-    <section className="gd-top-clients-row">
-      <article className="gd-card gd-card--yellow">
-        <div className="gd-card-inline-header">
-          <div className="gd-title">🏆 {cleanText(data?.title || "Top 5 Clientes")}</div>
-          <button className="gd-period-button" onClick={onOpen} title="Alterar período">
-            +
-          </button>
-        </div>
-        <div className="gd-subline">{cleanText(data?.subtitle)}</div>
-        <div className="gd-list gd-list--spaced">
-          {(data?.ranking || []).map((client: any, index: number) => (
-            <div className="gd-row gd-row--client" key={`${client.name}-${index}`}>
-              <strong>{index + 1}. {cleanText(client.name)}</strong>
-              <span>{formatCurrencyText(cleanText(client.value))}</span>
-            </div>
-          ))}
-        </div>
-      </article>
-      {isOpen && (
-        <PeriodDialog
-          year={year}
-          months={months}
-          yearOptions={yearOptions}
-          onClose={onClose}
-          onApply={onApply}
-        />
-      )}
-    </section>
-  );
-}
-
-function PeriodDialog({
-  year,
-  months,
-  yearOptions,
-  onClose,
-  onApply,
-}: {
-  year: number;
-  months: number[];
-  yearOptions: number[];
-  onClose: () => void;
-  onApply: (year: number, months: number[]) => void;
-}) {
-  const [draftYear, setDraftYear] = useState(year);
-  const [draftMonths, setDraftMonths] = useState(months);
-
-  function toggleMonth(month: number) {
-    setDraftMonths((current) =>
-      current.includes(month)
-        ? current.filter((item) => item !== month)
-        : sortMonths([...current, month])
-    );
-  }
+function InsightNote({ insight }: { insight?: any }) {
+  if (!insight) return null;
 
   return (
-    <div className="gd-dialog-backdrop" role="dialog" aria-modal="true">
-      <div className="gd-dialog">
-        <div className="gd-dialog__header">
-          <h2>Selecionar período</h2>
-          <button onClick={onClose} title="Fechar">×</button>
-        </div>
-        <div className="gd-period-form">
-          <label>
-            <span>Ano</span>
-            <select value={draftYear} onChange={(event) => setDraftYear(Number(event.target.value))}>
-              {yearOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          </label>
-          <div className="gd-month-grid">
-            {MONTHS.map((month) => (
-              <label key={month.value} className="gd-month-option">
-                <input
-                  type="checkbox"
-                  checked={draftMonths.includes(month.value)}
-                  onChange={() => toggleMonth(month.value)}
-                />
-                <span>{month.label}</span>
-              </label>
-            ))}
-          </div>
-        </div>
-        <div className="gd-dialog__actions">
-          <button onClick={onClose}>Cancelar</button>
-          <button
-            className="gd-dialog__primary"
-            disabled={!draftMonths.length}
-            onClick={() => onApply(draftYear, draftMonths)}
-          >
-            Carregar
-          </button>
-        </div>
-      </div>
+    <div className={`gd-card-insight gd-card-insight--${cleanText(insight.tone || "blue")}`}>
+      <strong>{cleanText(insight.title)}</strong>
+      <span>{cleanText(insight.description)}</span>
     </div>
-  );
-}
-
-function Insights({ insights }: { insights: any[] }) {
-  if (!insights?.length) return null;
-
-  return (
-    <section className="gd-insights">
-      {insights.map((insight: any, index: number) => (
-        <article className={`gd-insight gd-insight--${cleanText(insight.tone || "blue")}`} key={`${insight.title}-${index}`}>
-          <div className="gd-insight__title">{cleanText(insight.title)}</div>
-          <div className="gd-insight__description">{cleanText(insight.description)}</div>
-        </article>
-      ))}
-    </section>
-  );
-}
-
-function TechnicalAnalysis({ data }: { data: any }) {
-  return (
-    <section className="gd-technical">
-      <h2>{cleanText(data?.title || "Análise técnica")}</h2>
-      {(data?.paragraphs || []).map((paragraph: string, index: number) => (
-        <p key={index}>{cleanText(paragraph)}</p>
-      ))}
-    </section>
   );
 }
 

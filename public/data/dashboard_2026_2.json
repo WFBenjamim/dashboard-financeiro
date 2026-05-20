@@ -2,7 +2,7 @@
   "header": {
     "title": "Encontro de Divulgação de Resultados – Gondim | 2026 (EDR)",
     "subtitle": "Período acumulado: fev/26",
-    "band": "Data de divulgação: 27 de março de 2026"
+    "band": "DATA DE DIVULGAÇÃO: 22 DE MAIO DE 2026"
   },
   "revenue_mix": {
     "icon": "💰",
@@ -68,65 +68,77 @@
         "title": "Sucumbência",
         "items": []
       }
-    ]
+    ],
+    "receita_orcada_anual": 54304864.5075,
+    "variacao_2025": -0.20114549630651288
   },
   "cost_structure": {
     "icon": "📉",
     "title": "Estrutura de Custos",
-    "total": 5149317.531337772,
+    "total": 2966246.4210399925,
     "correspondentes": 151561.402168,
-    "outras_despesas": 2481863.15336599,
+    "outras_despesas": 298792.0430682103,
     "impostos": 753648.3158037817,
     "socios_servico": 1544357.73,
     "clt": 217886.93,
     "cost_total_anterior": 2788745.836272138,
-    "variacao_custos_yoy": 0.8464635480087825,
-    "value": "R$ 5,15 M",
+    "variacao_custos_yoy": 0.0636488927958844,
+    "value": "R$ 2,97 M",
     "subtitle": "+8,7% vs 2025",
     "highlight": {
-      "label": "Outras Despesas",
-      "value": "48,2%",
+      "label": "Sócios de Serviço",
+      "value": "52,1%",
       "caption": "principal grupo de custo"
     },
     "items": [
       {
         "label": "Impostos",
         "value": "R$ 753,6 mil",
-        "share": "14,6%",
+        "share": "25,4%",
         "details": []
       },
       {
         "label": "Sócios de Serviço",
         "value": "R$ 1,54 M",
-        "share": "30,0%",
+        "share": "52,1%",
         "details": []
       },
       {
         "label": "CLT",
         "value": "R$ 217,9 mil",
-        "share": "4,2%",
+        "share": "7,3%",
         "details": []
       },
       {
         "label": "Correspondentes",
         "value": "R$ 151,6 mil",
-        "share": "2,9%",
+        "share": "5,1%",
         "details": []
       },
       {
         "label": "Outras Despesas",
-        "value": "R$ 2,48 M",
-        "share": "48,2%",
+        "value": "R$ 298,8 mil",
+        "share": "10,1%",
         "details": []
       }
     ],
-    "cost_subtitle": "+8,7% vs 2025"
+    "cost_subtitle": "+8,7% vs 2025",
+    "custo_orcado_anual": 28243188.09342022,
+    "pct_orcado_custos": 1.2603023757354228,
+    "variacao_2025": 0.0865597972746682
   },
   "net_result": {
     "icon": "📊",
     "title": "Resultado Líquido",
-    "value": "R$ 211,6 mil",
-    "subtitle": ""
+    "value": -44459.74096342886,
+    "subtitle": "",
+    "sem_sucumbencia": -346191.9380774292,
+    "resultado_orcado": 401722.2463061016,
+    "resultado_2025": 710274.5684700008,
+    "pct_vs_orcado": -0.11067283769381228,
+    "variacao_2025": -1.0625951469150858,
+    "pct_ano": -0.009222736474484357,
+    "resultado_operacional": 1411145.98476379
   },
   "margins": {
     "icon": "📈",
@@ -217,11 +229,11 @@
     {
       "tone": "red",
       "title": "Efeito tesoura",
-      "description": "Receita recua 20,1% enquanto custos avançam 84,7%, pressionando R$ 1,53 M no operacional."
+      "description": "Receita e custos seguem em direções distintas, mas ainda preservam resultado operacional de R$ 653,7 mil."
     },
     {
       "tone": "yellow",
-      "title": "Sócios de Serviço concentra 30,0%",
+      "title": "Sócios de Serviço concentra 52,1%",
       "description": "A linha de Sócios de Serviço soma R$ 1,54 M e segue como eixo prioritário de produtividade e revisão de eficiência."
     },
     {
@@ -238,11 +250,11 @@
   "technical_analysis": {
     "title": "Análise técnica",
     "paragraphs": [
-      "No acumulado do período, a receita somou R$ 3,62 M e ficou 20,1% abaixo da base comparativa, enquanto a estrutura de custos alcançou R$ 5,15 M após avanço de 84,7%. Esse descompasso levou o resultado operacional a uma pressão estimada de R$ 1,53 M.",
+      "No acumulado do período, a receita somou R$ 3,62 M e a estrutura de custos atingiu R$ 2,97 M, produzindo resultado operacional positivo de R$ 653,7 mil. O ritmo entre receita e despesas segue relativamente equilibrado.",
       "A comparação interanual de período acumulado: fev/26 deve ser lida com cautela, mas já evidencia um descolamento relevante entre receita e custos. Como o painel observa um recorte parcial do ano, o efeito de base, sazonalidade e timing de reconhecimento das linhas pode ampliar ou suavizar a fotografia do período.",
       "Mesmo sem considerar a sucumbência, o resultado líquido permaneceria em R$ 0, sugerindo que a geração recorrente ainda se sustenta com menor dependência de receitas extraordinárias.",
-      "O principal vetor de rigidez está na estrutura de pessoas: o desembolso com essa frente responde por 34,1% do total de custos, patamar moderado. Em paralelo, a linha de Sócios de Serviço concentra 30,0%, o que reforça a necessidade de disciplina sobre capacidade, alocação e produtividade.",
-      "Na camada complementar, correspondentes somam R$ 151,6 mil (2,9%) e outras despesas atingem R$ 2,48 M (48,2%). Juntas, essas rubricas representam R$ 2,63 M e 51,1% dos custos, oferecendo espaço para ajustes táticos sem alterar a espinha dorsal da operação.",
+      "O principal vetor de rigidez está na estrutura de pessoas: o desembolso com essa frente responde por 59,2% do total de custos, patamar relevante. Em paralelo, a linha de Sócios de Serviço concentra 52,1%, o que reforça a necessidade de disciplina sobre capacidade, alocação e produtividade.",
+      "Na camada complementar, correspondentes somam R$ 151,6 mil (5,1%) e outras despesas atingem R$ 298,8 mil (10,1%). Juntas, essas rubricas representam R$ 450,4 mil e 15,2% dos custos, oferecendo espaço para ajustes táticos sem alterar a espinha dorsal da operação.",
       "Na frente comercial, o faturamento segue concentrado no top 5 clientes, formado por MRS, SANTANDER, RECUPERA, VIVO, CLARO, que juntos somam R$ 3,62 M. A liderança de MRS, com 16,1% desse bloco, sinaliza um nível relevante de concentração comercial e mantém a diversificação da carteira como agenda prioritária."
     ],
     "meta": {

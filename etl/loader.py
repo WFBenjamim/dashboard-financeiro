@@ -244,6 +244,42 @@ def _get_fat_real_cols(df: pd.DataFrame, header_row: int, selected_months: list[
     return columns
 
 
+def _get_valor_real_cost_cols(df: pd.DataFrame, header_row: int, selected_months: list[int]) -> list[int]:
+    month_row = header_row - 1
+    if month_row < 0:
+        return []
+
+    month_starts = [
+        column
+        for column in range(len(df.columns))
+        if _is_month_label(df.iloc[month_row, column], selected_months)
+    ]
+    if not month_starts:
+        return []
+
+    all_month_starts = [
+        column
+        for column in range(len(df.columns))
+        if _normalize_text(df.iloc[month_row, column]) in set(MONTH_LABELS.values())
+    ]
+    columns = []
+    for month_start in month_starts:
+        next_months = [column for column in all_month_starts if column > month_start]
+        block_end = min(next_months) if next_months else len(df.columns)
+        found_column = None
+        for label_row in range(header_row + 1, min(header_row + 4, len(df))):
+            for column in range(month_start, block_end):
+                if _normalize_text(df.iloc[label_row, column]) == "valor real":
+                    found_column = column
+                    break
+            if found_column is not None:
+                break
+        if found_column is not None:
+            columns.append(found_column)
+
+    return columns
+
+
 def _get_cost_header_rows(df: pd.DataFrame) -> list[int]:
     return [
         i
@@ -268,14 +304,67 @@ def _is_cost_row_excluded(label: str) -> bool:
     if not label or label == "nan":
         return True
     excluded_fragments = [
+        # totais e receita
         "total",
         "receita",
         "margem",
+        "resultado",
+        "rateio",
+        "faturamento",
         "distribuicao",
         "distribuição",
         "ajuste mensal",
         "calculo aproximado",
         "cálculo aproximado",
+        "margem de contribuicao",
+        "margem de contribuição",
+        # pessoal - ja contado em Socios/CLT
+        "remuneração",
+        "remuneracao",
+        "13º",
+        "13o",
+        "ferias",
+        "férias",
+        "encargos",
+        "plano de saude",
+        "plano de saúde",
+        "plano odontologico",
+        "plano odontológico",
+        "vale alimentacao",
+        "vale alimentação",
+        "vale refeicao",
+        "vale refeição",
+        "vale transporte",
+        "seg vida",
+        "seguro de vida",
+        "exames medicos",
+        "exames médicos",
+        "ir s/ salario",
+        "ir s/ salário",
+        "ir - salario",
+        "ir - salário",
+        "salario",
+        "salário",
+        "salarios",
+        "salários",
+        "indenizacao",
+        "indenização",
+        "encargos rescisorios",
+        "encargos rescisórios",
+        "bonificacoes",
+        "bonificações",
+        "premiações",
+        "premiacoes",
+        "contratacao",
+        "contratação",
+        # distribuicao de lucros
+        "distribuicao anual",
+        "distribuição anual",
+        "ajuste mensal de lucros",
+        # ja possuem campo separado no card
+        "impostos",
+        "correspondente",
+        "correspondentes",
     ]
     return any(fragment in label for fragment in excluded_fragments)
 
@@ -286,11 +375,13 @@ def _extract_client_costs(
     sheets: Iterable[str] = CLIENT_COST_SHEETS,
 ) -> dict[str, float]:
     workbook = pd.ExcelFile(workbook_path)
+    should_log_other_details = sorted(selected_months) == [1, 2, 3]
     totals = {
         "correspondentes": 0.0,
         "outras_despesas": 0.0,
         "impostos": 0.0,
     }
+    other_expense_entries: list[tuple[str, str, float]] = []
 
     for sheet in sheets:
         if sheet not in workbook.sheet_names:
@@ -304,18 +395,20 @@ def _extract_client_costs(
             "outras_despesas": 0.0,
             "impostos": 0.0,
         }
+        sheet_other_entries: list[tuple[str, float]] = []
 
         for header_index, header_row in enumerate(header_rows):
-            fat_real_cols = _get_fat_real_cols(df, header_row, selected_months)
-            if not fat_real_cols:
+            valor_real_cols = _get_valor_real_cost_cols(df, header_row, selected_months)
+            if not valor_real_cols:
                 continue
 
             next_header_row = header_rows[header_index + 1] if header_index + 1 < len(header_rows) else None
             block_end = _get_cost_block_end(df, header_row, next_header_row)
 
             for row_index in range(header_row + 4, block_end):
-                label = _normalize_text(_row_text(df, row_index))
-                value = _sum_fixed_row(df, row_index, fat_real_cols)
+                raw_label = _row_text(df, row_index, columns=(0,)) or _row_text(df, row_index, columns=(1,))
+                label = _normalize_text(raw_label)
+                value = _sum_fixed_row(df, row_index, valor_real_cols)
                 if not value:
                     continue
 
@@ -325,6 +418,10 @@ def _extract_client_costs(
                     sheet_totals["impostos"] += value
                 elif not _is_cost_row_excluded(label):
                     sheet_totals["outras_despesas"] += value
+                    if should_log_other_details:
+                        clean_label = re.sub(r"\s+", " ", str(raw_label)).strip()
+                        sheet_other_entries.append((clean_label, value))
+                        other_expense_entries.append((sheet, clean_label, value))
 
         for key in totals:
             totals[key] += sheet_totals[key]
@@ -335,6 +432,10 @@ def _extract_client_costs(
             f"outras={sheet_totals['outras_despesas']:.2f}; "
             f"impostos={sheet_totals['impostos']:.2f}"
         )
+        if should_log_other_details and sheet_other_entries:
+            print(f"[ETL Custos] {sheet}: linhas somadas em outras_despesas")
+            for label, value in sheet_other_entries:
+                print(f"    - {label}: {value:.2f}")
 
     totals["socios_servico"] = 0.0
     totals["clt"] = 0.0
@@ -352,6 +453,20 @@ def _extract_client_costs(
         f"impostos={totals['impostos']:.2f}; "
         f"total={totals['total']:.2f}"
     )
+    if should_log_other_details:
+        if 200_000 <= totals["outras_despesas"] <= 500_000:
+            print(
+                "[ETL Custos] VALIDACAO outras_despesas jan-mar/26 dentro do intervalo: "
+                f"{totals['outras_despesas']:.2f}"
+            )
+        else:
+            print(
+                "[ETL Custos] ATENCAO outras_despesas jan-mar/26 fora do intervalo esperado: "
+                f"{totals['outras_despesas']:.2f}"
+            )
+            print("[ETL Custos] Top 10 linhas que mais inflaram outras_despesas:")
+            for sheet, label, value in sorted(other_expense_entries, key=lambda item: abs(item[2]), reverse=True)[:10]:
+                print(f"    - {sheet} | {label}: {value:.2f}")
     return totals
 
 

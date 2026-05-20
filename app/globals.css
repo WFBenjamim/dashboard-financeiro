@@ -769,6 +769,100 @@ button {
   font-size: 0.72rem;
 }
 
+.gd-card-insight {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 0.45rem;
+  margin-top: auto;
+  padding: 0.9rem 0.95rem;
+  border-radius: 16px;
+  background: rgba(7, 17, 29, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.gd-card-insight strong {
+  font-size: 0.86rem;
+  line-height: 1.35;
+  font-weight: 900;
+  color: #ffffff;
+}
+
+.gd-card-insight span {
+  font-size: 0.84rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.gd-card-insight--red {
+  border-top: 3px solid rgba(248, 113, 113, 0.92);
+}
+
+.gd-card-insight--yellow {
+  border-top: 3px solid rgba(251, 191, 36, 0.92);
+}
+
+.gd-card-insight--green {
+  border-top: 3px solid rgba(52, 211, 153, 0.92);
+}
+
+.gd-card-insight--blue {
+  border-top: 3px solid rgba(96, 165, 250, 0.92);
+}
+
+.gd-result-submetric {
+  position: relative;
+  z-index: 1;
+  font-size: 0.86rem;
+  line-height: 1.45;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.gd-result-mini-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin: 0.35rem 0 0.25rem;
+}
+
+.gd-result-mini {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+  padding: 0.6rem 0.45rem;
+  border-radius: 10px;
+  background: rgba(7, 17, 29, 0.18);
+  text-align: center;
+}
+
+.gd-result-mini span {
+  font-size: 0.68rem;
+  line-height: 1.2;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.gd-result-mini strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 0.82rem;
+  line-height: 1.25;
+  font-weight: 900;
+  color: #ffffff;
+}
+
+.gd-result-mini__value--red {
+  color: #fecaca !important;
+}
+
+.gd-result-mini__value--green {
+  color: #bbf7d0 !important;
+}
+
 .gd-top-clients-row {
   display: block;
   margin-top: 1rem;
@@ -882,6 +976,55 @@ button {
   margin-bottom: 0;
 }
 
+.gd-evolution-section,
+.gd-profit-section {
+  display: grid;
+  gap: 1.25rem;
+  margin-top: 1rem;
+}
+
+.gd-dashboard-chart-card {
+  display: grid;
+  gap: 0.85rem;
+  padding: 1.25rem;
+  border-radius: 26px;
+  background: linear-gradient(180deg, rgba(7, 17, 29, 0.98), rgba(15, 23, 42, 0.92));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px rgba(217, 119, 6, 0.18);
+  animation: gd-card-enter 350ms ease both;
+  transition: transform 0.2s ease;
+  will-change: transform;
+}
+
+.gd-dashboard-chart-card:hover {
+  transform: translateY(-4px);
+}
+
+.gd-dashboard-section-title {
+  font-size: 1.15rem;
+  line-height: 1.3;
+  font-weight: 900;
+  color: #f8fafc;
+}
+
+.gd-dashboard-chart-card .gd-chart-panel {
+  min-height: 440px;
+}
+
+.gd-dashboard-chart-card--profit .gd-chart-panel {
+  min-height: 0;
+}
+
+.gd-profit-inline {
+  overflow: visible;
+}
+
+.gd-profit-inline .profit-advance-scroll {
+  max-height: none;
+  overflow: visible;
+  padding-right: 0;
+}
+
 .gd-top-section .gd-card:nth-child(1) {
   animation-delay: 0ms;
 }
@@ -926,6 +1069,18 @@ button {
   animation-delay: 800ms;
 }
 
+.gd-evolution-section .gd-dashboard-chart-card:nth-child(1) {
+  animation-delay: 400ms;
+}
+
+.gd-evolution-section .gd-dashboard-chart-card:nth-child(2) {
+  animation-delay: 480ms;
+}
+
+.gd-profit-section .gd-dashboard-chart-card {
+  animation-delay: 560ms;
+}
+
 @keyframes gd-card-enter {
   from {
     opacity: 0;
@@ -941,7 +1096,8 @@ button {
 @media (prefers-reduced-motion: reduce) {
   .gd-card,
   .gd-insight,
-  .gd-technical {
+  .gd-technical,
+  .gd-dashboard-chart-card {
     animation: none;
     transition: none;
     will-change: auto;
@@ -949,7 +1105,8 @@ button {
 
   .gd-card:hover,
   .gd-insight:hover,
-  .gd-technical:hover {
+  .gd-technical:hover,
+  .gd-dashboard-chart-card:hover {
     transform: none;
   }
 }
@@ -1127,6 +1284,21 @@ button {
   background-position: top center;
   background-repeat: no-repeat;
   color: #f8fafc;
+}
+
+.profit-advance__period-text {
+  position: absolute;
+  top: 19.35%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 43%;
+  text-align: center;
+  color: #16110a;
+  font-size: clamp(0.58rem, 1.05vw, 1.05rem);
+  font-weight: 900;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .profit-advance__summary-value {
@@ -1419,8 +1591,14 @@ button {
 
   .gd-hero__inner,
   .gd-card,
-  .gd-technical {
+  .gd-technical,
+  .gd-dashboard-chart-card {
     padding: 1.2rem;
+  }
+
+  .gd-dashboard-chart-card .gd-chart-panel {
+    min-height: 380px;
+    padding: 0.85rem;
   }
 
   .gd-hero h1 {
