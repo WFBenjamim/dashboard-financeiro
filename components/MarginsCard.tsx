@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Card } from "./Card";
 import { LineChart } from "lucide-react";
 
@@ -18,7 +19,7 @@ export function MarginsCard({ data }: MarginsCardProps) {
       
       <div className="flex items-center gap-3 mb-6 relative z-10">
         <div className="p-2 rounded-lg bg-[var(--accent)]/10 text-[var(--accent)]">
-          <span className="text-xl">{data.icon || "📈"}</span>
+          <Image className="gd-card-title-icon" src="/icones/margens.png" alt="" width={24} height={24} unoptimized aria-hidden="true" />
         </div>
         <h2 className="text-lg font-semibold text-[var(--foreground)]">{data.title}</h2>
       </div>

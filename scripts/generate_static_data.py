@@ -157,7 +157,8 @@ def _sum_result_row(df: pd.DataFrame, header_row: int, columns: list[int]) -> fl
 def enrich_net_result(data: dict, selected_months: list[int], year: int = YEAR) -> None:
     budget_totals = load_budget_totals()
     ml_orcado_anual = budget_totals["ml"]
-    resultado_orcado_periodo = ml_orcado_anual / 12 * len(selected_months) if ml_orcado_anual else 0.0
+    period_months = len(selected_months)
+    resultado_orcado_periodo = ml_orcado_anual / 12 * period_months if ml_orcado_anual and period_months else 0.0
 
     df_res = pd.read_excel(
         ORCAMENTO_FILE,
@@ -188,7 +189,10 @@ def enrich_net_result(data: dict, selected_months: list[int], year: int = YEAR) 
     data["net_result"].update({
         "value": resultado_real,
         "sem_sucumbencia": resultado_sem_sucumb,
+        "resultado_orcado_anual": ml_orcado_anual,
         "resultado_orcado": resultado_orcado_periodo,
+        "meta_periodo_resultado": resultado_orcado_periodo,
+        "meta_periodo_meses": period_months,
         "resultado_2025": resultado_2025,
         "pct_vs_orcado": pct_vs_orcado,
         "variacao_2025": variacao_2025,
@@ -200,21 +204,26 @@ def enrich_net_result(data: dict, selected_months: list[int], year: int = YEAR) 
 def enrich_revenue_and_cost_metrics(data: dict, selected_months: list[int], year: int = YEAR) -> None:
     budget_totals = load_budget_totals()
     cost_variation = calculate_cost_variation(selected_months, year)
+    period_months = len(selected_months)
+    receita_orcada_anual = budget_totals["receita"] or data["revenue_mix"].get("receita_orcada", 0)
+    meta_periodo_receita = receita_orcada_anual / 12 * period_months if receita_orcada_anual and period_months else 0.0
     custo_orcado_anual = budget_totals["despesas"]
+    meta_periodo_custos = custo_orcado_anual / 12 * period_months if custo_orcado_anual and period_months else 0.0
     cost_total = data["cost_structure"]["total"]
 
     data["revenue_mix"].update({
-        "receita_orcada_anual": budget_totals["receita"] or data["revenue_mix"].get("receita_orcada", 0),
+        "receita_orcada_anual": receita_orcada_anual,
+        "meta_periodo_receita": meta_periodo_receita,
+        "meta_periodo_meses": period_months,
+        "pct_orcado": data["revenue_mix"]["value"] / meta_periodo_receita if meta_periodo_receita else 0.0,
         "variacao_2025": data["revenue_mix"].get("variacao_yoy", 0),
     })
 
     data["cost_structure"].update({
         "custo_orcado_anual": custo_orcado_anual,
-        "pct_orcado_custos": (
-            cost_total / custo_orcado_anual * (12 / len(selected_months))
-            if custo_orcado_anual and selected_months
-            else 0.0
-        ),
+        "meta_periodo_custos": meta_periodo_custos,
+        "meta_periodo_meses": period_months,
+        "pct_orcado_custos": cost_total / meta_periodo_custos if meta_periodo_custos else 0.0,
         "variacao_2025": cost_variation if cost_variation is not None else data["cost_structure"].get("variacao_custos_yoy", 0),
     })
 

@@ -220,7 +220,7 @@ export default function Dashboard() {
         />
 
         <section className="gd-top-section">
-          <RevenueCard data={data.revenue_mix} insight={revenueInsight} />
+          <RevenueCard data={data.revenue_mix} insight={revenueInsight} topClients={data.top_clients} />
           <CostCard data={data.cost_structure} insight={costInsight} />
         </section>
 
@@ -248,22 +248,28 @@ function Hero({ header }: { header: any }) {
   );
 }
 
-function RevenueCard({ data, insight }: { data: any; insight?: any }) {
+function RevenueCard({ data, insight, topClients }: { data: any; insight?: any; topClients?: any }) {
   const rows = data?.rows || [];
-  const expansions = new Map(
-    (data?.expansions || []).map((item: any) => [normalizeKey(item.title), item.items || []])
-  );
   const receitaOrcadaAnual = data?.receita_orcada_anual ?? data?.receita_orcada;
   const hasMetrics = isFiniteNumber(receitaOrcadaAnual)
     || isFiniteNumber(data?.variacao_2025)
     || isFiniteNumber(data?.pct_orcado);
+  const highlight = [...rows].sort((a: any, b: any) => parseShareValue(b?.share) - parseShareValue(a?.share))[0];
+  const remaining = rows.filter((row: any) => row !== highlight);
+  const contractualExpansion = (data?.expansions || []).find((expansion: any) =>
+    normalizeKey(expansion?.title).includes("contratuais")
+  );
+  const contractualDetails = contractualExpansion?.items?.length
+    ? contractualExpansion.items
+    : (topClients?.ranking || []).filter((item: any) => normalizeKey(item?.name) !== "outros").slice(0, 5);
+  const contractualTotal = highlight?.value ? [{ name: "Total Contratuais", value: highlight.value }] : [];
+  const contractualItems = [...contractualDetails, ...contractualTotal];
 
   return (
     <article className="gd-card gd-card--blue">
       <div className="gd-card__header">
-        <div className="gd-title">💰 {cleanText(data?.title || "Mix de Receitas")}</div>
+        <CardTitle icon="/icones/receita.png" title={data?.title || "Estrutura de Receita"} />
         <div className="gd-kpi"><AnimatedCurrencyKpi value={data?.value} /></div>
-        <OptionalSubline value={data?.subtitle} />
         {hasMetrics && (
           <MetricaGrid>
             <MetricaMini label="Orçado anual" value={isFiniteNumber(receitaOrcadaAnual) ? formatCurrency(receitaOrcadaAnual) : ""} />
@@ -272,18 +278,20 @@ function RevenueCard({ data, insight }: { data: any; insight?: any }) {
               value={formatSignedPercentMetric(data?.variacao_2025)}
               tone={isFiniteNumber(data?.variacao_2025) && data.variacao_2025 < 0 ? "red" : "green"}
             />
-            <MetricaMini label="% do orçado" value={formatPercentMetric(data?.pct_orcado)} />
+            <MetricaMini
+              label="% Orçado Periodo"
+              value={formatPercentMetric(data?.pct_orcado)}
+            />
           </MetricaGrid>
         )}
       </div>
-      <div className="gd-surface">
-        <div className="gd-revenue-list">
-          {rows.map((row: any) => (
-            <RevenueRow
-              key={cleanText(row.label)}
-              row={row}
-              items={(expansions.get(normalizeKey(row.label)) as any[]) || []}
-            />
+      <div className="gd-cost-layout gd-revenue-block-layout">
+        {highlight && (
+          <RevenueHighlight row={highlight} items={contractualItems} />
+        )}
+        <div className="gd-cost-list">
+          {remaining.map((row: any) => (
+            <RevenueBlockItem key={cleanText(row.label)} row={row} />
           ))}
         </div>
       </div>
@@ -292,24 +300,34 @@ function RevenueCard({ data, insight }: { data: any; insight?: any }) {
   );
 }
 
-function RevenueRow({ row, items }: { row: any; items: any[] }) {
+function RevenueBlockItem({ row }: { row: any }) {
+  return (
+    <div className="gd-cost-rect">
+      <div className="gd-cost-rect__head">
+        <span className="gd-cost-rect__label">{cleanText(row.label)}</span>
+        <span className="gd-cost-rect__share">{cleanText(row.share)}</span>
+      </div>
+      <div className="gd-cost-rect__value">{formatCurrencyText(cleanText(row.value))}</div>
+    </div>
+  );
+}
+
+function RevenueHighlight({ row, items }: { row: any; items: any[] }) {
   const content = (
     <>
-      <span className="gd-revenue-line__label">{cleanText(row.label)}</span>
-      <span className="gd-revenue-line__metrics">
-        <strong>{formatCurrencyText(cleanText(row.value))}</strong>
-        <span>{cleanText(row.share)}</span>
-      </span>
+      <div className="gd-cost__label">{cleanText(row.label)}</div>
+      <div className="gd-cost__value gd-cost__value--xl">{cleanText(row.share)}</div>
+      <div className="gd-cost__caption">principal origem</div>
     </>
   );
 
   if (!items.length) {
-    return <div className="gd-revenue-line gd-revenue-line--static">{content}</div>;
+    return <div className="gd-cost gd-cost--highlight gd-revenue-highlight">{content}</div>;
   }
 
   return (
-    <details className="gd-revenue-line">
-      <summary className="gd-revenue-line__summary">{content}</summary>
+    <details className="gd-cost gd-cost--highlight gd-revenue-highlight gd-revenue-highlight--expandable">
+      <summary className="gd-cost-rect__summary gd-revenue-highlight__summary">{content}</summary>
       <DetailRows items={items} />
     </details>
   );
@@ -331,9 +349,8 @@ function CostCard({ data, insight }: { data: any; insight?: any }) {
   return (
     <article className="gd-card gd-card--gray">
       <div className="gd-card__header">
-        <div className="gd-title">📉 {cleanText(data?.title || "Estrutura de Custos")}</div>
+        <CardTitle icon="/icones/custo.png" title={data?.title || "Estrutura de Custos"} />
         <div className="gd-kpi"><AnimatedCurrencyKpi value={data?.value} /></div>
-        <OptionalSubline value={data?.subtitle} />
         {hasMetrics && (
           <MetricaGrid>
             <MetricaMini label="Orçado anual" value={isFiniteNumber(data?.custo_orcado_anual) ? formatCurrency(data.custo_orcado_anual) : ""} />
@@ -343,7 +360,7 @@ function CostCard({ data, insight }: { data: any; insight?: any }) {
               tone={isFiniteNumber(data?.variacao_2025) && data.variacao_2025 > 0 ? "red" : "green"}
             />
             <MetricaMini
-              label="% do orçado"
+              label="% Orçado Periodo"
               value={formatPercentMetric(data?.pct_orcado_custos)}
               tone={isFiniteNumber(data?.pct_orcado_custos) && data.pct_orcado_custos > 1 ? "red" : "green"}
             />
@@ -411,13 +428,8 @@ function ResultCard({ data, insight }: { data: any; insight?: any }) {
 
   return (
     <article className="gd-card gd-card--orange gd-card--compact">
-      <div className="gd-title">📊 {cleanText(data?.title || "Resultado Líquido")}</div>
+      <CardTitle icon="/icones/liquido.png" title={data?.title || "Resultado Líquido"} />
       <div className="gd-kpi"><AnimatedCurrencyKpi value={data?.value} /></div>
-      {isFiniteNumber(data?.sem_sucumbencia) && (
-        <div className="gd-result-submetric">
-          Resultado sem sucumbência: {formatCurrency(data.sem_sucumbencia)}
-        </div>
-      )}
       {hasMetrics && (
         <MetricaGrid>
           <MetricaMini label="Orçado" value={isFiniteNumber(data?.resultado_orcado) ? formatCurrency(data.resultado_orcado) : ""} />
@@ -426,10 +438,12 @@ function ResultCard({ data, insight }: { data: any; insight?: any }) {
             value={formatSignedPercentMetric(data?.variacao_2025)}
             tone={isFiniteNumber(data?.variacao_2025) && data.variacao_2025 < 0 ? "red" : "green"}
           />
-          <MetricaMini label="% Orçado" value={formatPercentMetric(data?.pct_vs_orcado)} />
+          <MetricaMini
+            label="% Orçado Periodo"
+            value={formatPercentMetric(data?.pct_vs_orcado)}
+          />
         </MetricaGrid>
       )}
-      {!isFiniteNumber(data?.sem_sucumbencia) && <OptionalSubline value={data?.subtitle} />}
       <InsightNote insight={insight} />
     </article>
   );
@@ -437,6 +451,15 @@ function ResultCard({ data, insight }: { data: any; insight?: any }) {
 
 function MetricaGrid({ children }: { children: ReactNode }) {
   return <div className="gd-result-mini-grid">{children}</div>;
+}
+
+function CardTitle({ icon, title }: { icon: string; title: unknown }) {
+  return (
+    <div className="gd-title">
+      <Image className="gd-card-title-icon" src={icon} alt="" width={24} height={24} unoptimized aria-hidden="true" />
+      <span>{cleanText(title)}</span>
+    </div>
+  );
 }
 
 function MetricaMini({ label, value, tone }: { label: string; value: string; tone?: "red" | "green" }) {
@@ -451,7 +474,7 @@ function MetricaMini({ label, value, tone }: { label: string; value: string; ton
 function PeopleCard({ data, insight }: { data: any; insight?: any }) {
   return (
     <article className="gd-card gd-card--green gd-card--compact">
-      <div className="gd-title">👥 {cleanText(data?.title || "Pessoas")}</div>
+      <CardTitle icon="/icones/pessoas.png" title={data?.title || "Pessoas"} />
       <div className="gd-kpi"><AnimatedNumberKpi value={data?.value} /></div>
       <OptionalSubline value={data?.subtitle} />
       {!!data?.rows?.length && (
@@ -475,7 +498,7 @@ function PeopleCard({ data, insight }: { data: any; insight?: any }) {
 function MarginsCard({ data }: { data: any }) {
   return (
     <article className="gd-card gd-card--purple gd-card--margins">
-      <div className="gd-title">📈 {cleanText(data?.title || "Margens")}</div>
+      <CardTitle icon="/icones/margens.png" title={data?.title || "Margens"} />
       <OptionalSubline value={data?.subtitle} />
       <div className="gd-margins-grid">
         {(data?.metrics || []).map((metric: any) => (

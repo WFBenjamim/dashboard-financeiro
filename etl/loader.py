@@ -734,7 +734,9 @@ def get_extracted_data(ano: int, selected_months: list[int], file_mtime_ns: int 
 
     df_resumo_orc = pd.read_excel(f, sheet_name="Resumo Orç 2026", header=None, engine="openpyxl").fillna("")
     receita_orcada_anual = _get_table_value_by_labels(df_resumo_orc, "Total", "Receitas")
-    pct_orcado = (receita_total / receita_orcada_anual) if receita_orcada_anual else 0.0
+    meses_periodo = len(selected_months)
+    meta_periodo_receita = receita_orcada_anual / 12 * meses_periodo if receita_orcada_anual and meses_periodo else 0.0
+    pct_orcado = (receita_total / meta_periodo_receita) if meta_periodo_receita else 0.0
 
     receita_2025_periodo = 0.0
     cost_total_anterior = 0.0
@@ -814,6 +816,8 @@ def get_extracted_data(ano: int, selected_months: list[int], file_mtime_ns: int 
         "pct_sucumbencia": pct_sucumbencia,
         "pct_outras": pct_outras,
         "receita_orcada": receita_orcada_anual,
+        "meta_periodo_receita": meta_periodo_receita,
+        "meta_periodo_meses": meses_periodo,
         "pct_orcado": pct_orcado,
         "receita_2025_periodo": receita_2025_periodo,
         "variacao_yoy": variacao_yoy,
@@ -844,6 +848,8 @@ def get_dashboard_data(mes: int, ano: int, selected_months: list[int] | None = N
     
     receita_total = data["receita_total"]
     receita_orcada = data["receita_orcada"]
+    meta_periodo_receita = data["meta_periodo_receita"]
+    meta_periodo_meses = data["meta_periodo_meses"]
     pct_orcado = data["pct_orcado"]
     receita_2025_periodo = data["receita_2025_periodo"]
     variacao_yoy = data["variacao_yoy"]
@@ -858,7 +864,7 @@ def get_dashboard_data(mes: int, ano: int, selected_months: list[int] | None = N
     
     template["revenue_mix"] = {
         "icon": "💰",
-        "title": "Mix de Receitas",
+        "title": "Estrutura de Receita",
         "value": receita_total,
         "contratual": contratuais,
         "sucumbencia": sucumb,
@@ -869,9 +875,11 @@ def get_dashboard_data(mes: int, ano: int, selected_months: list[int] | None = N
         "pct_outras": pct_outras,
         "pct_orcado": pct_orcado,
         "receita_orcada": receita_orcada,
+        "meta_periodo_receita": meta_periodo_receita,
+        "meta_periodo_meses": meta_periodo_meses,
         "receita_2025_periodo": receita_2025_periodo,
         "variacao_yoy": variacao_yoy,
-        "subtitle": f"{_format_percent(pct_orcado * 100)} do orçado anual • 2026  /  {_format_signed_percent(variacao_yoy)} vs 2025",
+        "subtitle": "",
         "comparison_pct": variacao_yoy * 100,
         "rows": [
             {

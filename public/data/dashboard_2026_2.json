@@ -6,7 +6,7 @@
   },
   "revenue_mix": {
     "icon": "💰",
-    "title": "Mix de Receitas",
+    "title": "Estrutura de Receita",
     "value": 3623744.090000001,
     "contratual": 3211463.3100000005,
     "sucumbencia": 410980.78,
@@ -15,11 +15,13 @@
     "pct_contratual": 0.886227953806749,
     "pct_sucumbencia": 0.1134133012135523,
     "pct_outras": 0.0003587449796986077,
-    "pct_orcado": 0.06672964057390343,
+    "pct_orcado": 0.8007556868868412,
     "receita_orcada": 54304864.5075,
+    "meta_periodo_receita": 4525405.375625,
+    "meta_periodo_meses": 1,
     "receita_2025_periodo": 4536175.327604333,
     "variacao_yoy": -0.20114549630651288,
-    "subtitle": "6,7% do orçado anual • 2026  /  -20,1% vs 2025",
+    "subtitle": "",
     "comparison_pct": -20.114549630651286,
     "rows": [
       {
@@ -124,7 +126,9 @@
     ],
     "cost_subtitle": "+8,7% vs 2025",
     "custo_orcado_anual": 28243188.09342022,
-    "pct_orcado_custos": 1.2603023757354228,
+    "meta_periodo_custos": 2353599.007785018,
+    "meta_periodo_meses": 1,
+    "pct_orcado_custos": 1.260302375735423,
     "variacao_2025": 0.0865597972746682
   },
   "net_result": {
@@ -133,7 +137,10 @@
     "value": -44459.74096342886,
     "subtitle": "",
     "sem_sucumbencia": -346191.9380774292,
+    "resultado_orcado_anual": 4820666.95567322,
     "resultado_orcado": 401722.2463061016,
+    "meta_periodo_resultado": 401722.2463061016,
+    "meta_periodo_meses": 1,
     "resultado_2025": 710274.5684700008,
     "pct_vs_orcado": -0.11067283769381228,
     "variacao_2025": -1.0625951469150858,

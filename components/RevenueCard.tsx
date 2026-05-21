@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Card } from "./Card";
 import { TrendingUp } from "lucide-react";
 
@@ -18,7 +19,7 @@ export function RevenueCard({ data }: RevenueCardProps) {
       
       <div className="flex items-center gap-3 mb-4 relative z-10">
         <div className="p-2 rounded-lg bg-[var(--accent)]/10 text-[var(--accent)]">
-          <span className="text-xl">{data.icon || "💰"}</span>
+          <Image className="gd-card-title-icon" src="/icones/receita.png" alt="" width={24} height={24} unoptimized aria-hidden="true" />
         </div>
         <h2 className="text-lg font-semibold text-[var(--foreground)]">{data.title}</h2>
       </div>

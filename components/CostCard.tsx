@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Card } from "./Card";
 import { TrendingDown } from "lucide-react";
 
@@ -18,7 +19,7 @@ export function CostCard({ data }: CostCardProps) {
       
       <div className="flex items-center gap-3 mb-4 relative z-10">
         <div className="p-2 rounded-lg bg-red-500/10 text-red-500">
-          <span className="text-xl">{data.icon || "📉"}</span>
+          <Image className="gd-card-title-icon" src="/icones/custo.png" alt="" width={24} height={24} unoptimized aria-hidden="true" />
         </div>
         <h2 className="text-lg font-semibold text-[var(--foreground)]">{data.title}</h2>
       </div>
