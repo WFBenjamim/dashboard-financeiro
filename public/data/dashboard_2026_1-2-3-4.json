@@ -1,0 +1,291 @@
+{
+  "header": {
+    "title": "Encontro de Divulgação de Resultados – Gondim | 2026 (EDR)",
+    "subtitle": "Período acumulado: jan, fev, mar e abr/26",
+    "band": "DATA DE DIVULGAÇÃO: 22 DE MAIO DE 2026"
+  },
+  "revenue_mix": {
+    "icon": "💰",
+    "title": "Estrutura de Receita",
+    "value": 16934568.413999997,
+    "contratual": 14751198.693999996,
+    "sucumbencia": 1591544.99,
+    "outras": 591824.73,
+    "outras_receitas": 591824.73,
+    "pct_contratual": 0.8710702471640798,
+    "pct_sucumbencia": 0.09398202251698673,
+    "pct_outras": 0.034947730318933425,
+    "pct_orcado": 0.9355277046126048,
+    "receita_orcada": 54304864.5075,
+    "meta_periodo_receita": 18101621.5025,
+    "meta_periodo_meses": 4,
+    "receita_2025_periodo": 16476730.060006,
+    "variacao_yoy": 0.027786966972609992,
+    "subtitle": "",
+    "comparison_pct": 2.778696697260999,
+    "rows": [
+      {
+        "label": "Contratuais",
+        "value": "R$ 14,75 M",
+        "share": "87,1%"
+      },
+      {
+        "label": "Sucumbência",
+        "value": "R$ 1,59 M",
+        "share": "9,4%"
+      },
+      {
+        "label": "Outras Receitas",
+        "value": "R$ 591,8 mil",
+        "share": "3,5%"
+      }
+    ],
+    "expansions": [
+      {
+        "title": "Contratuais",
+        "items": [
+          {
+            "name": "SANEAMENTO",
+            "value": "R$ 2,44 M"
+          },
+          {
+            "name": "SANTANDER",
+            "value": "R$ 2,24 M"
+          },
+          {
+            "name": "MERCADO LIVRE",
+            "value": "R$ 1,49 M"
+          },
+          {
+            "name": "RECUPERA",
+            "value": "R$ 1,42 M"
+          },
+          {
+            "name": "CLARO",
+            "value": "R$ 1,4 M"
+          }
+        ]
+      },
+      {
+        "title": "Sucumbência",
+        "items": []
+      }
+    ],
+    "receita_orcada_anual": 54304864.5075,
+    "variacao_2025": 0.027786966972609992
+  },
+  "cost_structure": {
+    "icon": "📉",
+    "title": "Estrutura de Custos",
+    "total": 15448829.725259367,
+    "correspondentes": 656433.9169920001,
+    "outras_despesas": 1325786.465109696,
+    "impostos": 3342280.6442949995,
+    "socios_servico": 6144191.95,
+    "socios": 6508614.51,
+    "clt": 820113.04,
+    "estagiarios": 313990.7,
+    "total_pessoas_custo": 7642718.25,
+    "cost_total_anterior": 13681628.330716962,
+    "variacao_custos_yoy": 0.12916601385631984,
+    "value": "R$ 15,45 M",
+    "subtitle": "+12,9% vs 2025",
+    "highlight": {
+      "label": "Sócios",
+      "value": "42,1%",
+      "caption": "principal grupo de custo"
+    },
+    "items": [
+      {
+        "label": "Impostos",
+        "value": "R$ 3,34 M",
+        "share": "21,6%",
+        "details": []
+      },
+      {
+        "label": "Sócios",
+        "value": "R$ 6,51 M",
+        "share": "42,1%",
+        "details": []
+      },
+      {
+        "label": "CLT",
+        "value": "R$ 820,1 mil",
+        "share": "5,3%",
+        "details": []
+      },
+      {
+        "label": "Estagiários",
+        "value": "R$ 314 mil",
+        "share": "2,0%",
+        "details": []
+      },
+      {
+        "label": "Correspondentes",
+        "value": "R$ 656,4 mil",
+        "share": "4,2%",
+        "details": []
+      },
+      {
+        "label": "Outras Despesas",
+        "value": "R$ 1,33 M",
+        "share": "8,6%",
+        "details": []
+      }
+    ],
+    "socios_capital": 364422.56,
+    "total_folha_val": 7642718.25,
+    "folha_months_used": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "folha_snapshot_month": 4,
+    "cost_subtitle": "+12,9% vs 2025",
+    "custo_orcado_anual": 28243188.09342022,
+    "meta_periodo_custos": 9414396.031140072,
+    "meta_periodo_meses": 4,
+    "pct_orcado_custos": 1.6409793760703448,
+    "variacao_2025": 0.12916601385631984
+  },
+  "net_result": {
+    "icon": "📊",
+    "title": "Resultado Líquido",
+    "value": 1485738.6887406325,
+    "subtitle": "",
+    "sem_sucumbencia": -105806.30125936796,
+    "resultado_orcado_anual": 4820666.95567322,
+    "resultado_orcado": 1606888.9852244065,
+    "meta_periodo_resultado": 1606888.9852244065,
+    "meta_periodo_meses": 4,
+    "resultado_2025": 2795101.7292890386,
+    "pct_vs_orcado": 0.9246056836547081,
+    "variacao_2025": -0.46844915404258125,
+    "pct_ano": 0.3082018945515694,
+    "resultado_operacional": 4828019.333035629
+  },
+  "margins": {
+    "icon": "📈",
+    "title": "Margens",
+    "value": "29,9%",
+    "subtitle": "",
+    "metrics": [
+      {
+        "label": "Margem Operacional",
+        "value": "29,9%",
+        "caption": ""
+      },
+      {
+        "label": "Margem Líquida",
+        "value": "8,8%",
+        "caption": ""
+      }
+    ]
+  },
+  "people": {
+    "icon": "👥",
+    "title": "Pessoas",
+    "value": "602",
+    "total": 602,
+    "socios": {
+      "qtd": 441,
+      "pct": 0.7325581395348837
+    },
+    "clt": {
+      "qtd": 124,
+      "pct": 0.2059800664451827
+    },
+    "estagiarios": {
+      "qtd": 34,
+      "pct": 0.05647840531561462
+    },
+    "subtitle": "",
+    "rows": [
+      {
+        "label": "Sócios de Serviço",
+        "value": "441",
+        "share": "73,3%"
+      },
+      {
+        "label": "CLT",
+        "value": "124",
+        "share": "20,6%"
+      },
+      {
+        "label": "Estagiários",
+        "value": "34",
+        "share": "5,6%"
+      }
+    ]
+  },
+  "top_clients": {
+    "icon": "🏆",
+    "title": "Top 5 Clientes",
+    "subtitle": "Faturamento em jan, fev, mar e abr/26",
+    "ranking": [
+      {
+        "name": "SANEAMENTO",
+        "value": "R$ 2,44 M"
+      },
+      {
+        "name": "SANTANDER",
+        "value": "R$ 2,24 M"
+      },
+      {
+        "name": "MERCADO LIVRE",
+        "value": "R$ 1,49 M"
+      },
+      {
+        "name": "RECUPERA",
+        "value": "R$ 1,42 M"
+      },
+      {
+        "name": "CLARO",
+        "value": "R$ 1,4 M"
+      },
+      {
+        "name": "Outros",
+        "value": "R$ 7,9 M"
+      }
+    ]
+  },
+  "insights": [
+    {
+      "tone": "red",
+      "title": "Efeito tesoura",
+      "description": "Receita e custos seguem em direções distintas, mas ainda preservam resultado operacional de R$ 1,48 M."
+    },
+    {
+      "tone": "yellow",
+      "title": "Pessoas representam 49,5% dos custos",
+      "description": "O gasto consolidado com Sócios, CLT e Estagiários soma R$ 7,64 M, representando 49,5% do total de custos do período."
+    },
+    {
+      "tone": "green",
+      "title": "Estrutura de pessoas",
+      "description": "A base segue concentrada em pessoas, com Sócios de Serviço 73,3%, CLT 20,6%, Estagiários 5,6%, o que reforça uma estrutura mais rígida no curto prazo."
+    },
+    {
+      "tone": "blue",
+      "title": "Top 5 clientes",
+      "description": "SANEAMENTO lidera um grupo que soma R$ 16,89 M e mantém concentração moderada na frente comercial."
+    }
+  ],
+  "technical_analysis": {
+    "title": "Análise técnica",
+    "paragraphs": [
+      "No acumulado do período, a receita somou R$ 16,93 M e a estrutura de custos atingiu R$ 15,45 M, produzindo resultado operacional positivo de R$ 1,48 M. O ritmo entre receita e despesas segue relativamente equilibrado.",
+      "A comparação interanual de período acumulado: jan, fev, mar e abr/26 deve ser lida com cautela, mas já evidencia um descolamento relevante entre receita e custos. Como o painel observa um recorte parcial do ano, o efeito de base, sazonalidade e timing de reconhecimento das linhas pode ampliar ou suavizar a fotografia do período.",
+      "Mesmo sem considerar a sucumbência, o resultado líquido permaneceria em R$ 0, sugerindo que a geração recorrente ainda se sustenta com menor dependência de receitas extraordinárias.",
+      "O principal vetor de rigidez está na estrutura de pessoas: o desembolso com essa frente responde por 49,5% do total de custos, patamar moderado. Em paralelo, a linha de Sócios concentra 42,1%, o que reforça a necessidade de disciplina sobre capacidade, alocação e produtividade.",
+      "Na camada complementar, correspondentes somam R$ 656,4 mil (4,2%) e outras despesas atingem R$ 1,33 M (8,6%). Juntas, essas rubricas representam R$ 1,99 M e 12,8% dos custos, oferecendo espaço para ajustes táticos sem alterar a espinha dorsal da operação.",
+      "Na frente comercial, o faturamento segue concentrado no top 5 clientes, formado por SANEAMENTO, SANTANDER, MERCADO LIVRE, RECUPERA, CLARO, que juntos somam R$ 16,89 M. A liderança de SANEAMENTO, com 14,4% desse bloco, sinaliza um nível relevante de concentração comercial e mantém a diversificação da carteira como agenda prioritária."
+    ],
+    "meta": {
+      "mode": "template",
+      "provider": null
+    }
+  },
+  "cost_subtitle": "+12,9% vs 2025"
+}

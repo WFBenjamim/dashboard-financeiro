@@ -12,10 +12,12 @@ Como usar:
 import itertools
 import json
 import sys
+import unicodedata
 from datetime import datetime, timedelta
 from pathlib import Path
 
 import pandas as pd
+import openpyxl
 
 # Garante que o root do projeto esta no sys.path
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -32,7 +34,7 @@ INFORMACOES_GERENCIAIS_FILE = PROJECT_ROOT / "data" / "INFORMAÇÕES GERENCIAIS.
 YEAR = 2026
 # Apenas os meses que tem dados reais na planilha.
 # Ajuste conforme os meses disponiveis no Orcamento.xlsx.
-AVAILABLE_MONTHS = [1, 2, 3]
+AVAILABLE_MONTHS = [1, 2, 3, 4]
 # ──────────────────────────────────────────────────────────────────────────────
 
 
@@ -58,6 +60,13 @@ def to_number(value) -> float:
     return float(value)
 
 
+def normalize_label(value) -> str:
+    text = "" if value is None else str(value)
+    text = unicodedata.normalize("NFKD", text)
+    text = text.encode("ascii", "ignore").decode("ascii")
+    return " ".join(text.lower().split())
+
+
 def load_totais_df() -> pd.DataFrame:
     df = pd.read_excel(
         INFORMACOES_GERENCIAIS_FILE,
@@ -70,6 +79,71 @@ def load_totais_df() -> pd.DataFrame:
     return df[[col for col in df.columns if col is not None]]
 
 
+def sum_totais_row(df: pd.DataFrame, label: str, columns: list[datetime]) -> float:
+    expected = normalize_label(label)
+    for row_label, row in df.iterrows():
+        if normalize_label(row_label) == expected:
+            return sum(to_number(row.get(col, 0)) for col in columns)
+    return 0.0
+
+
+def load_totais(selected_months: list[int], year: int = YEAR) -> dict[str, float]:
+    wb = openpyxl.load_workbook(
+        INFORMACOES_GERENCIAIS_FILE,
+        read_only=True,
+        data_only=True,
+    )
+    ws = wb["TOTAIS  20 E 21"]
+    rows = list(ws.iter_rows(values_only=True))
+    header = rows[0]
+
+    period_cols = []
+    previous_cols = []
+    for index, header_value in enumerate(header):
+        if not hasattr(header_value, "year"):
+            continue
+        if header_value.year == year and header_value.month in selected_months:
+            period_cols.append(index)
+        if header_value.year == year - 1 and header_value.month in selected_months:
+            previous_cols.append(index)
+
+    print(f"Periodo selecionado {year} meses {selected_months}:")
+    print(f"  Colunas {year}: {[header[index].strftime('%b/%Y') for index in period_cols]}")
+    print(f"  Colunas {year - 1}: {[header[index].strftime('%b/%Y') for index in previous_cols]}")
+
+    def sum_row(label: str, columns: list[int]) -> float:
+        expected = normalize_label(label)
+        for row in rows[1:]:
+            if normalize_label(row[0]) == expected:
+                values = [row[index] for index in columns if row[index] not in (None, "", "-")]
+                return sum(float(value) for value in values if isinstance(value, (int, float)))
+        return 0.0
+
+    receita = sum_row("RECEITA", period_cols)
+    custos = sum_row("CUSTOS E DESPESAS", period_cols)
+    resultado = sum_row("RESULTADO IG", period_cols)
+    impostos = sum_row("IMPOSTOS", period_cols)
+    sucumbencia = sum_row("SUCUMBENCIA", period_cols)
+    receita_2025 = sum_row("RECEITA", previous_cols)
+    custos_2025 = sum_row("CUSTOS E DESPESAS", previous_cols)
+    resultado_2025 = sum_row("RESULTADO IG", previous_cols)
+    resultado_sem_sucumbencia = sum_row("RESULTADO SEM SUCUMBENCIAS", period_cols)
+
+    return {
+        "receita": receita,
+        "custos": custos,
+        "resultado": resultado,
+        "impostos": impostos,
+        "sucumbencia": sucumbencia,
+        "receita_2025": receita_2025,
+        "custos_2025": custos_2025,
+        "resultado_2025": resultado_2025,
+        "resultado_sem_sucumbencia": resultado_sem_sucumbencia,
+        "variacao_receita": (receita - receita_2025) / receita_2025 if receita_2025 else 0.0,
+        "variacao_custos": (custos - custos_2025) / custos_2025 if custos_2025 else 0.0,
+    }
+
+
 def build_cost_subtitle(selected_months: list[int], year: int = YEAR) -> str:
     variacao_custos = calculate_cost_variation(selected_months, year)
     if variacao_custos is None:
@@ -80,18 +154,17 @@ def build_cost_subtitle(selected_months: list[int], year: int = YEAR) -> str:
 
 def calculate_cost_variation(selected_months: list[int], year: int = YEAR) -> float | None:
     df = load_totais_df()
-    despesas_label = "CUSTOS E DESPESAS SEM INTERCOMPANY"
-    despesas = df.loc[despesas_label]
+    despesas_label = "custos e despesas"
 
-    despesas_atual = sum(
-        to_number(despesas.get(col, 0))
-        for col in df.columns
-        if col.year == year and col.month in selected_months
+    despesas_atual = sum_totais_row(
+        df,
+        despesas_label,
+        [col for col in df.columns if col.year == year and col.month in selected_months],
     )
-    despesas_anterior = sum(
-        to_number(despesas.get(col, 0))
-        for col in df.columns
-        if col.year == year - 1 and col.month in selected_months
+    despesas_anterior = sum_totais_row(
+        df,
+        despesas_label,
+        [col for col in df.columns if col.year == year - 1 and col.month in selected_months],
     )
 
     if not despesas_anterior:
@@ -156,28 +229,15 @@ def _sum_result_row(df: pd.DataFrame, header_row: int, columns: list[int]) -> fl
 
 def enrich_net_result(data: dict, selected_months: list[int], year: int = YEAR) -> None:
     budget_totals = load_budget_totals()
+    totais = load_totais(selected_months, year)
     ml_orcado_anual = budget_totals["ml"]
     period_months = len(selected_months)
     resultado_orcado_periodo = ml_orcado_anual / 12 * period_months if ml_orcado_anual and period_months else 0.0
 
-    df_res = pd.read_excel(
-        ORCAMENTO_FILE,
-        sheet_name="Resultado - Sucumb - Sem Sucumb",
-        header=None,
-        engine="openpyxl",
-    ).fillna("")
-    total_header_row, total_columns = _month_columns_from_section(df_res, "Total Geral", selected_months)
-    sem_sucumb_header_row, sem_sucumb_columns = _month_columns_from_section(df_res, "Sem Sucumbência", selected_months)
-    resultado_real = _sum_result_row(df_res, total_header_row, total_columns)
-    resultado_sem_sucumb = _sum_result_row(df_res, sem_sucumb_header_row, sem_sucumb_columns)
+    resultado_real = totais["resultado"]
+    resultado_sem_sucumb = totais["resultado_sem_sucumbencia"]
 
-    df_tot = load_totais_df()
-    resultado = df_tot.loc["RESULTADO SEM INTERCOMPANY"]
-    resultado_2025 = sum(
-        to_number(resultado.get(column, 0))
-        for column in df_tot.columns
-        if column.year == year - 1 and column.month in selected_months
-    )
+    resultado_2025 = totais["resultado_2025"]
 
     pct_vs_orcado = resultado_real / resultado_orcado_periodo if resultado_orcado_periodo else 0.0
     variacao_2025 = (resultado_real - resultado_2025) / abs(resultado_2025) if resultado_2025 else 0.0
@@ -257,13 +317,9 @@ def generate_dashboard_jsons() -> None:
 def generate_evolution_jsons() -> None:
     df = load_totais_df()
 
-    receita_label = "RECEITA SEM INTERCOMPANY"
-    despesas_label = "CUSTOS E DESPESAS SEM INTERCOMPANY"
-    resultado_label = "RESULTADO SEM INTERCOMPANY"
-
-    receita = df.loc[receita_label]
-    despesas = df.loc[despesas_label]
-    resultado = df.loc[resultado_label]
+    receita = next(row for row_label, row in df.iterrows() if normalize_label(row_label) == "receita")
+    despesas = next(row for row_label, row in df.iterrows() if normalize_label(row_label) == "custos e despesas")
+    resultado = next(row for row_label, row in df.iterrows() if normalize_label(row_label) == "resultado ig")
 
     month_labels = {
         1: "jan", 2: "fev", 3: "mar", 4: "abr",

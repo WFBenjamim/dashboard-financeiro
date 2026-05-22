@@ -7,22 +7,22 @@
   "revenue_mix": {
     "icon": "💰",
     "title": "Estrutura de Receita",
-    "value": 7462802.050000002,
-    "contratual": 6103991.450000001,
+    "value": 7462802.05,
+    "contratual": 6103991.449999999,
     "sucumbencia": 841554.2,
     "outras": 517256.4,
     "outras_receitas": 517256.4,
-    "pct_contratual": 0.817922197199375,
-    "pct_sucumbencia": 0.1127665177719674,
-    "pct_outras": 0.06931128502865755,
-    "pct_orcado": 0.8245451435352705,
+    "pct_contratual": 0.8179221971993749,
+    "pct_sucumbencia": 0.11276651777196743,
+    "pct_outras": 0.06931128502865758,
+    "pct_orcado": 0.8245451435352703,
     "receita_orcada": 54304864.5075,
     "meta_periodo_receita": 9050810.75125,
     "meta_periodo_meses": 2,
-    "receita_2025_periodo": 9072350.655208666,
-    "variacao_yoy": -0.1774125214488465,
+    "receita_2025_periodo": 8488908.220006,
+    "variacao_yoy": -0.12087610602123758,
     "subtitle": "",
-    "comparison_pct": -17.74125214488465,
+    "comparison_pct": -12.087610602123759,
     "rows": [
       {
         "label": "Contratuais",
@@ -72,95 +72,111 @@
       }
     ],
     "receita_orcada_anual": 54304864.5075,
-    "variacao_2025": -0.1774125214488465
+    "variacao_2025": -0.12087610602123758
   },
   "cost_structure": {
     "icon": "📉",
     "title": "Estrutura de Custos",
-    "total": 4376739.433385291,
+    "total": 7544967.4432214275,
     "correspondentes": 365248.071425,
     "outras_despesas": 651653.4144746283,
-    "impostos": 1597593.287485663,
-    "socios_servico": 1544357.73,
-    "clt": 217886.93,
-    "cost_total_anterior": 5577491.672544276,
-    "variacao_custos_yoy": -0.2152853486218187,
-    "value": "R$ 4,38 M",
+    "impostos": 1678354.2799089998,
+    "socios_servico": 3197908.91,
+    "socios": 3380258.5900000003,
+    "clt": 380828.92,
+    "estagiarios": 155400.56,
+    "total_pessoas_custo": 3916488.0700000003,
+    "cost_total_anterior": 6809937.8751197355,
+    "variacao_custos_yoy": 0.1079348419296363,
+    "value": "R$ 7,54 M",
     "subtitle": "+10,8% vs 2025",
     "highlight": {
-      "label": "Impostos",
-      "value": "36,5%",
+      "label": "Sócios",
+      "value": "44,8%",
       "caption": "principal grupo de custo"
     },
     "items": [
       {
         "label": "Impostos",
-        "value": "R$ 1,6 M",
-        "share": "36,5%",
+        "value": "R$ 1,68 M",
+        "share": "22,2%",
         "details": []
       },
       {
-        "label": "Sócios de Serviço",
-        "value": "R$ 1,54 M",
-        "share": "35,3%",
+        "label": "Sócios",
+        "value": "R$ 3,38 M",
+        "share": "44,8%",
         "details": []
       },
       {
         "label": "CLT",
-        "value": "R$ 217,9 mil",
+        "value": "R$ 380,8 mil",
         "share": "5,0%",
+        "details": []
+      },
+      {
+        "label": "Estagiários",
+        "value": "R$ 155,4 mil",
+        "share": "2,1%",
         "details": []
       },
       {
         "label": "Correspondentes",
         "value": "R$ 365,2 mil",
-        "share": "8,3%",
+        "share": "4,8%",
         "details": []
       },
       {
         "label": "Outras Despesas",
         "value": "R$ 651,7 mil",
-        "share": "14,9%",
+        "share": "8,6%",
         "details": []
       }
     ],
+    "socios_capital": 182349.68,
+    "total_folha_val": 3916488.0700000003,
+    "folha_months_used": [
+      1,
+      2
+    ],
+    "folha_snapshot_month": 2,
     "cost_subtitle": "+10,8% vs 2025",
     "custo_orcado_anual": 28243188.09342022,
     "meta_periodo_custos": 4707198.015570036,
     "meta_periodo_meses": 2,
-    "pct_orcado_custos": 0.9297971784718457,
+    "pct_orcado_custos": 1.602857457507604,
     "variacao_2025": 0.1079348419296363
   },
   "net_result": {
     "icon": "📊",
     "title": "Resultado Líquido",
-    "value": -82165.3932214278,
+    "value": -82165.39322142769,
     "subtitle": "",
-    "sem_sucumbencia": -721198.8851724282,
+    "sem_sucumbencia": -923719.5932214282,
     "resultado_orcado_anual": 4820666.95567322,
     "resultado_orcado": 803444.4926122032,
     "meta_periodo_resultado": 803444.4926122032,
     "meta_periodo_meses": 2,
     "resultado_2025": 1678970.3448862652,
-    "pct_vs_orcado": -0.10226642160964615,
+    "pct_vs_orcado": -0.102266421609646,
     "variacao_2025": -1.048937965742923,
-    "pct_ano": -0.01704440360160769,
-    "resultado_operacional": 4683655.904100373
+    "pct_ano": -0.017044403601607666,
+    "resultado_operacional": 1596188.886687572
   },
   "margins": {
     "icon": "📈",
     "title": "Margens",
-    "value": "27,6%",
+    "value": "29,9%",
     "subtitle": "",
     "metrics": [
       {
         "label": "Margem Operacional",
-        "value": "27,6%",
+        "value": "29,9%",
         "caption": ""
       },
       {
         "label": "Margem Líquida",
-        "value": "5,8%",
+        "value": "8,8%",
         "caption": ""
       }
     ]
@@ -168,31 +184,31 @@
   "people": {
     "icon": "👥",
     "title": "Pessoas",
-    "value": "602",
-    "total": 602,
+    "value": "604",
+    "total": 604,
     "socios": {
-      "qtd": 441,
-      "pct": 0.7325581395348837
+      "qtd": 440,
+      "pct": 0.7284768211920529
     },
     "clt": {
       "qtd": 124,
-      "pct": 0.2059800664451827
+      "pct": 0.2052980132450331
     },
     "estagiarios": {
       "qtd": 37,
-      "pct": 0.061461794019933555
+      "pct": 0.061258278145695365
     },
     "subtitle": "",
     "rows": [
       {
         "label": "Sócios de Serviço",
-        "value": "441",
-        "share": "73,3%"
+        "value": "440",
+        "share": "72,8%"
       },
       {
         "label": "CLT",
         "value": "124",
-        "share": "20,6%"
+        "share": "20,5%"
       },
       {
         "label": "Estagiários",
@@ -236,17 +252,17 @@
     {
       "tone": "red",
       "title": "Efeito tesoura",
-      "description": "Receita e custos seguem em direções distintas, mas ainda preservam resultado operacional de R$ 3,08 M."
+      "description": "Receita recua 12,1% enquanto custos avançam 10,7%, pressionando R$ 77,2 mil no operacional."
     },
     {
       "tone": "yellow",
-      "title": "Sócios de Serviço concentra 35,3%",
-      "description": "A linha de Sócios de Serviço soma R$ 1,54 M e segue como eixo prioritário de produtividade e revisão de eficiência."
+      "title": "Pessoas representam 51,9% dos custos",
+      "description": "O gasto consolidado com Sócios, CLT e Estagiários soma R$ 3,92 M, representando 51,9% do total de custos do período."
     },
     {
       "tone": "green",
       "title": "Estrutura de pessoas",
-      "description": "A base segue concentrada em pessoas, com Sócios de Serviço 73,3%, CLT 20,6%, Estagiários 6,1%, o que reforça uma estrutura mais rígida no curto prazo."
+      "description": "A base segue concentrada em pessoas, com Sócios de Serviço 72,8%, CLT 20,5%, Estagiários 6,1%, o que reforça uma estrutura mais rígida no curto prazo."
     },
     {
       "tone": "blue",
@@ -257,11 +273,11 @@
   "technical_analysis": {
     "title": "Análise técnica",
     "paragraphs": [
-      "No acumulado do período, a receita somou R$ 7,46 M e a estrutura de custos atingiu R$ 4,38 M, produzindo resultado operacional positivo de R$ 3,08 M. O ritmo entre receita e despesas segue relativamente equilibrado.",
-      "A comparação interanual de período acumulado: jan e fev/26 deve ser lida com cautela, mas já evidencia um descompasso mais moderado entre receita e custos. Como o painel observa um recorte parcial do ano, o efeito de base, sazonalidade e timing de reconhecimento das linhas pode ampliar ou suavizar a fotografia do período.",
+      "No acumulado do período, a receita somou R$ 7,46 M e ficou 12,1% abaixo da base comparativa, enquanto a estrutura de custos alcançou R$ 7,54 M após avanço de 10,7%. Esse descompasso levou o resultado operacional a uma pressão estimada de R$ 77,2 mil.",
+      "A comparação interanual de período acumulado: jan e fev/26 deve ser lida com cautela, mas já evidencia um descolamento relevante entre receita e custos. Como o painel observa um recorte parcial do ano, o efeito de base, sazonalidade e timing de reconhecimento das linhas pode ampliar ou suavizar a fotografia do período.",
       "Mesmo sem considerar a sucumbência, o resultado líquido permaneceria em R$ 0, sugerindo que a geração recorrente ainda se sustenta com menor dependência de receitas extraordinárias.",
-      "O principal vetor de rigidez está na estrutura de pessoas: o desembolso com essa frente responde por 40,1% do total de custos, patamar moderado. Em paralelo, a linha de Sócios de Serviço concentra 35,3%, o que reforça a necessidade de disciplina sobre capacidade, alocação e produtividade.",
-      "Na camada complementar, correspondentes somam R$ 365,2 mil (8,3%) e outras despesas atingem R$ 651,7 mil (14,9%). Juntas, essas rubricas representam R$ 1,02 M e 23,2% dos custos, oferecendo espaço para ajustes táticos sem alterar a espinha dorsal da operação.",
+      "O principal vetor de rigidez está na estrutura de pessoas: o desembolso com essa frente responde por 51,9% do total de custos, patamar relevante. Em paralelo, a linha de Sócios concentra 44,8%, o que reforça a necessidade de disciplina sobre capacidade, alocação e produtividade.",
+      "Na camada complementar, correspondentes somam R$ 365,2 mil (4,8%) e outras despesas atingem R$ 651,7 mil (8,6%). Juntas, essas rubricas representam R$ 1,02 M e 13,4% dos custos, oferecendo espaço para ajustes táticos sem alterar a espinha dorsal da operação.",
       "Na frente comercial, o faturamento segue concentrado no top 5 clientes, formado por SANTANDER, SANEAMENTO, MRS, UOL, CLARO, que juntos somam R$ 7,44 M. A liderança de SANTANDER, com 14,6% desse bloco, sinaliza um nível relevante de concentração comercial e mantém a diversificação da carteira como agenda prioritária."
     ],
     "meta": {

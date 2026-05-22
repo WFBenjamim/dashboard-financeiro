@@ -59,6 +59,10 @@ function sortMonths(months: number[]) {
   return [...months].sort((a, b) => a - b);
 }
 
+function availableMonthsUntil(month: number) {
+  return Array.from({ length: month }, (_, index) => index + 1);
+}
+
 function OptionalSubline({ value }: { value: unknown }) {
   const text = cleanText(value);
   return text ? <div className="gd-subline">{text}</div> : null;
@@ -154,15 +158,16 @@ export default function Dashboard() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const year = 2026;
-  const [months, setMonths] = useState([1, 2, 3]);
-  const currentMonth = 3;
+  const currentMonth = 4;
+  const [months, setMonths] = useState<number[]>([]);
 
   useEffect(() => {
     let isMounted = true;
 
     async function loadData() {
       setLoading(true);
-      const dashboardData = await fetchDashboardData(year, sortMonths(months).join(","));
+      const effectiveMonths = months.length ? months : availableMonthsUntil(currentMonth);
+      const dashboardData = await fetchDashboardData(year, sortMonths(effectiveMonths).join(","));
       if (isMounted) {
         setData(dashboardData);
         setLoading(false);
@@ -200,7 +205,7 @@ export default function Dashboard() {
   }
 
   const revenueInsight = findInsight(data.insights, "Top 5 clientes");
-  const costInsight = findInsight(data.insights, "Sócios de Serviço");
+  const costInsight = findInsight(data.insights, "Pessoas representam") || findInsight(data.insights, "Sócios");
   const resultInsight = findInsight(data.insights, "Efeito tesoura");
   const peopleInsight = findInsight(data.insights, "Estrutura de pessoas");
 
@@ -262,8 +267,7 @@ function RevenueCard({ data, insight, topClients }: { data: any; insight?: any; 
   const contractualDetails = contractualExpansion?.items?.length
     ? contractualExpansion.items
     : (topClients?.ranking || []).filter((item: any) => normalizeKey(item?.name) !== "outros").slice(0, 5);
-  const contractualTotal = highlight?.value ? [{ name: "Total Contratuais", value: highlight.value }] : [];
-  const contractualItems = [...contractualDetails, ...contractualTotal];
+  const contractualItems = contractualDetails.slice(0, 5);
 
   return (
     <article className="gd-card gd-card--blue">
@@ -313,23 +317,13 @@ function RevenueBlockItem({ row }: { row: any }) {
 }
 
 function RevenueHighlight({ row, items }: { row: any; items: any[] }) {
-  const content = (
-    <>
+  return (
+    <div className="gd-cost gd-cost--highlight gd-revenue-highlight">
       <div className="gd-cost__label">{cleanText(row.label)}</div>
       <div className="gd-cost__value gd-cost__value--xl">{cleanText(row.share)}</div>
       <div className="gd-cost__caption">principal origem</div>
-    </>
-  );
-
-  if (!items.length) {
-    return <div className="gd-cost gd-cost--highlight gd-revenue-highlight">{content}</div>;
-  }
-
-  return (
-    <details className="gd-cost gd-cost--highlight gd-revenue-highlight gd-revenue-highlight--expandable">
-      <summary className="gd-cost-rect__summary gd-revenue-highlight__summary">{content}</summary>
-      <DetailRows items={items} />
-    </details>
+      {!!items.length && <DetailRows items={items} />}
+    </div>
   );
 }
 
@@ -339,7 +333,7 @@ function CostCard({ data, insight }: { data: any; insight?: any }) {
   const highlight = data?.highlight || fallbackHighlight || {};
   const special = items.filter((item: any) => {
     const label = normalizeKey(item.label);
-    return label.includes("socios de servico") || label === "clt";
+    return label.includes("socios") || label === "clt" || label.includes("estagiarios");
   });
   const remaining = items.filter((item: any) => !special.includes(item));
   const hasMetrics = isFiniteNumber(data?.custo_orcado_anual)

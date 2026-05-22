@@ -491,40 +491,40 @@
     "month": "fev/23",
     "year": 2023,
     "month_num": 2,
-    "receita": 2080503.62,
-    "despesa": 1991438.66,
+    "receita": 2290503.62,
+    "despesa": 2201438.66,
     "resultado": 89064.96
   },
   {
     "month": "mar/23",
     "year": 2023,
     "month_num": 3,
-    "receita": 2178763.79,
-    "despesa": 2221123.3,
+    "receita": 2258763.79,
+    "despesa": 2301123.3,
     "resultado": -42359.51
   },
   {
     "month": "abr/23",
     "year": 2023,
     "month_num": 4,
-    "receita": 3146365.23,
-    "despesa": 2368120.94,
+    "receita": 3226365.23,
+    "despesa": 2448120.94,
     "resultado": 778244.29
   },
   {
     "month": "mai/23",
     "year": 2023,
     "month_num": 5,
-    "receita": 2679630.72,
-    "despesa": 2488380.58,
+    "receita": 2759630.72,
+    "despesa": 2568380.58,
     "resultado": 191250.14
   },
   {
     "month": "jun/23",
     "year": 2023,
     "month_num": 6,
-    "receita": 2684496.35,
-    "despesa": 2471024.14,
+    "receita": 2764496.35,
+    "despesa": 2551024.14,
     "resultado": 213472.21
   },
   {
@@ -547,16 +547,16 @@
     "month": "set/23",
     "year": 2023,
     "month_num": 9,
-    "receita": 3236794.8,
-    "despesa": 2556106.25,
+    "receita": 3346794.8,
+    "despesa": 2666106.25,
     "resultado": 680688.55
   },
   {
     "month": "out/23",
     "year": 2023,
     "month_num": 10,
-    "receita": 3075706.12,
-    "despesa": 2819804.57,
+    "receita": 3245706.12,
+    "despesa": 2989804.57,
     "resultado": 255901.55
   },
   {
@@ -571,16 +571,16 @@
     "month": "dez/23",
     "year": 2023,
     "month_num": 12,
-    "receita": 4523248.92,
-    "despesa": 2947664.09,
+    "receita": 4923248.92,
+    "despesa": 3347664.09,
     "resultado": 1575584.83
   },
   {
     "month": "jan/24",
     "year": 2024,
     "month_num": 1,
-    "receita": 3159755.26,
-    "despesa": 2811248.79,
+    "receita": 3209755.26,
+    "despesa": 2861248.79,
     "resultado": 348506.47
   },
   {
@@ -659,16 +659,16 @@
     "month": "nov/24",
     "year": 2024,
     "month_num": 11,
-    "receita": 5744339.0,
-    "despesa": 3410971.41,
+    "receita": 6144339.0,
+    "despesa": 3810971.41,
     "resultado": 2333367.59
   },
   {
     "month": "dez/24",
     "year": 2024,
     "month_num": 12,
-    "receita": 4812105.91,
-    "despesa": 3474938.41,
+    "receita": 5312105.91,
+    "despesa": 3974938.41,
     "resultado": 1337167.5
   },
   {
@@ -795,9 +795,9 @@
     "month": "abr/26",
     "year": 2026,
     "month_num": 4,
-    "receita": 0.0,
-    "despesa": 0.0,
-    "resultado": 0.0
+    "receita": 4775794.23,
+    "despesa": 4000074.92,
+    "resultado": 775719.31
   },
   {
     "month": "mai/26",

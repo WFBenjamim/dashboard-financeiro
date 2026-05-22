@@ -11,8 +11,6 @@ export function MonthFilter({ currentMonth, selectedMonths, onChange }: MonthFil
     if (month > currentMonth) return;
 
     const isSelected = selectedMonths.includes(month);
-    if (isSelected && selectedMonths.length === 1) return;
-
     const nextMonths = isSelected
       ? selectedMonths.filter((item) => item !== month)
       : [...selectedMonths, month];

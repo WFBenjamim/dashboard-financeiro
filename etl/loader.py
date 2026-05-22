@@ -12,6 +12,7 @@ from typing import Any, Iterable
 from functools import wraps
 
 import pandas as pd
+import openpyxl
 
 from config.settings import (
     PROFIT_ADVANCE_ADJUSTMENT_PCT,
@@ -47,6 +48,21 @@ MONTH_LABELS = {
     1: "jan", 2: "fev", 3: "mar", 4: "abr", 
     5: "mai", 6: "jun", 7: "jul", 8: "ago", 
     9: "set", 10: "out", 11: "nov", 12: "dez"
+}
+
+MONTH_SHEET_NAMES = {
+    1: "janeiro",
+    2: "fevereiro",
+    3: "marco",
+    4: "abril",
+    5: "maio",
+    6: "junho",
+    7: "julho",
+    8: "agosto",
+    9: "setembro",
+    10: "outubro",
+    11: "novembro",
+    12: "dezembro",
 }
 
 CLIENT_COST_SHEETS = [
@@ -144,6 +160,14 @@ def _normalize_text(value: Any) -> str:
     return re.sub(r"\s+", " ", text).strip().lower()
 
 
+def _month_number_from_sheet_name(sheet_name: str) -> int | None:
+    normalized = _normalize_text(sheet_name)
+    for month, name in MONTH_SHEET_NAMES.items():
+        if normalized == name:
+            return month
+    return None
+
+
 @cache_data(show_spinner=False)
 def _load_dashboard_template(file_mtime_ns: int) -> dict[str, Any]:
     return json.loads(TEMPLATE_FILE.read_text(encoding="utf-8"))
@@ -174,6 +198,81 @@ def _sum_row_for_period(df: pd.DataFrame, label: str, header_row: int, ano: int,
                 if _is_date_in_period(df.iloc[header_row, j], ano, selected_months)
             )
     return 0.0
+
+
+def _load_totais_period(selected_months: list[int], year: int = 2026) -> dict[str, float]:
+    """Carrega os totais oficiais do BI na aba TOTAIS  20 E 21."""
+    empty = {
+        "receita": 0.0,
+        "custos": 0.0,
+        "resultado": 0.0,
+        "impostos": 0.0,
+        "sucumbencia": 0.0,
+        "receita_2025": 0.0,
+        "custos_2025": 0.0,
+        "resultado_2025": 0.0,
+        "variacao_receita": 0.0,
+        "variacao_custos": 0.0,
+    }
+    if not ANTECIPACAO_FILE.exists():
+        return empty
+
+    try:
+        wb = openpyxl.load_workbook(
+            ANTECIPACAO_FILE,
+            read_only=True,
+            data_only=True,
+        )
+        ws = wb["TOTAIS  20 E 21"]
+        rows = list(ws.iter_rows(values_only=True))
+    except Exception as exc:
+        print(f"[ETL] Nao foi possivel ler TOTAIS  20 E 21: {exc}")
+        return empty
+
+    header = rows[0]
+    period_cols = []
+    previous_cols = []
+    for index, header_value in enumerate(header):
+        if not hasattr(header_value, "year"):
+            continue
+        if header_value.year == year and header_value.month in selected_months:
+            period_cols.append(index)
+        if header_value.year == year - 1 and header_value.month in selected_months:
+            previous_cols.append(index)
+
+    print(f"Periodo selecionado {year} meses {selected_months}:")
+    print(f"  Colunas {year}: {[header[index].strftime('%b/%Y') for index in period_cols]}")
+    print(f"  Colunas {year - 1}: {[header[index].strftime('%b/%Y') for index in previous_cols]}")
+
+    def sum_row(label: str, columns: list[int]) -> float:
+        expected = _normalize_text(label)
+        for row in rows[1:]:
+            if _normalize_text(row[0]) == expected:
+                values = [row[index] for index in columns if row[index] not in (None, "", "-")]
+                return sum(float(value) for value in values if isinstance(value, (int, float)))
+        return 0.0
+
+    receita = sum_row("receita", period_cols)
+    custos = sum_row("custos e despesas", period_cols)
+    resultado = sum_row("resultado ig", period_cols)
+    impostos = sum_row("impostos", period_cols)
+    sucumbencia = sum_row("sucumbencia", period_cols)
+    receita_2025 = sum_row("receita", previous_cols)
+    custos_2025 = sum_row("custos e despesas", previous_cols)
+    resultado_2025 = sum_row("resultado ig", previous_cols)
+
+    return {
+        "receita": receita,
+        "custos": custos,
+        "resultado": resultado,
+        "impostos": impostos,
+        "sucumbencia": sucumbencia,
+        "receita_2025": receita_2025,
+        "custos_2025": custos_2025,
+        "resultado_2025": resultado_2025,
+        "variacao_receita": ((receita - receita_2025) / receita_2025) if receita_2025 else 0.0,
+        "variacao_custos": ((custos - custos_2025) / custos_2025) if custos_2025 else 0.0,
+    }
 
 
 def _month_columns_from_header(df: pd.DataFrame, header_row: int, ano: int, selected_months: list[int]) -> list[int]:
@@ -303,6 +402,28 @@ def _get_cost_block_end(df: pd.DataFrame, start_row: int, next_header_row: int |
 def _is_cost_row_excluded(label: str) -> bool:
     if not label or label == "nan":
         return True
+    excluir_pessoal = [
+        "remuneracao",
+        "socio",
+        "socios",
+        "celetista",
+        "estagiario",
+        "estagiarios",
+        "plano de saude",
+        "vale alimentacao",
+        "vale transporte",
+        "seguro de vida",
+        "seg vida",
+        "encargos",
+        "ferias",
+        "13o",
+        "plano odontologico",
+        "exames medicos",
+        "ir s/ salario",
+        "indenizacao",
+        "bonificacoes",
+        "premiacoes",
+    ]
     excluded_fragments = [
         # totais e receita
         "total",
@@ -366,6 +487,7 @@ def _is_cost_row_excluded(label: str) -> bool:
         "correspondente",
         "correspondentes",
     ]
+    excluded_fragments.extend(excluir_pessoal)
     return any(fragment in label for fragment in excluded_fragments)
 
 
@@ -612,64 +734,155 @@ def _share(value: float, total: float) -> str:
     return _format_percent((value / total * 100) if total else 0.0)
 
 
-def _get_folha_row(df: pd.DataFrame, label: str) -> pd.Series:
-    expected = _normalize_text(label)
-    labels = df.iloc[:, 1].astype(str).map(_normalize_text)
-    rows = df[labels.str.contains(expected, regex=False, na=False)]
-    if rows.empty:
-        raise ValueError(f"Linha '{label}' nao encontrada em {FOLHA_FILE.name}.")
-    return rows.iloc[0]
+FOLHA_SOCIOS_CAPITAL = {_normalize_text("Socios de capital GAN")}
+FOLHA_SOCIOS_SERVICO = {
+    _normalize_text("Socios de servico GAN"),
+    _normalize_text("Socios de servico GAT"),
+    _normalize_text("Socios de servico GAA"),
+}
+FOLHA_CLT = {_normalize_text("Celetista")}
+FOLHA_ESTAGIARIOS = {
+    _normalize_text("Estagiarios RPA + RPA + PJ"),
+    _normalize_text("Estagiarios GAN"),
+    _normalize_text("Estagiarios GAT"),
+}
 
 
-def _load_people_and_payroll_data() -> dict[str, Any]:
+def _empty_people_and_payroll_data() -> dict[str, Any]:
+    return {
+        "people": {
+            "total": 0,
+            "socios": {"qtd": 0, "pct": 0.0},
+            "clt": {"qtd": 0, "pct": 0.0},
+            "estagiarios": {"qtd": 0, "pct": 0.0},
+        },
+        "socios_servico_val": 0.0,
+        "socios_capital_val": 0.0,
+        "socios_val": 0.0,
+        "clt_val": 0.0,
+        "estagiarios_val": 0.0,
+        "total_pessoas_val": 0.0,
+        "total_folha_val": 0.0,
+        "folha_months_used": [],
+        "folha_snapshot_month": None,
+    }
+
+
+def _find_folha_columns(df: pd.DataFrame) -> tuple[int, int, int, int] | None:
+    for row_index in range(len(df)):
+        headers = {
+            _normalize_text(df.iloc[row_index, column_index]): column_index
+            for column_index in range(len(df.columns))
+        }
+        if {"categoria", "quantidade", "valor"}.issubset(headers):
+            return row_index, headers["categoria"], headers["quantidade"], headers["valor"]
+    return None
+
+
+def _read_folha_month(sheet_name: str) -> dict[str, Any]:
+    df = pd.read_excel(FOLHA_FILE, sheet_name=sheet_name, header=None, engine="openpyxl").fillna("")
+    columns = _find_folha_columns(df)
+    if columns is None:
+        print(f"[ETL] Aba de folha ignorada sem cabecalho esperado: {sheet_name}")
+        return {"records": {}, "total_qtd": 0.0, "total_valor": 0.0}
+
+    header_row, category_col, quantity_col, value_col = columns
+    records: dict[str, dict[str, float]] = {}
+    total_qtd = 0.0
+    total_valor = 0.0
+
+    for row_index in range(header_row + 1, len(df)):
+        category = _normalize_text(df.iloc[row_index, category_col])
+        if not category or category in {"total", "totais"}:
+            continue
+
+        qtd = _to_float(df.iloc[row_index, quantity_col])
+        valor = _to_float(df.iloc[row_index, value_col])
+        records[category] = {"qtd": qtd, "valor": valor}
+        total_qtd += qtd
+        total_valor += valor
+
+    return {"records": records, "total_qtd": total_qtd, "total_valor": total_valor}
+
+
+def _sum_folha_categories(month_data: dict[str, Any], categories: set[str], field: str) -> float:
+    records = month_data.get("records", {})
+    return sum(_to_float(records.get(category, {}).get(field, 0.0)) for category in categories)
+
+
+def _load_people_and_payroll_data(selected_months: list[int]) -> dict[str, Any]:
     """Le pessoas e valores de folha em data/Resumo - folha.xlsx."""
     if not FOLHA_FILE.exists():
-        return {
-            "people": {
-                "total": 0,
-                "socios": {"qtd": 0, "pct": 0.0},
-                "clt": {"qtd": 0, "pct": 0.0},
-                "estagiarios": {"qtd": 0, "pct": 0.0},
-            },
-            "socios_servico_val": 0.0,
-            "clt_val": 0.0,
-        }
+        return _empty_people_and_payroll_data()
 
-    df = pd.read_excel(FOLHA_FILE, sheet_name="Planilha1", header=None, engine="openpyxl").fillna("")
+    valid_selected_months = sorted({month for month in selected_months if 1 <= month <= 12})
+    if not valid_selected_months:
+        return _empty_people_and_payroll_data()
 
-    socios_gan = _get_folha_row(df, "Sócios de serviço GAN")
-    socios_gat = _get_folha_row(df, "Sócios de serviço GAT")
-    socios_gaa = _get_folha_row(df, "Sócios de serviço GAA")
-    clt = _get_folha_row(df, "Celetista")
+    workbook = pd.ExcelFile(FOLHA_FILE, engine="openpyxl")
+    monthly_sheets = {
+        month: sheet_name
+        for sheet_name in workbook.sheet_names
+        if (month := _month_number_from_sheet_name(sheet_name)) is not None
+    }
+    months_to_read = [month for month in valid_selected_months if month in monthly_sheets]
 
-    socios_total_qtd = (
-        _to_float(socios_gan.iloc[2])
-        + _to_float(socios_gat.iloc[2])
-        + _to_float(socios_gaa.iloc[2])
+    if not months_to_read:
+        print(f"[ETL] Nenhuma aba mensal de folha encontrada para meses {valid_selected_months}.")
+        return _empty_people_and_payroll_data()
+
+    monthly_data = {
+        month: _read_folha_month(monthly_sheets[month])
+        for month in months_to_read
+    }
+    snapshot_month = max(monthly_data)
+    snapshot_data = monthly_data[snapshot_month]
+
+    socios_servico_qtd = _sum_folha_categories(snapshot_data, FOLHA_SOCIOS_SERVICO, "qtd")
+    socios_capital_qtd = _sum_folha_categories(snapshot_data, FOLHA_SOCIOS_CAPITAL, "qtd")
+    clt_qtd = _sum_folha_categories(snapshot_data, FOLHA_CLT, "qtd")
+    estagiarios_qtd = _sum_folha_categories(snapshot_data, FOLHA_ESTAGIARIOS, "qtd")
+    total_profissionais = snapshot_data["total_qtd"]
+
+    socios_servico_val = sum(
+        _sum_folha_categories(month_data, FOLHA_SOCIOS_SERVICO, "valor")
+        for month_data in monthly_data.values()
     )
-    socios_total_val = (
-        _to_float(socios_gan.iloc[3])
-        + _to_float(socios_gat.iloc[3])
-        + _to_float(socios_gaa.iloc[3])
+    socios_capital_val = sum(
+        _sum_folha_categories(month_data, FOLHA_SOCIOS_CAPITAL, "valor")
+        for month_data in monthly_data.values()
     )
-    clt_qtd = _to_float(clt.iloc[2])
-    clt_val = _to_float(clt.iloc[3])
-
-    total_pessoas = _to_float(df.iloc[:, 2].replace("", pd.NA).dropna().iloc[-1])
-    est_qtd = max(total_pessoas - socios_total_qtd - clt_qtd, 0.0)
+    clt_val = sum(
+        _sum_folha_categories(month_data, FOLHA_CLT, "valor")
+        for month_data in monthly_data.values()
+    )
+    estagiarios_val = sum(
+        _sum_folha_categories(month_data, FOLHA_ESTAGIARIOS, "valor")
+        for month_data in monthly_data.values()
+    )
+    total_folha_val = sum(_to_float(month_data["total_valor"]) for month_data in monthly_data.values())
+    total_pessoas_val = socios_servico_val + socios_capital_val + clt_val + estagiarios_val
 
     def pct(value: float) -> float:
-        return (value / total_pessoas) if total_pessoas else 0.0
+        return (value / total_profissionais) if total_profissionais else 0.0
 
     return {
         "people": {
-            "total": int(round(total_pessoas)),
-            "socios": {"qtd": int(round(socios_total_qtd)), "pct": pct(socios_total_qtd)},
+            "total": int(round(total_profissionais)),
+            "socios": {"qtd": int(round(socios_servico_qtd)), "pct": pct(socios_servico_qtd)},
             "clt": {"qtd": int(round(clt_qtd)), "pct": pct(clt_qtd)},
-            "estagiarios": {"qtd": int(round(est_qtd)), "pct": pct(est_qtd)},
+            "estagiarios": {"qtd": int(round(estagiarios_qtd)), "pct": pct(estagiarios_qtd)},
         },
-        "socios_servico_val": socios_total_val,
+        "socios_servico_val": socios_servico_val,
+        "socios_capital_val": socios_capital_val,
+        "socios_val": socios_servico_val,
         "clt_val": clt_val,
+        "estagiarios_val": estagiarios_val,
+        "total_pessoas_val": total_pessoas_val,
+        "total_folha_val": total_folha_val,
+        "folha_months_used": months_to_read,
+        "folha_snapshot_month": snapshot_month,
+        "socios_capital_qtd": int(round(socios_capital_qtd)),
     }
 
 
@@ -718,19 +931,29 @@ def get_extracted_data(ano: int, selected_months: list[int], file_mtime_ns: int 
     outras_receitas = sum(_sum_fixed_row(df_receita, row_index, receita_month_columns) for row_index in outras_linhas)
     sucumb = sucumb_1 + sucumb_2
     receita_total = contratuais + sucumb + outras_receitas
+    totais_bi = _load_totais_period(selected_months, ano)
+    if totais_bi["receita"]:
+        receita_total = totais_bi["receita"]
+        sucumb = totais_bi["sucumbencia"]
+        outras_receitas = min(outras_receitas, max(receita_total - sucumb, 0.0))
+        contratuais = max(receita_total - sucumb - outras_receitas, 0.0)
     pct_contratual = (contratuais / receita_total) if receita_total else 0.0
     pct_sucumbencia = (sucumb / receita_total) if receita_total else 0.0
     pct_outras = (outras_receitas / receita_total) if receita_total else 0.0
 
-    folha_data = _load_people_and_payroll_data()
+    folha_data = _load_people_and_payroll_data(selected_months)
 
     cost_totals = _extract_client_costs(f, selected_months)
     correspondentes = cost_totals["correspondentes"]
     outras_despesas = cost_totals["outras_despesas"]
-    impostos = cost_totals["impostos"]
-    socios_servico = folha_data["socios_servico_val"]
+    impostos = totais_bi["impostos"] if totais_bi["impostos"] else cost_totals["impostos"]
+    socios = folha_data["socios_val"]
+    socios_capital = folha_data["socios_capital_val"]
     clt = folha_data["clt_val"]
-    total_despesas = correspondentes + outras_despesas + impostos + socios_servico + clt
+    estagiarios = folha_data["estagiarios_val"]
+    total_pessoas_custo = folha_data["total_pessoas_val"]
+    total_despesas_detalhado = correspondentes + outras_despesas + impostos + total_pessoas_custo
+    total_despesas = totais_bi["custos"] if totais_bi["custos"] else total_despesas_detalhado
 
     df_resumo_orc = pd.read_excel(f, sheet_name="Resumo Orç 2026", header=None, engine="openpyxl").fillna("")
     receita_orcada_anual = _get_table_value_by_labels(df_resumo_orc, "Total", "Receitas")
@@ -738,20 +961,23 @@ def get_extracted_data(ano: int, selected_months: list[int], file_mtime_ns: int 
     meta_periodo_receita = receita_orcada_anual / 12 * meses_periodo if receita_orcada_anual and meses_periodo else 0.0
     pct_orcado = (receita_total / meta_periodo_receita) if meta_periodo_receita else 0.0
 
-    receita_2025_periodo = 0.0
-    cost_total_anterior = 0.0
-    try:
-        df_comparativo = pd.read_excel(f, sheet_name="Comparativo 26-25", header=None, engine="openpyxl").fillna("")
-        receita_2025_periodo = _get_comparativo_2025_period(df_comparativo, selected_months)
-        cost_total_anterior = _get_comparativo_total_2025_period(df_comparativo, "Despesa", selected_months)
-    except Exception as exc:
-        print(f"[ETL] Nao foi possivel ler Comparativo 26-25: {exc}")
-    variacao_yoy = ((receita_total - receita_2025_periodo) / receita_2025_periodo) if receita_2025_periodo else 0.0
-    variacao_custos_yoy = (
-        (total_despesas - cost_total_anterior) / cost_total_anterior
-        if cost_total_anterior
-        else 0.0
-    )
+    receita_2025_periodo = totais_bi["receita_2025"]
+    cost_total_anterior = totais_bi["custos_2025"]
+    variacao_yoy = totais_bi["variacao_receita"]
+    variacao_custos_yoy = totais_bi["variacao_custos"]
+    if not receita_2025_periodo or not cost_total_anterior:
+        try:
+            df_comparativo = pd.read_excel(f, sheet_name="Comparativo 26-25", header=None, engine="openpyxl").fillna("")
+            receita_2025_periodo = receita_2025_periodo or _get_comparativo_2025_period(df_comparativo, selected_months)
+            cost_total_anterior = cost_total_anterior or _get_comparativo_total_2025_period(df_comparativo, "Despesa", selected_months)
+        except Exception as exc:
+            print(f"[ETL] Nao foi possivel ler Comparativo 26-25: {exc}")
+        variacao_yoy = ((receita_total - receita_2025_periodo) / receita_2025_periodo) if receita_2025_periodo else 0.0
+        variacao_custos_yoy = (
+            (total_despesas - cost_total_anterior) / cost_total_anterior
+            if cost_total_anterior
+            else 0.0
+        )
 
     # --- 4 & 5. Receita -> Faturamento por Cliente & Sucumbência ---
     clientes = []
@@ -798,7 +1024,7 @@ def get_extracted_data(ano: int, selected_months: list[int], file_mtime_ns: int 
         ranking.append({"name": "Outros", "value": _format_currency_full(outros)})
 
     total_card_costs = total_despesas
-    item_sum = impostos + socios_servico + clt + correspondentes + outras_despesas
+    item_sum = impostos + socios + socios_capital + clt + estagiarios + correspondentes + outras_despesas
     diff = total_card_costs - item_sum
     if abs(diff) > 0.01:
         print(f"[ETL] Diferença no card Estrutura de Custos: {diff:.2f}")
@@ -823,12 +1049,22 @@ def get_extracted_data(ano: int, selected_months: list[int], file_mtime_ns: int 
         "variacao_yoy": variacao_yoy,
         "cost_total_anterior": cost_total_anterior,
         "variacao_custos_yoy": variacao_custos_yoy,
+        "resultado_total": totais_bi["resultado"],
+        "resultado_2025": totais_bi["resultado_2025"],
+        "totais_bi": totais_bi,
         "sucumb": sucumb,
         "impostos": impostos,
         "top_5": ranking,
         "total_despesas": total_despesas,
-        "socios_servico": socios_servico,
+        "socios_servico": folha_data["socios_servico_val"],
+        "socios_capital": socios_capital,
+        "socios": socios,
         "clt": clt,
+        "estagiarios": estagiarios,
+        "total_pessoas_custo": total_pessoas_custo,
+        "total_folha_val": folha_data["total_folha_val"],
+        "folha_months_used": folha_data["folha_months_used"],
+        "folha_snapshot_month": folha_data["folha_snapshot_month"],
         "correspondentes": correspondentes,
         "outras_despesas": outras_despesas,
         "clientes": clientes
@@ -911,10 +1147,20 @@ def get_dashboard_data(mes: int, ano: int, selected_months: list[int] | None = N
     }
     
     cost_total = data["total_despesas"]
+    socios_total = data["socios_servico"] + data["socios_capital"]
     cost_groups = [
         {"label": "Impostos", "amount": data["impostos"]},
-        {"label": "Sócios de Serviço", "amount": data["socios_servico"]},
+        {"label": "Sócios", "amount": data["socios"]},
         {"label": "CLT", "amount": data["clt"]},
+        {"label": "Estagiários", "amount": data["estagiarios"]},
+        {"label": "Correspondentes", "amount": data["correspondentes"]},
+        {"label": "Outras Despesas", "amount": data["outras_despesas"]},
+    ]
+    cost_groups = [
+        {"label": "Sócios", "amount": socios_total},
+        {"label": "Impostos", "amount": data["impostos"]},
+        {"label": "CLT", "amount": data["clt"]},
+        {"label": "Estagiários", "amount": data["estagiarios"]},
         {"label": "Correspondentes", "amount": data["correspondentes"]},
         {"label": "Outras Despesas", "amount": data["outras_despesas"]},
     ]
@@ -928,7 +1174,10 @@ def get_dashboard_data(mes: int, ano: int, selected_months: list[int] | None = N
         "outras_despesas": data["outras_despesas"],
         "impostos": data["impostos"],
         "socios_servico": data["socios_servico"],
+        "socios": socios_total,
         "clt": data["clt"],
+        "estagiarios": data["estagiarios"],
+        "total_pessoas_custo": data["total_pessoas_custo"],
         "cost_total_anterior": data["cost_total_anterior"],
         "variacao_custos_yoy": data["variacao_custos_yoy"],
         "value": _format_currency(cost_total),
@@ -946,15 +1195,21 @@ def get_dashboard_data(mes: int, ano: int, selected_months: list[int] | None = N
                 "details": []
             },
             {
-                "label": "Sócios de Serviço", 
-                "value": _format_currency(data["socios_servico"]), 
-                "share": _share(data["socios_servico"], cost_total), 
+                "label": "Sócios", 
+                "value": _format_currency(data["socios"]), 
+                "share": _share(data["socios"], cost_total), 
                 "details": []
             },
             {
                 "label": "CLT", 
                 "value": _format_currency(data["clt"]), 
                 "share": _share(data["clt"], cost_total), 
+                "details": []
+            },
+            {
+                "label": "Estagiários", 
+                "value": _format_currency(data["estagiarios"]), 
+                "share": _share(data["estagiarios"], cost_total), 
                 "details": []
             },
             {
@@ -971,11 +1226,58 @@ def get_dashboard_data(mes: int, ano: int, selected_months: list[int] | None = N
             }
         ]
     }
+
+    template["cost_structure"].update({
+        "socios_servico": data["socios_servico"],
+        "socios_capital": data["socios_capital"],
+        "socios": socios_total,
+        "total_folha_val": data["total_folha_val"],
+        "folha_months_used": data["folha_months_used"],
+        "folha_snapshot_month": data["folha_snapshot_month"],
+        "items": [
+            {
+                "label": "Impostos",
+                "value": _format_currency(data["impostos"]),
+                "share": _share(data["impostos"], cost_total),
+                "details": [],
+            },
+            {
+                "label": "Sócios",
+                "value": _format_currency(socios_total),
+                "share": _share(socios_total, cost_total),
+                "details": [],
+            },
+            {
+                "label": "CLT",
+                "value": _format_currency(data["clt"]),
+                "share": _share(data["clt"], cost_total),
+                "details": [],
+            },
+            {
+                "label": "Estagiários",
+                "value": _format_currency(data["estagiarios"]),
+                "share": _share(data["estagiarios"], cost_total),
+                "details": [],
+            },
+            {
+                "label": "Correspondentes",
+                "value": _format_currency(data["correspondentes"]),
+                "share": _share(data["correspondentes"], cost_total),
+                "details": [],
+            },
+            {
+                "label": "Outras Despesas",
+                "value": _format_currency(data["outras_despesas"]),
+                "share": _share(data["outras_despesas"], cost_total),
+                "details": [],
+            },
+        ],
+    })
     
     template["net_result"] = {
         "icon": "📊",
         "title": "Resultado Líquido",
-        "value": _format_currency(receita_total * data["ml"]),
+        "value": _format_currency(data["resultado_total"] if data["resultado_total"] else receita_total * data["ml"]),
         "subtitle": ""
     }
     
@@ -1009,7 +1311,7 @@ def get_dashboard_data(mes: int, ano: int, selected_months: list[int] | None = N
         "subtitle": "",
         "rows": [
             {
-                "label": "Sócios de Serviço",
+                "label": "Sócios",
                 "value": _format_count(data["people"]["socios"]["qtd"]),
                 "share": _format_percent(data["people"]["socios"]["pct"] * 100),
             },
@@ -1025,6 +1327,8 @@ def get_dashboard_data(mes: int, ano: int, selected_months: list[int] | None = N
             },
         ]
     }
+
+    template["people"]["rows"][0]["label"] = "Sócios de Serviço"
     
     template["top_clients"] = {
         "icon": "🏆",

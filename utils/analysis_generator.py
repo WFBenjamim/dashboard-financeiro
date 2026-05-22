@@ -102,6 +102,13 @@ def _generate_insights_with_template(metrics: DashboardMetrics) -> list[dict[str
         "concentração moderada"
     )
 
+    top_clients_description = (
+        f"{metrics.lead_client_name} lidera um grupo que soma {format_brl(metrics.top_group_total)} "
+        f"e mantém {top_group_risk} na frente comercial."
+        if metrics.top_clients
+        else "Sem faturamento por cliente no período selecionado."
+    )
+
     return [
         {
             "tone": "red",
@@ -110,10 +117,10 @@ def _generate_insights_with_template(metrics: DashboardMetrics) -> list[dict[str
         },
         {
             "tone": "yellow",
-            "title": f"Sócios de Serviço concentra {metrics.socios_de_servico.share}",
+            "title": f"Pessoas representam {format_percent(metrics.people_share_pct)} dos custos",
             "description": (
-                f"A linha de Sócios de Serviço soma {metrics.socios_de_servico.value} e segue como eixo prioritário "
-                f"de produtividade e revisão de eficiência."
+                f"O gasto consolidado com Sócios, CLT e Estagiários soma {format_brl(metrics.people_cost_value)}, "
+                f"representando {format_percent(metrics.people_share_pct)} do total de custos do período."
             ),
         },
         {
@@ -127,10 +134,7 @@ def _generate_insights_with_template(metrics: DashboardMetrics) -> list[dict[str
         {
             "tone": "blue",
             "title": "Top 5 clientes",
-            "description": (
-                f"{metrics.lead_client_name} lidera um grupo que soma {format_brl(metrics.top_group_total)} "
-                f"e mantém {top_group_risk} na frente comercial."
-            ),
+            "description": top_clients_description,
         },
     ]
 
@@ -200,7 +204,7 @@ def _build_people_costs_paragraph(metrics: DashboardMetrics) -> str:
     return (
         f"O principal vetor de rigidez está na estrutura de pessoas: o desembolso com essa frente responde "
         f"por {format_percent(metrics.people_share_pct)} do total de custos, patamar {intensity}. Em paralelo, "
-        f"a linha de Sócios de Serviço concentra {metrics.socios_de_servico.share}, o que reforça a necessidade de disciplina sobre capacidade, "
+        f"a linha de Sócios concentra {metrics.socios_de_servico.share}, o que reforça a necessidade de disciplina sobre capacidade, "
         f"alocação e produtividade."
     )
 
@@ -216,6 +220,9 @@ def _build_support_costs_paragraph(metrics: DashboardMetrics) -> str:
 
 
 def _build_client_risk_paragraph(metrics: DashboardMetrics) -> str:
+    if not metrics.top_clients:
+        return "Na frente comercial, não há faturamento por cliente no período selecionado."
+
     client_names = ", ".join(client.name for client in metrics.top_clients[:5])
     concentration = (
         "um nível elevado de concentração comercial"

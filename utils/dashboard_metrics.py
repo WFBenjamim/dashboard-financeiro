@@ -33,6 +33,7 @@ class DashboardMetrics:
     cost_change_pct: float
     sucumbency_share_pct: float
     net_without_sucumbency: float
+    people_cost_value: float
     people_share_pct: float
     socios_de_servico: BreakdownMetric
     taxes: BreakdownMetric
@@ -69,12 +70,14 @@ def build_dashboard_metrics(content: dict[str, Any]) -> DashboardMetrics:
     sucumbency_share_pct = parse_percent(sucumbency_row["share"])
     net_without_sucumbency = extract_currency_from_text(result["subtitle"])
 
-    socios_de_servico = _to_breakdown_metric(_find_item_by_label(costs["items"], "Sócios de Serviço"))
+    socios_de_servico = _to_breakdown_metric(_find_item_by_label(costs["items"], "Sócios"))
     clt_cost = _to_breakdown_metric(_find_item_by_label(costs["items"], "CLT"))
+    estagiarios_cost = _to_breakdown_metric(_find_item_by_label(costs["items"], "Estagiários"))
+    people_cost_value = socios_de_servico.amount + clt_cost.amount + estagiarios_cost.amount
     people_share_pct = (
-        (socios_de_servico.amount + clt_cost.amount) / cost_total * 100
+        people_cost_value / cost_total * 100
         if cost_total
-        else socios_de_servico.share_pct + clt_cost.share_pct
+        else socios_de_servico.share_pct + clt_cost.share_pct + estagiarios_cost.share_pct
     )
     taxes = _to_breakdown_metric(_find_item_by_label(costs["items"], "Impostos"))
     correspondents = _to_breakdown_metric(_find_item_by_label(costs["items"], "Correspondentes"))
@@ -84,8 +87,8 @@ def build_dashboard_metrics(content: dict[str, Any]) -> DashboardMetrics:
     top_clients = tuple(_to_client_metric(item) for item in clients)
 
     top_group_total = sum(client.amount for client in top_clients)
-    lead_client = top_clients[0]
-    lead_client_share_pct = (lead_client.amount / top_group_total * 100) if top_group_total else 0.0
+    lead_client = top_clients[0] if top_clients else None
+    lead_client_share_pct = (lead_client.amount / top_group_total * 100) if lead_client and top_group_total else 0.0
 
     return DashboardMetrics(
         revenue_total=revenue_total,
@@ -95,6 +98,7 @@ def build_dashboard_metrics(content: dict[str, Any]) -> DashboardMetrics:
         cost_change_pct=cost_change_pct,
         sucumbency_share_pct=sucumbency_share_pct,
         net_without_sucumbency=net_without_sucumbency,
+        people_cost_value=people_cost_value,
         people_share_pct=people_share_pct,
         socios_de_servico=socios_de_servico,
         taxes=taxes,
@@ -105,7 +109,7 @@ def build_dashboard_metrics(content: dict[str, Any]) -> DashboardMetrics:
         people_breakdown=people_breakdown,
         top_clients=top_clients,
         top_group_total=top_group_total,
-        lead_client_name=lead_client.name,
+        lead_client_name=lead_client.name if lead_client else "",
         lead_client_share_pct=lead_client_share_pct,
     )
 
@@ -188,6 +192,16 @@ def _find_item_by_label(items: list[dict[str, Any]], label: str) -> dict[str, An
     for item in items:
         if normalize_key(str(item.get("label", ""))) == expected:
             return item
+    if "cios" in expected or "sa3cios" in expected:
+        for item in items:
+            normalized = normalize_key(str(item.get("label", "")))
+            if normalized in {"socios", "socios de servico"}:
+                return item
+    if "estagi" in expected:
+        for item in items:
+            normalized = normalize_key(str(item.get("label", "")))
+            if normalized.startswith("estagi"):
+                return item
     raise KeyError(f"Item '{label}' não encontrado.")
 
 

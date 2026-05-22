@@ -23,6 +23,7 @@ build/
 # Logs and local files
 *.log
 .DS_Store
+Thumbs.db
 *.pem
 
 # Package manager logs
