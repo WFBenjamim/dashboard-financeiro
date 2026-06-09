@@ -148,7 +148,7 @@ def load_performance_budget_metrics(file_path: str, year: int, selected_months: 
         "budgetCosts": 0.0,
         "budgetResult": 0.0,
         "source": "PERFORMANCE.XLSX",
-        "budgetLogic": "Linha consolidada 1 - TODOS; soma mensal K/O/AB conforme meses selecionados",
+        "budgetLogic": "Linha consolidada 1 - TODOS; soma mensal K/V/AB conforme meses selecionados",
         "months": months,
         "validation": {
             "isJanuaryToPeriod": _is_january_to_selected_months(months),
@@ -199,7 +199,7 @@ def load_performance_budget_metrics(file_path: str, year: int, selected_months: 
 
         matching_rows += 1
         result["budgetRevenue"] += _to_float(row[10] if len(row) > 10 else 0.0)
-        result["budgetCosts"] += _to_float(row[14] if len(row) > 14 else 0.0)
+        result["budgetCosts"] += _to_float(row[21] if len(row) > 21 else 0.0)
         result["budgetResult"] += _to_float(row[27] if len(row) > 27 else 0.0)
 
         if month_date.month == last_month:
@@ -219,6 +219,79 @@ def load_performance_budget_metrics(file_path: str, year: int, selected_months: 
         result["validation"]["revenueDiff"] = result["budgetRevenue"] - last_accumulated["revenueAccumulated"]
         result["validation"]["costsDiff"] = result["budgetCosts"] - last_accumulated["costsAccumulated"]
         result["validation"]["resultDiff"] = result["budgetResult"] - last_accumulated["resultAccumulated"]
+
+    return result
+
+
+def load_performance_margin_metrics(file_path: str, year: int, selected_months: list[int]) -> dict[str, Any]:
+    """
+    Le as margens reais da aba Performance usando apenas a linha consolidada 1 - TODOS.
+    MO=(I-M-Q)/I; ML=Z/I.
+    """
+    months = sorted({month for month in selected_months if 1 <= month <= 12})
+    result = {
+        "operational": 0.0,
+        "net": 0.0,
+        "realRevenue": 0.0,
+        "realExpenses": 0.0,
+        "taxes": 0.0,
+        "realResult": 0.0,
+        "source": "PERFORMANCE.XLSX",
+        "logic": "Linha consolidada 1 - TODOS; MO=(I-M-Q)/I; ML=Z/I",
+        "months": months,
+        "available": False,
+        "error": None,
+    }
+
+    path = Path(file_path)
+    if not path.exists():
+        result["error"] = f"Arquivo nao encontrado: {path.name}"
+        print(f"[ETL Performance Margens] {result['error']}")
+        return result
+
+    if not months:
+        result["error"] = "Nenhum mes valido selecionado."
+        print(f"[ETL Performance Margens] {result['error']}")
+        return result
+
+    try:
+        workbook = openpyxl.load_workbook(path, read_only=True, data_only=True)
+        ws = workbook["Performance"]
+    except Exception as exc:
+        result["error"] = f"Nao foi possivel ler Performance: {exc}"
+        print(f"[ETL Performance Margens] {result['error']}")
+        return result
+
+    matching_rows = 0
+    for row in ws.iter_rows(min_row=2, values_only=True):
+        group = _normalize_text(row[1] if len(row) > 1 else "")
+        carteira = _normalize_text(row[3] if len(row) > 3 else "")
+        if group != "1 - todos" and carteira != "1 - todos":
+            continue
+
+        month_date = row[7] if len(row) > 7 else None
+        if not _is_valid_excel_date(month_date):
+            continue
+        if month_date.year != year or month_date.month not in months:
+            continue
+
+        matching_rows += 1
+        result["realRevenue"] += _to_float(row[8] if len(row) > 8 else 0.0)
+        result["realExpenses"] += _to_float(row[12] if len(row) > 12 else 0.0)
+        result["taxes"] += _to_float(row[16] if len(row) > 16 else 0.0)
+        result["realResult"] += _to_float(row[25] if len(row) > 25 else 0.0)
+
+    if matching_rows == 0:
+        result["error"] = "Linha consolidada 1 - TODOS nao encontrada para o periodo selecionado."
+        print(f"[ETL Performance Margens] {result['error']}")
+        return result
+
+    if result["realRevenue"]:
+        result["operational"] = (
+            result["realRevenue"] - result["realExpenses"] - result["taxes"]
+        ) / result["realRevenue"]
+        result["net"] = result["realResult"] / result["realRevenue"]
+        result["available"] = True
 
     return result
 
@@ -284,6 +357,108 @@ def load_people_costs_from_omie(file_path: str, selected_months: list[int]) -> d
         result["error"] = "Nenhum custo financeiro de pessoas encontrado na OMIE para o periodo."
         print(f"[ETL OMIE] {result['error']}")
 
+    return result
+
+
+def load_cost_distribution_from_omie(file_path: str, selected_months: list[int]) -> dict[str, Any]:
+    """
+    Le data/Custos OMIE.xlsx e retorna a distribuicao de custos por Grupo Resumo Final,
+    respeitando os meses selecionados.
+    """
+    months = sorted({month for month in selected_months if 1 <= month <= 12})
+    result = {
+        "source": "Custos OMIE.xlsx",
+        "logic": "Soma da coluna Valor por Grupo Resumo Final; percentuais recalculados sobre o total do periodo",
+        "months": [],
+        "total": 0.0,
+        "items": [],
+        "rawItems": [],
+        "available": False,
+        "error": None,
+    }
+
+    path = Path(file_path)
+    if not path.exists():
+        result["error"] = f"Arquivo nao encontrado: {path.name}"
+        print(f"[ETL OMIE Distribuicao] {result['error']}")
+        return result
+
+    if not months:
+        result["error"] = "Nenhum mes valido selecionado."
+        print(f"[ETL OMIE Distribuicao] {result['error']}")
+        return result
+
+    try:
+        workbook = openpyxl.load_workbook(path, read_only=True, data_only=True)
+    except Exception as exc:
+        result["error"] = f"Nao foi possivel ler Custos OMIE: {exc}"
+        print(f"[ETL OMIE Distribuicao] {result['error']}")
+        return result
+
+    totals_by_key: dict[str, dict[str, Any]] = {}
+    ignored_labels = {
+        "",
+        "grupo resumo final",
+        "total",
+        "total geral",
+        "subtotal",
+        "sub total",
+    }
+
+    for month in months:
+        sheet_name = OMIE_COST_SHEET_NAMES.get(month)
+        if not sheet_name or sheet_name not in workbook.sheetnames:
+            print(f"[ETL OMIE Distribuicao] Aba nao encontrada para mes {month}: {sheet_name}")
+            continue
+
+        ws = workbook[sheet_name]
+        result["months"].append(month)
+        for row in ws.iter_rows(min_row=2, values_only=True):
+            raw_label = row[0] if len(row) > 0 else ""
+            label = str(raw_label).strip()
+            normalized = _normalize_text(label)
+            value = _to_float(row[1] if len(row) > 1 else 0.0)
+
+            if normalized in ignored_labels or not value:
+                continue
+            if normalized.startswith("total ") or normalized.endswith(" total"):
+                continue
+
+            if normalized not in totals_by_key:
+                totals_by_key[normalized] = {"name": label, "value": 0.0}
+            totals_by_key[normalized]["value"] += value
+
+    raw_items = sorted(
+        (item for item in totals_by_key.values() if item["value"] > 0),
+        key=lambda item: item["value"],
+        reverse=True,
+    )
+    total = sum(item["value"] for item in raw_items)
+
+    if not total:
+        result["error"] = "Nenhum grupo de custo encontrado na OMIE para o periodo."
+        print(f"[ETL OMIE Distribuicao] {result['error']}")
+        return result
+
+    for item in raw_items:
+        item["percent"] = item["value"] / total
+
+    top_items = raw_items[:8]
+    other_value = sum(item["value"] for item in raw_items[8:])
+    items = [dict(item) for item in top_items]
+    if other_value > 0:
+        items.append({
+            "name": "Outros",
+            "value": other_value,
+            "percent": other_value / total,
+        })
+
+    result.update({
+        "total": total,
+        "items": items,
+        "rawItems": raw_items,
+        "available": True,
+    })
     return result
 
 
@@ -1124,7 +1299,7 @@ def get_extracted_data(ano: int, selected_months: list[int], file_mtime_ns: int 
     _ = file_mtime_ns
     f = str(ORCAMENTO_FILE)
     
-    # --- 1. KPI AN (Margens) & 2. KPI AN (Pessoas) ---
+    # --- 1. KPI AN (Pessoas) ---
     df_kpi = pd.read_excel(f, sheet_name="KPI AN", header=None, engine="openpyxl").fillna("")
     
     # Localizar a coluna "TOTAL" (última coluna)
@@ -1134,24 +1309,13 @@ def get_extracted_data(ano: int, selected_months: list[int], file_mtime_ns: int 
             col_total_idx = j
             break
             
-    mo, ml, pessoas = 0.0, 0.0, 0.0
-    receita_kpi = 0.0
-    resultado_kpi = 0.0
+    pessoas = 0.0
     
     if col_total_idx is not None:
         for i in range(len(df_kpi)):
             lbl = _normalize_text(df_kpi.iloc[i, 0])
-            if "margem operacional" in lbl:
-                mo = _to_float(df_kpi.iloc[i, col_total_idx])
-            elif lbl == "receita":
-                receita_kpi = _to_float(df_kpi.iloc[i, col_total_idx])
-            elif lbl == "resultado":
-                resultado_kpi = _to_float(df_kpi.iloc[i, col_total_idx])
-            elif "quantidade de profissionais" in lbl:
+            if "quantidade de profissionais" in lbl:
                 pessoas = _to_float(df_kpi.iloc[i, col_total_idx])
-        
-        if receita_kpi > 0:
-            ml = resultado_kpi / receita_kpi
 
     # --- 3. Resumo -> Custos e Receita -> Mix de Receitas ---
     df_receita = pd.read_excel(f, sheet_name="Receita", header=None, engine="openpyxl").fillna("")
@@ -1174,8 +1338,12 @@ def get_extracted_data(ano: int, selected_months: list[int], file_mtime_ns: int 
     pct_outras = (outras_receitas / receita_total) if receita_total else 0.0
 
     performance_budget = load_performance_budget_metrics(str(PERFORMANCE_FILE), ano, selected_months)
+    performance_margins = load_performance_margin_metrics(str(PERFORMANCE_FILE), ano, selected_months)
+    mo = performance_margins["operational"]
+    ml = performance_margins["net"]
     folha_data = _load_people_and_payroll_data(selected_months)
     omie_people_costs = load_people_costs_from_omie(str(OMIE_COSTS_FILE), selected_months)
+    cost_distribution = load_cost_distribution_from_omie(str(OMIE_COSTS_FILE), selected_months)
 
     cost_totals = _extract_client_costs(f, selected_months)
     correspondentes = cost_totals["correspondentes"]
@@ -1301,7 +1469,9 @@ def get_extracted_data(ano: int, selected_months: list[int], file_mtime_ns: int 
         "resultado_2025": totais_bi["resultado_2025"],
         "totais_bi": totais_bi,
         "budget": performance_budget,
+        "margin_metrics": performance_margins,
         "people_costs": omie_people_costs,
+        "cost_distribution": cost_distribution,
         "sucumb": sucumb,
         "impostos": impostos,
         "top_5": ranking,
@@ -1351,6 +1521,8 @@ def get_dashboard_data(mes: int, ano: int, selected_months: list[int] | None = N
     pct_outras = data["pct_outras"]
     budget = data["budget"]
     people_costs = data["people_costs"]
+    margin_metrics = data["margin_metrics"]
+    cost_distribution = data["cost_distribution"]
     
     template["header"]["subtitle"] = f"Período acumulado: {_format_months_label(selected_months, ano)}"
     template["budget"] = {
@@ -1372,6 +1544,17 @@ def get_dashboard_data(mes: int, ano: int, selected_months: list[int] | None = N
         "months": people_costs.get("months", []),
         "available": people_costs.get("available", False),
         "error": people_costs.get("error"),
+    }
+    template["costDistribution"] = {
+        "source": cost_distribution["source"],
+        "logic": cost_distribution["logic"],
+        "periodLabel": _format_months_label(selected_months, ano),
+        "months": cost_distribution.get("months", []),
+        "total": cost_distribution["total"],
+        "items": cost_distribution["items"],
+        "rawItems": cost_distribution.get("rawItems", []),
+        "available": cost_distribution.get("available", False),
+        "error": cost_distribution.get("error"),
     }
 
     data_quality_warnings = []
@@ -1636,6 +1819,16 @@ def get_dashboard_data(mes: int, ano: int, selected_months: list[int] | None = N
         "title": "Margens",
         "value": _format_percent(data["mo"] * 100),
         "subtitle": "",
+        "operational": data["mo"],
+        "net": data["ml"],
+        "source": margin_metrics["source"],
+        "logic": margin_metrics["logic"],
+        "totals": {
+            "realRevenue": margin_metrics["realRevenue"],
+            "realExpenses": margin_metrics["realExpenses"],
+            "taxes": margin_metrics["taxes"],
+            "realResult": margin_metrics["realResult"],
+        },
         "metrics": [
             {
                 "label": "Margem Operacional", 

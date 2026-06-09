@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { type ReactNode, useEffect, useState } from "react";
 import CountUp from "react-countup";
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import { EvolutionDashboardSections } from "@/components/EvolutionModal";
 import { MonthFilter } from "@/components/MonthFilter";
 import { ResultOpeningScreen } from "@/components/ResultOpeningScreen";
@@ -226,7 +227,7 @@ export default function Dashboard() {
 
         <section className="gd-top-section">
           <RevenueCard data={data.revenue_mix} insight={revenueInsight} topClients={data.top_clients} />
-          <CostCard data={data.cost_structure} insight={costInsight} />
+          <CostCard data={data.cost_structure} insight={costInsight} distribution={data.costDistribution} />
         </section>
 
         <section className="gd-kpi-row">
@@ -327,7 +328,21 @@ function RevenueHighlight({ row, items }: { row: any; items: any[] }) {
   );
 }
 
-function CostCard({ data, insight }: { data: any; insight?: any }) {
+const COST_DISTRIBUTION_COLORS = [
+  "#F59C27",
+  "#60a5fa",
+  "#34d399",
+  "#fb7185",
+  "#a78bfa",
+  "#f97316",
+  "#22d3ee",
+  "#a3e635",
+  "#facc15",
+  "#c084fc",
+];
+
+function CostCard({ data, insight, distribution }: { data: any; insight?: any; distribution?: any }) {
+  const [showDistribution, setShowDistribution] = useState(false);
   const items = data?.items || [];
   const fallbackHighlight = [...items].sort((a: any, b: any) => parseShareValue(b?.share) - parseShareValue(a?.share))[0];
   const highlight = data?.highlight || fallbackHighlight || {};
@@ -340,6 +355,16 @@ function CostCard({ data, insight }: { data: any; insight?: any }) {
   const hasMetrics = isFiniteNumber(custoOrcadoPeriodo)
     || isFiniteNumber(data?.variacao_2025)
     || isFiniteNumber(data?.pct_orcado_custos);
+  const hasDistribution = Boolean(distribution?.available && distribution?.items?.length);
+
+  useEffect(() => {
+    if (!showDistribution) return;
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") setShowDistribution(false);
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [showDistribution]);
 
   return (
     <article className="gd-card gd-card--gray">
@@ -360,6 +385,17 @@ function CostCard({ data, insight }: { data: any; insight?: any }) {
               tone={isFiniteNumber(data?.pct_orcado_custos) && data.pct_orcado_custos > 1 ? "red" : "green"}
             />
           </MetricaGrid>
+        )}
+        {hasDistribution && (
+          <div className="gd-card-actions">
+            <button
+              className="gd-secondary-action"
+              type="button"
+              onClick={() => setShowDistribution(true)}
+            >
+              Ver distribuição de custos
+            </button>
+          </div>
         )}
       </div>
       <div className="gd-cost-layout">
@@ -388,7 +424,103 @@ function CostCard({ data, insight }: { data: any; insight?: any }) {
         </div>
       </div>
       <InsightNote insight={insight} />
+      {hasDistribution && showDistribution && (
+        <CostDistributionModal
+          distribution={distribution}
+          onClose={() => setShowDistribution(false)}
+        />
+      )}
     </article>
+  );
+}
+
+function CostDistributionModal({ distribution, onClose }: { distribution: any; onClose: () => void }) {
+  const items = distribution?.items || [];
+  const total = Number(distribution?.total || 0);
+
+  return (
+    <div className="gd-modal-backdrop" role="presentation" onClick={onClose}>
+      <div
+        className="gd-modal gd-cost-distribution"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="gd-cost-distribution-title"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <button className="gd-modal__close" type="button" aria-label="Fechar" onClick={onClose}>
+          ×
+        </button>
+        <div className="gd-modal__header">
+          <h2 id="gd-cost-distribution-title">Distribuição de Custos</h2>
+          <p>{cleanText(distribution?.periodLabel || "Período selecionado")}</p>
+        </div>
+
+        <div className="gd-cost-distribution__body">
+          <div className="gd-donut-stage">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={items}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  innerRadius="58%"
+                  outerRadius="86%"
+                  paddingAngle={1.5}
+                  startAngle={90}
+                  endAngle={-270}
+                  minAngle={1}
+                  stroke="rgba(15, 23, 42, 0.42)"
+                  strokeWidth={2}
+                  isAnimationActive={false}
+                >
+                  {items.map((item: any, index: number) => (
+                    <Cell
+                      key={cleanText(item.name)}
+                      fill={COST_DISTRIBUTION_COLORS[index % COST_DISTRIBUTION_COLORS.length]}
+                    />
+                  ))}
+                </Pie>
+                <Tooltip content={<CostDistributionTooltip />} />
+              </PieChart>
+            </ResponsiveContainer>
+            <div className="gd-donut-center">
+              <span>Total</span>
+              <strong>{formatCurrency(total)}</strong>
+            </div>
+          </div>
+
+          <div className="gd-distribution-list">
+            {items.map((item: any, index: number) => (
+              <div className="gd-distribution-row" key={cleanText(item.name)}>
+                <span
+                  className="gd-distribution-row__swatch"
+                  data-color-index={index % COST_DISTRIBUTION_COLORS.length}
+                  aria-hidden="true"
+                />
+                <span className="gd-distribution-row__name">{cleanText(item.name)}</span>
+                <strong>{formatCurrency(Number(item.value || 0))}</strong>
+                <span>{formatPercentMetric(Number(item.percent || 0))}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CostDistributionTooltip({ active, payload }: any) {
+  if (!active || !payload?.length) return null;
+  const item = payload[0]?.payload || {};
+
+  return (
+    <div className="gd-chart-tooltip">
+      <strong>{cleanText(item.name)}</strong>
+      <span>{formatCurrency(Number(item.value || 0))}</span>
+      <span>{formatPercentMetric(Number(item.percent || 0))}</span>
+    </div>
   );
 }
 

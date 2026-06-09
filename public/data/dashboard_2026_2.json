@@ -93,9 +93,9 @@
     "cost_total_warning": "",
     "cost_total_anterior": 3375979.711529999,
     "variacao_custos_yoy": 0.0865597972746682,
-    "custo_orcado_periodo": 2236462.4020079332,
-    "meta_periodo_custos": 2236462.4020079332,
-    "pct_orcado_custos": 1.6401813094063438,
+    "custo_orcado_periodo": 3941773.9008990154,
+    "meta_periodo_custos": 3941773.9008990154,
+    "pct_orcado_custos": 0.9305972192181818,
     "value": "R$ 3,67 M",
     "subtitle": "+8,7% vs 2025",
     "highlight": {
@@ -147,7 +147,7 @@
     "folha_months_used": [],
     "folha_snapshot_month": null,
     "cost_subtitle": "+8,7% vs 2025",
-    "custo_orcado_anual": 2236462.4020079332,
+    "custo_orcado_anual": 3941773.9008990154,
     "meta_periodo_meses": 1,
     "variacao_2025": 0.0865597972746682
   },
@@ -170,17 +170,27 @@
   "margins": {
     "icon": "📈",
     "title": "Margens",
-    "value": "29,9%",
+    "value": "20,8%",
     "subtitle": "",
+    "operational": 0.20770176961050066,
+    "net": -0.01226900682256199,
+    "source": "PERFORMANCE.XLSX",
+    "logic": "Linha consolidada 1 - TODOS; MO=(I-M-Q)/I; ML=Z/I",
+    "totals": {
+      "realRevenue": 3623744.09,
+      "realExpenses": 2075571.2699824066,
+      "taxes": 795514.7599089999,
+      "realResult": -44459.74096342869
+    },
     "metrics": [
       {
         "label": "Margem Operacional",
-        "value": "29,9%",
+        "value": "20,8%",
         "caption": ""
       },
       {
         "label": "Margem Líquida",
-        "value": "8,8%",
+        "value": "-1,2%",
         "caption": ""
       }
     ]
@@ -297,10 +307,10 @@
   },
   "budget": {
     "revenue": 3650042.4175,
-    "costs": 2236462.4020079332,
+    "costs": 3941773.9008990154,
     "result": -291731.4833990154,
     "source": "PERFORMANCE.XLSX",
-    "logic": "Linha consolidada 1 - TODOS; soma mensal K/O/AB conforme meses selecionados",
+    "logic": "Linha consolidada 1 - TODOS; soma mensal K/V/AB conforme meses selecionados",
     "months": [
       2
     ],
@@ -332,6 +342,131 @@
     "source": "Custos OMIE.xlsx",
     "months": [
       2
+    ],
+    "available": true,
+    "error": null
+  },
+  "costDistribution": {
+    "source": "Custos OMIE.xlsx",
+    "logic": "Soma da coluna Valor por Grupo Resumo Final; percentuais recalculados sobre o total do periodo",
+    "periodLabel": "fev/26",
+    "months": [
+      2
+    ],
+    "total": 3737808.07,
+    "items": [
+      {
+        "name": "Sócios de Serviço e Capital",
+        "value": 1854097.42,
+        "percent": 0.49603869039749815
+      },
+      {
+        "name": "Impostos",
+        "value": 833034.69,
+        "percent": 0.22286716556850925
+      },
+      {
+        "name": "Celetistas",
+        "value": 505249.28,
+        "percent": 0.13517261200626604
+      },
+      {
+        "name": "Correspondentes",
+        "value": 156169.36,
+        "percent": 0.04178100027484825
+      },
+      {
+        "name": "Despesas Administrativas - Despesas Gerais",
+        "value": 102810.44,
+        "percent": 0.02750554284078048
+      },
+      {
+        "name": "Custo Operacional - Processos Trabalhistas",
+        "value": 85724.67,
+        "percent": 0.022934476140718484
+      },
+      {
+        "name": "Despesas Administrativas - Localização / Ocupação",
+        "value": 67730.01,
+        "percent": 0.01812024821274464
+      },
+      {
+        "name": "Despesas com  Marketing",
+        "value": 43179.6,
+        "percent": 0.011552118030501228
+      },
+      {
+        "name": "Outros",
+        "value": 89812.6,
+        "percent": 0.024028146528133534
+      }
+    ],
+    "rawItems": [
+      {
+        "name": "Sócios de Serviço e Capital",
+        "value": 1854097.42,
+        "percent": 0.49603869039749815
+      },
+      {
+        "name": "Impostos",
+        "value": 833034.69,
+        "percent": 0.22286716556850925
+      },
+      {
+        "name": "Celetistas",
+        "value": 505249.28,
+        "percent": 0.13517261200626604
+      },
+      {
+        "name": "Correspondentes",
+        "value": 156169.36,
+        "percent": 0.04178100027484825
+      },
+      {
+        "name": "Despesas Administrativas - Despesas Gerais",
+        "value": 102810.44,
+        "percent": 0.02750554284078048
+      },
+      {
+        "name": "Custo Operacional - Processos Trabalhistas",
+        "value": 85724.67,
+        "percent": 0.022934476140718484
+      },
+      {
+        "name": "Despesas Administrativas - Localização / Ocupação",
+        "value": 67730.01,
+        "percent": 0.01812024821274464
+      },
+      {
+        "name": "Despesas com  Marketing",
+        "value": 43179.6,
+        "percent": 0.011552118030501228
+      },
+      {
+        "name": "Despesas Administrativas - Prestadores de Serviço",
+        "value": 39633.8,
+        "percent": 0.010603487192963336
+      },
+      {
+        "name": "Custo  Operacional - Condenações de Clientes",
+        "value": 18230.0,
+        "percent": 0.004877189962297877
+      },
+      {
+        "name": "Despesas Administrativas - Consumo de Material",
+        "value": 12386.86,
+        "percent": 0.0033139368763789954
+      },
+      {
+        "name": "Despesas Administrativas - Comunicação",
+        "value": 11455.67,
+        "percent": 0.0030648095850464574
+      },
+      {
+        "name": "Despesas Administrativas - Equipamentos",
+        "value": 8106.27,
+        "percent": 0.0021687229114468686
+      }
     ],
     "available": true,
     "error": null
