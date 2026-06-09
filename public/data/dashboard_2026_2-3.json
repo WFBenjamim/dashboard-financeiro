@@ -15,9 +15,10 @@
     "pct_contratual": 0.8852013380883315,
     "pct_sucumbencia": 0.10841599229046012,
     "pct_outras": 0.0063826696212084645,
-    "pct_orcado": 0.9192233107791996,
-    "receita_orcada": 54304864.5075,
-    "meta_periodo_receita": 9050810.75125,
+    "pct_orcado": 0.9776056318453255,
+    "receita_orcada": 8510298.99275,
+    "receita_orcada_periodo": 8510298.99275,
+    "meta_periodo_receita": 8510298.99275,
     "meta_periodo_meses": 2,
     "receita_2025_periodo": 8134448.619999999,
     "variacao_yoy": 0.022775680645949085,
@@ -71,7 +72,7 @@
         "items": []
       }
     ],
-    "receita_orcada_anual": 54304864.5075,
+    "receita_orcada_anual": 8510298.99275,
     "variacao_2025": 0.022775680645949085
   },
   "cost_structure": {
@@ -81,18 +82,25 @@
     "correspondentes": 250137.57773399996,
     "outras_despesas": 608692.7470196575,
     "impostos": 1629627.3542939997,
-    "socios_servico": 2802061.68,
-    "socios": 2984302.96,
-    "clt": 424516.24,
-    "estagiarios": 152519.96000000002,
-    "total_pessoas_custo": 3561339.16,
+    "socios_servico": 3784647.61,
+    "socios": 3784647.61,
+    "clt": 1032902.54,
+    "estagiarios": 0.0,
+    "total_pessoas_custo": 4817550.15,
+    "official_total_costs": 7571991.190044427,
+    "detailed_cost_total": 7306007.829047658,
+    "cost_total_source": "INFORMAÇÕES GERENCIAIS.xlsx / TOTAIS  20 E 21 / CUSTOS E DESPESAS",
+    "cost_total_warning": "",
     "cost_total_anterior": 6826084.972329735,
     "variacao_custos_yoy": 0.10927291716090601,
+    "custo_orcado_periodo": 4526600.428515777,
+    "meta_periodo_custos": 4526600.428515777,
+    "pct_orcado_custos": 1.672776581370846,
     "value": "R$ 7,57 M",
     "subtitle": "+10,9% vs 2025",
     "highlight": {
       "label": "Sócios",
-      "value": "39,4%",
+      "value": "50,0%",
       "caption": "principal grupo de custo"
     },
     "items": [
@@ -104,20 +112,20 @@
       },
       {
         "label": "Sócios",
-        "value": "R$ 2,98 M",
-        "share": "39,4%",
+        "value": "R$ 3,78 M",
+        "share": "50,0%",
         "details": []
       },
       {
         "label": "CLT",
-        "value": "R$ 424,5 mil",
-        "share": "5,6%",
+        "value": "R$ 1,03 M",
+        "share": "13,6%",
         "details": []
       },
       {
         "label": "Estagiários",
-        "value": "R$ 152,5 mil",
-        "share": "2,0%",
+        "value": "R$ 0",
+        "share": "0,0%",
         "details": []
       },
       {
@@ -133,18 +141,14 @@
         "details": []
       }
     ],
-    "socios_capital": 182241.28,
-    "total_folha_val": 3561339.16,
-    "folha_months_used": [
-      2,
-      3
-    ],
-    "folha_snapshot_month": 3,
+    "socios_capital": 0.0,
+    "total_folha_val": 1933107.63,
+    "people_costs_source": "Custos OMIE.xlsx",
+    "folha_months_used": [],
+    "folha_snapshot_month": null,
     "cost_subtitle": "+10,9% vs 2025",
-    "custo_orcado_anual": 28243188.09342022,
-    "meta_periodo_custos": 4707198.015570036,
+    "custo_orcado_anual": 4526600.428515777,
     "meta_periodo_meses": 2,
-    "pct_orcado_custos": 1.6085983986648729,
     "variacao_2025": 0.10927291716090601
   },
   "net_result": {
@@ -152,15 +156,15 @@
     "title": "Resultado Líquido",
     "value": 747725.0339555726,
     "subtitle": "",
-    "sem_sucumbencia": -154265.25604442763,
-    "resultado_orcado_anual": 4820666.95567322,
-    "resultado_orcado": 803444.4926122032,
-    "meta_periodo_resultado": 803444.4926122032,
+    "resultado_orcado": 406849.79230465554,
+    "meta_periodo_resultado": 406849.79230465554,
     "meta_periodo_meses": 2,
+    "pct_vs_orcado": 1.837840520256833,
     "resultado_2025": 1308363.6476702648,
-    "pct_vs_orcado": 0.9306492742573014,
     "variacao_2025": -0.4285036615875045,
-    "pct_ano": 0.1551082123762169,
+    "sem_sucumbencia": -154265.25604442763,
+    "resultado_orcado_anual": 406849.79230465554,
+    "pct_ano": 0.0,
     "resultado_operacional": 2377352.3882495733
   },
   "margins": {
@@ -184,36 +188,42 @@
   "people": {
     "icon": "👥",
     "title": "Pessoas",
-    "value": "615",
-    "total": 615,
+    "value": "602",
+    "total": 602,
     "socios": {
-      "qtd": 447,
-      "pct": 0.7268292682926829
+      "qtd": 441,
+      "pct": 0.7325581395348837
     },
     "clt": {
-      "qtd": 125,
-      "pct": 0.2032520325203252
+      "qtd": 124,
+      "pct": 0.2059800664451827
     },
     "estagiarios": {
-      "qtd": 40,
-      "pct": 0.06504065040650407
+      "qtd": 34,
+      "pct": 0.05647840531561462
     },
     "subtitle": "",
     "rows": [
       {
         "label": "Sócios de Serviço",
-        "value": "447",
-        "share": "72,7%"
+        "value": "441",
+        "share": "73,3%",
+        "costValue": "R$ 3,78 M",
+        "costSource": "Custos OMIE.xlsx"
       },
       {
         "label": "CLT",
-        "value": "125",
-        "share": "20,3%"
+        "value": "124",
+        "share": "20,6%",
+        "costValue": "R$ 1,03 M",
+        "costSource": "Custos OMIE.xlsx"
       },
       {
         "label": "Estagiários",
-        "value": "40",
-        "share": "6,5%"
+        "value": "34",
+        "share": "5,6%",
+        "costValue": "",
+        "costSource": ""
       }
     ]
   },
@@ -256,13 +266,13 @@
     },
     {
       "tone": "yellow",
-      "title": "Pessoas representam 47,0% dos custos",
-      "description": "O gasto consolidado com Sócios, CLT e Estagiários soma R$ 3,56 M, representando 47,0% do total de custos do período."
+      "title": "Pessoas representam 63,5% dos custos",
+      "description": "O gasto consolidado com Sócios, CLT e Estagiários soma R$ 4,81 M, representando 63,5% do total de custos do período."
     },
     {
       "tone": "green",
       "title": "Estrutura de pessoas",
-      "description": "A base segue concentrada em pessoas, com Sócios de Serviço 72,7%, CLT 20,3%, Estagiários 6,5%, o que reforça uma estrutura mais rígida no curto prazo."
+      "description": "A base segue concentrada em pessoas, com Sócios de Serviço 73,3%, CLT 20,6%, Estagiários 5,6%, o que reforça uma estrutura mais rígida no curto prazo."
     },
     {
       "tone": "blue",
@@ -276,7 +286,7 @@
       "No acumulado do período, a receita somou R$ 8,32 M e a estrutura de custos atingiu R$ 7,57 M, produzindo resultado operacional positivo de R$ 749,7 mil. O ritmo entre receita e despesas segue relativamente equilibrado.",
       "A comparação interanual de período acumulado: fev e mar/26 deve ser lida com cautela, mas já evidencia um descompasso mais moderado entre receita e custos. Como o painel observa um recorte parcial do ano, o efeito de base, sazonalidade e timing de reconhecimento das linhas pode ampliar ou suavizar a fotografia do período.",
       "Mesmo sem considerar a sucumbência, o resultado líquido permaneceria em R$ 0, sugerindo que a geração recorrente ainda se sustenta com menor dependência de receitas extraordinárias.",
-      "O principal vetor de rigidez está na estrutura de pessoas: o desembolso com essa frente responde por 47,0% do total de custos, patamar moderado. Em paralelo, a linha de Sócios concentra 39,4%, o que reforça a necessidade de disciplina sobre capacidade, alocação e produtividade.",
+      "O principal vetor de rigidez está na estrutura de pessoas: o desembolso com essa frente responde por 63,5% do total de custos, patamar relevante. Em paralelo, a linha de Sócios concentra 50,0%, o que reforça a necessidade de disciplina sobre capacidade, alocação e produtividade.",
       "Na camada complementar, correspondentes somam R$ 250,1 mil (3,3%) e outras despesas atingem R$ 608,7 mil (8,0%). Juntas, essas rubricas representam R$ 858,8 mil e 11,3% dos custos, oferecendo espaço para ajustes táticos sem alterar a espinha dorsal da operação.",
       "Na frente comercial, o faturamento segue concentrado no top 5 clientes, formado por SANTANDER, SANEAMENTO, MRS, RECUPERA, MERCADO LIVRE, que juntos somam R$ 8,29 M. A liderança de SANTANDER, com 12,4% desse bloco, sinaliza um nível relevante de concentração comercial e mantém a diversificação da carteira como agenda prioritária."
     ],
@@ -284,6 +294,57 @@
       "mode": "template",
       "provider": null
     }
+  },
+  "budget": {
+    "revenue": 8510298.99275,
+    "costs": 4526600.428515777,
+    "result": 406849.79230465554,
+    "source": "PERFORMANCE.XLSX",
+    "logic": "Linha consolidada 1 - TODOS; soma mensal K/O/AB conforme meses selecionados",
+    "months": [
+      2,
+      3
+    ],
+    "validation": {
+      "isJanuaryToPeriod": false,
+      "revenueAccumulated": 0.0,
+      "costsAccumulated": 0.0,
+      "resultAccumulated": 0.0,
+      "revenueDiff": 0.0,
+      "costsDiff": 0.0,
+      "resultDiff": 0.0
+    },
+    "error": null
+  },
+  "peopleCosts": {
+    "partners": 3784647.61,
+    "clt": 1032902.54,
+    "total": 4817550.15,
+    "breakdown": [
+      {
+        "name": "Sócios de Serviço e Capital",
+        "value": 3784647.61
+      },
+      {
+        "name": "Celetistas",
+        "value": 1032902.54
+      }
+    ],
+    "source": "Custos OMIE.xlsx",
+    "months": [
+      2,
+      3
+    ],
+    "available": true,
+    "error": null
+  },
+  "dataQuality": {
+    "hasSuspectRealData": false,
+    "warnings": [],
+    "zeroOfficialMonths": [],
+    "officialCostSource": "INFORMAÇÕES GERENCIAIS.xlsx / TOTAIS  20 E 21 / CUSTOS E DESPESAS",
+    "detailedCostTotal": 7306007.829047658,
+    "peopleCostSource": "Custos OMIE.xlsx"
   },
   "cost_subtitle": "+10,9% vs 2025"
 }

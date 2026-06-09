@@ -43,6 +43,8 @@ TEMPLATE_FILE = DATA_DIR / "dashboard_content.json"
 ORCAMENTO_FILE = DATA_DIR / "Orçamento.xlsx"
 FOLHA_FILE = DATA_DIR / "Resumo - folha.xlsx"
 ANTECIPACAO_FILE = DATA_DIR / "INFORMAÇÕES GERENCIAIS.xlsx"
+PERFORMANCE_FILE = DATA_DIR / "PERFORMANCE.XLSX"
+OMIE_COSTS_FILE = DATA_DIR / "Custos OMIE.xlsx"
 
 MONTH_LABELS = {
     1: "jan", 2: "fev", 3: "mar", 4: "abr", 
@@ -63,6 +65,21 @@ MONTH_SHEET_NAMES = {
     10: "outubro",
     11: "novembro",
     12: "dezembro",
+}
+
+OMIE_COST_SHEET_NAMES = {
+    1: "Custos jan26",
+    2: "Custos fev26",
+    3: "Custos mar26",
+    4: "Custos abr26",
+    5: "Custos mai26",
+    6: "Custos jun26",
+    7: "Custos jul26",
+    8: "Custos ago26",
+    9: "Custos set26",
+    10: "Custos out26",
+    11: "Custos nov26",
+    12: "Custos dez26",
 }
 
 CLIENT_COST_SHEETS = [
@@ -109,6 +126,165 @@ def _to_float(value: Any) -> float:
         return float(text)
     except ValueError:
         return 0.0
+
+
+def _is_valid_excel_date(value: Any) -> bool:
+    return isinstance(value, datetime)
+
+
+def _is_january_to_selected_months(selected_months: list[int]) -> bool:
+    months = sorted({month for month in selected_months if 1 <= month <= 12})
+    return bool(months) and months == list(range(1, max(months) + 1))
+
+
+def load_performance_budget_metrics(file_path: str, year: int, selected_months: list[int]) -> dict[str, Any]:
+    """
+    Le a aba Performance usando apenas a linha consolidada 1 - TODOS e retorna
+    os valores orcados do periodo filtrado.
+    """
+    months = sorted({month for month in selected_months if 1 <= month <= 12})
+    result = {
+        "budgetRevenue": 0.0,
+        "budgetCosts": 0.0,
+        "budgetResult": 0.0,
+        "source": "PERFORMANCE.XLSX",
+        "budgetLogic": "Linha consolidada 1 - TODOS; soma mensal K/O/AB conforme meses selecionados",
+        "months": months,
+        "validation": {
+            "isJanuaryToPeriod": _is_january_to_selected_months(months),
+            "revenueAccumulated": 0.0,
+            "costsAccumulated": 0.0,
+            "resultAccumulated": 0.0,
+            "revenueDiff": 0.0,
+            "costsDiff": 0.0,
+            "resultDiff": 0.0,
+        },
+        "error": None,
+    }
+
+    path = Path(file_path)
+    if not path.exists():
+        result["error"] = f"Arquivo nao encontrado: {path.name}"
+        print(f"[ETL Performance] {result['error']}")
+        return result
+
+    if not months:
+        result["error"] = "Nenhum mes valido selecionado."
+        print(f"[ETL Performance] {result['error']}")
+        return result
+
+    try:
+        workbook = openpyxl.load_workbook(path, read_only=True, data_only=True)
+        ws = workbook["Performance"]
+    except Exception as exc:
+        result["error"] = f"Nao foi possivel ler Performance: {exc}"
+        print(f"[ETL Performance] {result['error']}")
+        return result
+
+    last_accumulated: dict[str, float] = {}
+    last_month = max(months)
+    matching_rows = 0
+
+    for row in ws.iter_rows(min_row=2, values_only=True):
+        group = _normalize_text(row[1] if len(row) > 1 else "")
+        carteira = _normalize_text(row[3] if len(row) > 3 else "")
+        if group != "1 - todos" and carteira != "1 - todos":
+            continue
+
+        month_date = row[7] if len(row) > 7 else None
+        if not _is_valid_excel_date(month_date):
+            continue
+        if month_date.year != year or month_date.month not in months:
+            continue
+
+        matching_rows += 1
+        result["budgetRevenue"] += _to_float(row[10] if len(row) > 10 else 0.0)
+        result["budgetCosts"] += _to_float(row[14] if len(row) > 14 else 0.0)
+        result["budgetResult"] += _to_float(row[27] if len(row) > 27 else 0.0)
+
+        if month_date.month == last_month:
+            last_accumulated = {
+                "revenueAccumulated": _to_float(row[11] if len(row) > 11 else 0.0),
+                "costsAccumulated": _to_float(row[15] if len(row) > 15 else 0.0),
+                "resultAccumulated": _to_float(row[28] if len(row) > 28 else 0.0),
+            }
+
+    if matching_rows == 0:
+        result["error"] = "Linha consolidada 1 - TODOS nao encontrada para o periodo selecionado."
+        print(f"[ETL Performance] {result['error']}")
+        return result
+
+    if result["validation"]["isJanuaryToPeriod"] and last_accumulated:
+        result["validation"].update(last_accumulated)
+        result["validation"]["revenueDiff"] = result["budgetRevenue"] - last_accumulated["revenueAccumulated"]
+        result["validation"]["costsDiff"] = result["budgetCosts"] - last_accumulated["costsAccumulated"]
+        result["validation"]["resultDiff"] = result["budgetResult"] - last_accumulated["resultAccumulated"]
+
+    return result
+
+
+def load_people_costs_from_omie(file_path: str, selected_months: list[int]) -> dict[str, Any]:
+    """Le Custos OMIE.xlsx e retorna os custos financeiros de pessoas por periodo."""
+    months = sorted({month for month in selected_months if 1 <= month <= 12})
+    result = {
+        "partners": 0.0,
+        "clt": 0.0,
+        "totalPeopleCost": 0.0,
+        "breakdown": [
+            {"name": "Sócios de Serviço e Capital", "value": 0.0},
+            {"name": "Celetistas", "value": 0.0},
+        ],
+        "source": "Custos OMIE.xlsx",
+        "months": [],
+        "available": False,
+        "error": None,
+    }
+
+    path = Path(file_path)
+    if not path.exists():
+        result["error"] = f"Arquivo nao encontrado: {path.name}"
+        print(f"[ETL OMIE] {result['error']}")
+        return result
+
+    if not months:
+        result["error"] = "Nenhum mes valido selecionado."
+        print(f"[ETL OMIE] {result['error']}")
+        return result
+
+    try:
+        workbook = openpyxl.load_workbook(path, read_only=True, data_only=True)
+    except Exception as exc:
+        result["error"] = f"Nao foi possivel ler Custos OMIE: {exc}"
+        print(f"[ETL OMIE] {result['error']}")
+        return result
+
+    for month in months:
+        sheet_name = OMIE_COST_SHEET_NAMES.get(month)
+        if not sheet_name or sheet_name not in workbook.sheetnames:
+            print(f"[ETL OMIE] Aba nao encontrada para mes {month}: {sheet_name}")
+            continue
+
+        ws = workbook[sheet_name]
+        result["months"].append(month)
+        for row in ws.iter_rows(min_row=2, values_only=True):
+            label = _normalize_text(row[0] if len(row) > 0 else "")
+            value = _to_float(row[1] if len(row) > 1 else 0.0)
+            if label == _normalize_text("Sócios de Serviço e Capital"):
+                result["partners"] += value
+            elif label == _normalize_text("Celetistas"):
+                result["clt"] += value
+
+    result["totalPeopleCost"] = result["partners"] + result["clt"]
+    result["breakdown"] = [
+        {"name": "Sócios de Serviço e Capital", "value": result["partners"]},
+        {"name": "Celetistas", "value": result["clt"]},
+    ]
+    result["available"] = bool(result["months"]) and result["totalPeopleCost"] > 0
+    if not result["available"] and result["error"] is None:
+        result["error"] = "Nenhum custo financeiro de pessoas encontrado na OMIE para o periodo."
+        print(f"[ETL OMIE] {result['error']}")
+
+    return result
 
 
 def _format_currency(value: float) -> str:
@@ -213,6 +389,7 @@ def _load_totais_period(selected_months: list[int], year: int = 2026) -> dict[st
         "resultado_2025": 0.0,
         "variacao_receita": 0.0,
         "variacao_custos": 0.0,
+        "official_months": [],
     }
     if not ANTECIPACAO_FILE.exists():
         return empty
@@ -252,6 +429,14 @@ def _load_totais_period(selected_months: list[int], year: int = 2026) -> dict[st
                 return sum(float(value) for value in values if isinstance(value, (int, float)))
         return 0.0
 
+    def row_value(label: str, column: int) -> float:
+        expected = _normalize_text(label)
+        for row in rows[1:]:
+            if _normalize_text(row[0]) == expected:
+                value = row[column]
+                return float(value) if isinstance(value, (int, float)) else 0.0
+        return 0.0
+
     receita = sum_row("receita", period_cols)
     custos = sum_row("custos e despesas", period_cols)
     resultado = sum_row("resultado ig", period_cols)
@@ -260,6 +445,15 @@ def _load_totais_period(selected_months: list[int], year: int = 2026) -> dict[st
     receita_2025 = sum_row("receita", previous_cols)
     custos_2025 = sum_row("custos e despesas", previous_cols)
     resultado_2025 = sum_row("resultado ig", previous_cols)
+    official_months = [
+        {
+            "month": header[index].month,
+            "receita": row_value("receita", index),
+            "custos": row_value("custos e despesas", index),
+            "resultado": row_value("resultado ig", index),
+        }
+        for index in period_cols
+    ]
 
     return {
         "receita": receita,
@@ -272,6 +466,7 @@ def _load_totais_period(selected_months: list[int], year: int = 2026) -> dict[st
         "resultado_2025": resultado_2025,
         "variacao_receita": ((receita - receita_2025) / receita_2025) if receita_2025 else 0.0,
         "variacao_custos": ((custos - custos_2025) / custos_2025) if custos_2025 else 0.0,
+        "official_months": official_months,
     }
 
 
@@ -828,8 +1023,45 @@ def _load_people_and_payroll_data(selected_months: list[int]) -> dict[str, Any]:
     months_to_read = [month for month in valid_selected_months if month in monthly_sheets]
 
     if not months_to_read:
-        print(f"[ETL] Nenhuma aba mensal de folha encontrada para meses {valid_selected_months}.")
-        return _empty_people_and_payroll_data()
+        fallback_sheet = "Planilha1" if "Planilha1" in workbook.sheet_names else workbook.sheet_names[0]
+        print(
+            "[ETL] Nenhuma aba mensal de folha encontrada para meses "
+            f"{valid_selected_months}; usando {fallback_sheet} como snapshot de quantidade."
+        )
+        snapshot_data = _read_folha_month(fallback_sheet)
+        socios_servico_qtd = _sum_folha_categories(snapshot_data, FOLHA_SOCIOS_SERVICO, "qtd")
+        socios_capital_qtd = _sum_folha_categories(snapshot_data, FOLHA_SOCIOS_CAPITAL, "qtd")
+        clt_qtd = _sum_folha_categories(snapshot_data, FOLHA_CLT, "qtd")
+        estagiarios_qtd = _sum_folha_categories(snapshot_data, FOLHA_ESTAGIARIOS, "qtd")
+        total_profissionais = snapshot_data["total_qtd"]
+
+        def pct_snapshot(value: float) -> float:
+            return (value / total_profissionais) if total_profissionais else 0.0
+
+        socios_servico_val = _sum_folha_categories(snapshot_data, FOLHA_SOCIOS_SERVICO, "valor")
+        socios_capital_val = _sum_folha_categories(snapshot_data, FOLHA_SOCIOS_CAPITAL, "valor")
+        clt_val = _sum_folha_categories(snapshot_data, FOLHA_CLT, "valor")
+        estagiarios_val = _sum_folha_categories(snapshot_data, FOLHA_ESTAGIARIOS, "valor")
+        total_pessoas_val = socios_servico_val + socios_capital_val + clt_val + estagiarios_val
+
+        return {
+            "people": {
+                "total": int(round(total_profissionais)),
+                "socios": {"qtd": int(round(socios_servico_qtd)), "pct": pct_snapshot(socios_servico_qtd)},
+                "clt": {"qtd": int(round(clt_qtd)), "pct": pct_snapshot(clt_qtd)},
+                "estagiarios": {"qtd": int(round(estagiarios_qtd)), "pct": pct_snapshot(estagiarios_qtd)},
+            },
+            "socios_servico_val": socios_servico_val,
+            "socios_capital_val": socios_capital_val,
+            "socios_val": socios_servico_val,
+            "clt_val": clt_val,
+            "estagiarios_val": estagiarios_val,
+            "total_pessoas_val": total_pessoas_val,
+            "total_folha_val": _to_float(snapshot_data["total_valor"]),
+            "folha_months_used": [],
+            "folha_snapshot_month": None,
+            "socios_capital_qtd": int(round(socios_capital_qtd)),
+        }
 
     monthly_data = {
         month: _read_folha_month(monthly_sheets[month])
@@ -941,24 +1173,39 @@ def get_extracted_data(ano: int, selected_months: list[int], file_mtime_ns: int 
     pct_sucumbencia = (sucumb / receita_total) if receita_total else 0.0
     pct_outras = (outras_receitas / receita_total) if receita_total else 0.0
 
+    performance_budget = load_performance_budget_metrics(str(PERFORMANCE_FILE), ano, selected_months)
     folha_data = _load_people_and_payroll_data(selected_months)
+    omie_people_costs = load_people_costs_from_omie(str(OMIE_COSTS_FILE), selected_months)
 
     cost_totals = _extract_client_costs(f, selected_months)
     correspondentes = cost_totals["correspondentes"]
     outras_despesas = cost_totals["outras_despesas"]
     impostos = totais_bi["impostos"] if totais_bi["impostos"] else cost_totals["impostos"]
-    socios = folha_data["socios_val"]
-    socios_capital = folha_data["socios_capital_val"]
-    clt = folha_data["clt_val"]
-    estagiarios = folha_data["estagiarios_val"]
-    total_pessoas_custo = folha_data["total_pessoas_val"]
+    if omie_people_costs["available"]:
+        socios = omie_people_costs["partners"]
+        socios_capital = 0.0
+        clt = omie_people_costs["clt"]
+        estagiarios = 0.0
+        total_pessoas_custo = omie_people_costs["totalPeopleCost"]
+    else:
+        socios = folha_data["socios_val"]
+        socios_capital = folha_data["socios_capital_val"]
+        clt = folha_data["clt_val"]
+        estagiarios = folha_data["estagiarios_val"]
+        total_pessoas_custo = folha_data["total_pessoas_val"]
     total_despesas_detalhado = correspondentes + outras_despesas + impostos + total_pessoas_custo
-    total_despesas = totais_bi["custos"] if totais_bi["custos"] else total_despesas_detalhado
+    total_despesas_oficial = totais_bi["custos"]
+    total_despesas = total_despesas_oficial
+    cost_total_warning = ""
+    if not total_despesas_oficial and total_despesas_detalhado:
+        cost_total_warning = (
+            "CUSTOS E DESPESAS veio zerado em INFORMAÇÕES GERENCIAIS.xlsx; "
+            "o total oficial foi mantido como 0 e a OMIE ficou apenas no detalhe de pessoas."
+        )
 
-    df_resumo_orc = pd.read_excel(f, sheet_name="Resumo Orç 2026", header=None, engine="openpyxl").fillna("")
-    receita_orcada_anual = _get_table_value_by_labels(df_resumo_orc, "Total", "Receitas")
+    receita_orcada_periodo = performance_budget["budgetRevenue"]
     meses_periodo = len(selected_months)
-    meta_periodo_receita = receita_orcada_anual / 12 * meses_periodo if receita_orcada_anual and meses_periodo else 0.0
+    meta_periodo_receita = receita_orcada_periodo
     pct_orcado = (receita_total / meta_periodo_receita) if meta_periodo_receita else 0.0
 
     receita_2025_periodo = totais_bi["receita_2025"]
@@ -1041,7 +1288,8 @@ def get_extracted_data(ano: int, selected_months: list[int], file_mtime_ns: int 
         "pct_contratual": pct_contratual,
         "pct_sucumbencia": pct_sucumbencia,
         "pct_outras": pct_outras,
-        "receita_orcada": receita_orcada_anual,
+        "receita_orcada": receita_orcada_periodo,
+        "receita_orcada_periodo": receita_orcada_periodo,
         "meta_periodo_receita": meta_periodo_receita,
         "meta_periodo_meses": meses_periodo,
         "pct_orcado": pct_orcado,
@@ -1052,11 +1300,17 @@ def get_extracted_data(ano: int, selected_months: list[int], file_mtime_ns: int 
         "resultado_total": totais_bi["resultado"],
         "resultado_2025": totais_bi["resultado_2025"],
         "totais_bi": totais_bi,
+        "budget": performance_budget,
+        "people_costs": omie_people_costs,
         "sucumb": sucumb,
         "impostos": impostos,
         "top_5": ranking,
         "total_despesas": total_despesas,
-        "socios_servico": folha_data["socios_servico_val"],
+        "total_despesas_oficial": total_despesas_oficial,
+        "total_despesas_detalhado": total_despesas_detalhado,
+        "cost_total_source": "INFORMAÇÕES GERENCIAIS.xlsx / TOTAIS  20 E 21 / CUSTOS E DESPESAS",
+        "cost_total_warning": cost_total_warning,
+        "socios_servico": socios,
         "socios_capital": socios_capital,
         "socios": socios,
         "clt": clt,
@@ -1095,8 +1349,89 @@ def get_dashboard_data(mes: int, ano: int, selected_months: list[int] | None = N
     pct_contratual = data["pct_contratual"]
     pct_sucumbencia = data["pct_sucumbencia"]
     pct_outras = data["pct_outras"]
+    budget = data["budget"]
+    people_costs = data["people_costs"]
     
     template["header"]["subtitle"] = f"Período acumulado: {_format_months_label(selected_months, ano)}"
+    template["budget"] = {
+        "revenue": budget["budgetRevenue"],
+        "costs": budget["budgetCosts"],
+        "result": budget["budgetResult"],
+        "source": budget["source"],
+        "logic": budget["budgetLogic"],
+        "months": budget.get("months", []),
+        "validation": budget.get("validation", {}),
+        "error": budget.get("error"),
+    }
+    template["peopleCosts"] = {
+        "partners": people_costs["partners"],
+        "clt": people_costs["clt"],
+        "total": people_costs["totalPeopleCost"],
+        "breakdown": people_costs["breakdown"],
+        "source": people_costs["source"],
+        "months": people_costs.get("months", []),
+        "available": people_costs.get("available", False),
+        "error": people_costs.get("error"),
+    }
+
+    data_quality_warnings = []
+    real_revenue_is_zero = abs(receita_total) < 0.01
+    real_result_is_zero = abs(data["resultado_total"]) < 0.01
+    zero_official_months = [
+        item["month"]
+        for item in data["totais_bi"].get("official_months", [])
+        if abs(item.get("receita", 0.0)) < 0.01
+        and abs(item.get("custos", 0.0)) < 0.01
+        and abs(item.get("resultado", 0.0)) < 0.01
+    ]
+    revenue_breakdown_is_zero = (
+        abs(contratuais) < 0.01
+        and abs(sucumb) < 0.01
+        and abs(outras_receitas) < 0.01
+        and not data["top_5"]
+    )
+    official_cost_is_zero = abs(data["total_despesas_oficial"]) < 0.01
+
+    if real_revenue_is_zero and budget["budgetRevenue"]:
+        data_quality_warnings.append(
+            "Receita real veio zerada na fonte oficial, mas existe orçamento no período."
+        )
+    if real_result_is_zero and budget["budgetResult"]:
+        data_quality_warnings.append(
+            "Resultado real veio zerado na fonte oficial, mas existe orçamento no período."
+        )
+    if revenue_breakdown_is_zero and budget["budgetRevenue"]:
+        data_quality_warnings.append(
+            "Abertura de receita e ranking de clientes vieram zerados/vazios para o período."
+        )
+    if data["cost_total_warning"]:
+        data_quality_warnings.append(data["cost_total_warning"])
+    if zero_official_months and (budget["budgetRevenue"] or budget["budgetCosts"] or budget["budgetResult"]):
+        data_quality_warnings.append(
+            f"Meses oficiais com receita/custos/resultado zerados: {zero_official_months}."
+        )
+
+    has_suspect_real_data = (
+        (budget["budgetRevenue"] or budget["budgetCosts"] or budget["budgetResult"])
+        and (
+            (
+                real_revenue_is_zero
+                and real_result_is_zero
+                and revenue_breakdown_is_zero
+                and official_cost_is_zero
+            )
+            or bool(zero_official_months)
+        )
+    )
+
+    template["dataQuality"] = {
+        "hasSuspectRealData": bool(has_suspect_real_data),
+        "warnings": data_quality_warnings,
+        "zeroOfficialMonths": zero_official_months,
+        "officialCostSource": data["cost_total_source"],
+        "detailedCostTotal": data["total_despesas_detalhado"],
+        "peopleCostSource": people_costs["source"] if people_costs.get("available") else "Resumo - folha.xlsx",
+    }
     
     template["revenue_mix"] = {
         "icon": "💰",
@@ -1111,6 +1446,7 @@ def get_dashboard_data(mes: int, ano: int, selected_months: list[int] | None = N
         "pct_outras": pct_outras,
         "pct_orcado": pct_orcado,
         "receita_orcada": receita_orcada,
+        "receita_orcada_periodo": budget["budgetRevenue"],
         "meta_periodo_receita": meta_periodo_receita,
         "meta_periodo_meses": meta_periodo_meses,
         "receita_2025_periodo": receita_2025_periodo,
@@ -1178,8 +1514,15 @@ def get_dashboard_data(mes: int, ano: int, selected_months: list[int] | None = N
         "clt": data["clt"],
         "estagiarios": data["estagiarios"],
         "total_pessoas_custo": data["total_pessoas_custo"],
+        "official_total_costs": data["total_despesas_oficial"],
+        "detailed_cost_total": data["total_despesas_detalhado"],
+        "cost_total_source": data["cost_total_source"],
+        "cost_total_warning": data["cost_total_warning"],
         "cost_total_anterior": data["cost_total_anterior"],
         "variacao_custos_yoy": data["variacao_custos_yoy"],
+        "custo_orcado_periodo": budget["budgetCosts"],
+        "meta_periodo_custos": budget["budgetCosts"],
+        "pct_orcado_custos": (cost_total / budget["budgetCosts"]) if budget["budgetCosts"] else 0.0,
         "value": _format_currency(cost_total),
         "subtitle": "",
         "highlight": {
@@ -1232,6 +1575,7 @@ def get_dashboard_data(mes: int, ano: int, selected_months: list[int] | None = N
         "socios_capital": data["socios_capital"],
         "socios": socios_total,
         "total_folha_val": data["total_folha_val"],
+        "people_costs_source": people_costs["source"] if people_costs.get("available") else "Resumo - folha.xlsx",
         "folha_months_used": data["folha_months_used"],
         "folha_snapshot_month": data["folha_snapshot_month"],
         "items": [
@@ -1278,7 +1622,13 @@ def get_dashboard_data(mes: int, ano: int, selected_months: list[int] | None = N
         "icon": "📊",
         "title": "Resultado Líquido",
         "value": _format_currency(data["resultado_total"] if data["resultado_total"] else receita_total * data["ml"]),
-        "subtitle": ""
+        "subtitle": "",
+        "resultado_orcado": budget["budgetResult"],
+        "meta_periodo_resultado": budget["budgetResult"],
+        "meta_periodo_meses": meta_periodo_meses,
+        "pct_vs_orcado": ((data["resultado_total"] if data["resultado_total"] else receita_total * data["ml"]) / budget["budgetResult"]) if budget["budgetResult"] else 0.0,
+        "resultado_2025": data["resultado_2025"],
+        "variacao_2025": ((data["resultado_total"] - data["resultado_2025"]) / abs(data["resultado_2025"])) if data["resultado_2025"] else 0.0,
     }
     
     template["margins"] = {
@@ -1314,16 +1664,22 @@ def get_dashboard_data(mes: int, ano: int, selected_months: list[int] | None = N
                 "label": "Sócios",
                 "value": _format_count(data["people"]["socios"]["qtd"]),
                 "share": _format_percent(data["people"]["socios"]["pct"] * 100),
+                "costValue": _format_currency(people_costs["partners"]) if people_costs.get("available") else "",
+                "costSource": people_costs["source"] if people_costs.get("available") else "",
             },
             {
                 "label": "CLT",
                 "value": _format_count(data["people"]["clt"]["qtd"]),
                 "share": _format_percent(data["people"]["clt"]["pct"] * 100),
+                "costValue": _format_currency(people_costs["clt"]) if people_costs.get("available") else "",
+                "costSource": people_costs["source"] if people_costs.get("available") else "",
             },
             {
                 "label": "Estagiários",
                 "value": _format_count(data["people"]["estagiarios"]["qtd"]),
                 "share": _format_percent(data["people"]["estagiarios"]["pct"] * 100),
+                "costValue": "",
+                "costSource": "",
             },
         ]
     }

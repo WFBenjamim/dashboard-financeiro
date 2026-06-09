@@ -255,8 +255,8 @@ function Hero({ header }: { header: any }) {
 
 function RevenueCard({ data, insight, topClients }: { data: any; insight?: any; topClients?: any }) {
   const rows = data?.rows || [];
-  const receitaOrcadaAnual = data?.receita_orcada_anual ?? data?.receita_orcada;
-  const hasMetrics = isFiniteNumber(receitaOrcadaAnual)
+  const receitaOrcadaPeriodo = data?.receita_orcada_periodo ?? data?.meta_periodo_receita ?? data?.receita_orcada_anual ?? data?.receita_orcada;
+  const hasMetrics = isFiniteNumber(receitaOrcadaPeriodo)
     || isFiniteNumber(data?.variacao_2025)
     || isFiniteNumber(data?.pct_orcado);
   const highlight = [...rows].sort((a: any, b: any) => parseShareValue(b?.share) - parseShareValue(a?.share))[0];
@@ -276,7 +276,7 @@ function RevenueCard({ data, insight, topClients }: { data: any; insight?: any; 
         <div className="gd-kpi"><AnimatedCurrencyKpi value={data?.value} /></div>
         {hasMetrics && (
           <MetricaGrid>
-            <MetricaMini label="Orçado anual" value={isFiniteNumber(receitaOrcadaAnual) ? formatCurrency(receitaOrcadaAnual) : ""} />
+            <MetricaMini label="Orçado período" value={isFiniteNumber(receitaOrcadaPeriodo) ? formatCurrency(receitaOrcadaPeriodo) : ""} />
             <MetricaMini
               label="vs 2025"
               value={formatSignedPercentMetric(data?.variacao_2025)}
@@ -336,7 +336,8 @@ function CostCard({ data, insight }: { data: any; insight?: any }) {
     return label.includes("socios") || label === "clt" || label.includes("estagiarios");
   });
   const remaining = items.filter((item: any) => !special.includes(item));
-  const hasMetrics = isFiniteNumber(data?.custo_orcado_anual)
+  const custoOrcadoPeriodo = data?.custo_orcado_periodo ?? data?.meta_periodo_custos ?? data?.custo_orcado_anual;
+  const hasMetrics = isFiniteNumber(custoOrcadoPeriodo)
     || isFiniteNumber(data?.variacao_2025)
     || isFiniteNumber(data?.pct_orcado_custos);
 
@@ -347,7 +348,7 @@ function CostCard({ data, insight }: { data: any; insight?: any }) {
         <div className="gd-kpi"><AnimatedCurrencyKpi value={data?.value} /></div>
         {hasMetrics && (
           <MetricaGrid>
-            <MetricaMini label="Orçado anual" value={isFiniteNumber(data?.custo_orcado_anual) ? formatCurrency(data.custo_orcado_anual) : ""} />
+            <MetricaMini label="Orçado período" value={isFiniteNumber(custoOrcadoPeriodo) ? formatCurrency(custoOrcadoPeriodo) : ""} />
             <MetricaMini
               label="vs 2025"
               value={formatSignedPercentMetric(data?.variacao_2025)}
@@ -479,6 +480,9 @@ function PeopleCard({ data, insight }: { data: any; insight?: any }) {
               <span className="gd-row__value-group">
                 <strong>{cleanText(row.value)}</strong>
                 <span className="gd-pill gd-pill--inline">{cleanText(row.share)}</span>
+                {cleanText(row.costValue) && (
+                  <span className="gd-pill gd-pill--inline">{cleanText(row.costValue)}</span>
+                )}
               </span>
             </div>
           ))}

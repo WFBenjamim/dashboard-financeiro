@@ -5,6 +5,7 @@ data/*.json
 
 # Generated dashboard snapshots are public app assets.
 !public/data/*.json
+public/data/*.suspect.json
 
 # Python
 __pycache__/

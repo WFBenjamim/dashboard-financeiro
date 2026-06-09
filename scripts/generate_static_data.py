@@ -43,6 +43,79 @@ def month_file_key(months: list) -> str:
     return "-".join(str(m) for m in sorted(months))
 
 
+def _real_number(value) -> float:
+    if isinstance(value, (int, float)):
+        return float(value)
+    if value is None:
+        return 0.0
+    text = str(value)
+    digits = "".join(ch for ch in text if ch.isdigit() or ch in ",.-")
+    if not digits:
+        return 0.0
+    try:
+        return float(digits.replace(".", "").replace(",", "."))
+    except ValueError:
+        return 0.0
+
+
+def _has_existing_real_data(data: dict) -> bool:
+    revenue = _real_number(data.get("revenue_mix", {}).get("value"))
+    result = _real_number(data.get("net_result", {}).get("value"))
+    expansions = data.get("revenue_mix", {}).get("expansions") or [{}]
+    top_clients = expansions[0].get("items", [])
+    return abs(revenue) > 0.01 or abs(result) > 0.01 or bool(top_clients)
+
+
+def _is_suspect_real_data(data: dict) -> bool:
+    data_quality = data.get("dataQuality", {})
+    if data_quality.get("hasSuspectRealData"):
+        return True
+
+    revenue_mix = data.get("revenue_mix", {})
+    cost_structure = data.get("cost_structure", {})
+    net_result = data.get("net_result", {})
+    budget = data.get("budget", {})
+    expansions = revenue_mix.get("expansions") or [{}]
+    top_clients = expansions[0].get("items", [])
+
+    real_values_zero = (
+        abs(_real_number(revenue_mix.get("value"))) < 0.01
+        and abs(_real_number(net_result.get("value"))) < 0.01
+        and abs(_real_number(cost_structure.get("total"))) < 0.01
+    )
+    revenue_breakdown_zero = (
+        abs(_real_number(revenue_mix.get("contratual"))) < 0.01
+        and abs(_real_number(revenue_mix.get("sucumbencia"))) < 0.01
+        and abs(_real_number(revenue_mix.get("outras"))) < 0.01
+        and not top_clients
+    )
+    has_period_budget = any(
+        abs(_real_number(budget.get(key))) > 0.01
+        for key in ("revenue", "costs", "result")
+    )
+    return real_values_zero and revenue_breakdown_zero and has_period_budget
+
+
+def write_dashboard_json_safely(filename: Path, data: dict) -> bool:
+    if _is_suspect_real_data(data) and filename.exists():
+        try:
+            existing = json.loads(filename.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            existing = {}
+
+        if _has_existing_real_data(existing):
+            suspect_file = filename.with_name(f"{filename.stem}.suspect.json")
+            suspect_file.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+            print(
+                "    [AVISO] Dados reais suspeitos/zerados. "
+                f"Preservado {filename.name}; diagnostico salvo em {suspect_file.name}."
+            )
+            return False
+
+    filename.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    return True
+
+
 def excel_date(value):
     if isinstance(value, datetime):
         return value
@@ -173,25 +246,6 @@ def calculate_cost_variation(selected_months: list[int], year: int = YEAR) -> fl
     return (despesas_atual - despesas_anterior) / despesas_anterior
 
 
-def load_budget_totals() -> dict[str, float]:
-    df_orc = pd.read_excel(
-        ORCAMENTO_FILE,
-        sheet_name="Resumo Orç 2026",
-        header=2,
-        engine="openpyxl",
-    ).fillna("")
-    total_row = df_orc[df_orc.iloc[:, 0].astype(str).str.strip() == "Total"]
-    if total_row.empty:
-        return {"receita": 0.0, "despesas": 0.0, "ml": 0.0}
-
-    row = total_row.iloc[0]
-    return {
-        "receita": to_number(row.get("Receitas", 0)),
-        "despesas": to_number(row.get("Despesas", 0)),
-        "ml": to_number(row.get("ML", 0)),
-    }
-
-
 def _month_columns_from_section(df: pd.DataFrame, section_label: str, selected_months: list[int]) -> tuple[int, list[int]]:
     month_labels = {
         1: "jan", 2: "fev", 3: "mar", 4: "abr",
@@ -228,11 +282,10 @@ def _sum_result_row(df: pd.DataFrame, header_row: int, columns: list[int]) -> fl
 
 
 def enrich_net_result(data: dict, selected_months: list[int], year: int = YEAR) -> None:
-    budget_totals = load_budget_totals()
     totais = load_totais(selected_months, year)
-    ml_orcado_anual = budget_totals["ml"]
+    budget = data.get("budget", {})
+    resultado_orcado_periodo = float(budget.get("result") or data.get("net_result", {}).get("resultado_orcado") or 0.0)
     period_months = len(selected_months)
-    resultado_orcado_periodo = ml_orcado_anual / 12 * period_months if ml_orcado_anual and period_months else 0.0
 
     resultado_real = totais["resultado"]
     resultado_sem_sucumb = totais["resultado_sem_sucumbencia"]
@@ -241,7 +294,7 @@ def enrich_net_result(data: dict, selected_months: list[int], year: int = YEAR) 
 
     pct_vs_orcado = resultado_real / resultado_orcado_periodo if resultado_orcado_periodo else 0.0
     variacao_2025 = (resultado_real - resultado_2025) / abs(resultado_2025) if resultado_2025 else 0.0
-    pct_ano = resultado_real / ml_orcado_anual if ml_orcado_anual else 0.0
+    pct_ano = 0.0
     resultado_operacional = data["revenue_mix"]["value"] - (
         data["cost_structure"]["total"] - data["cost_structure"]["impostos"]
     )
@@ -249,7 +302,7 @@ def enrich_net_result(data: dict, selected_months: list[int], year: int = YEAR) 
     data["net_result"].update({
         "value": resultado_real,
         "sem_sucumbencia": resultado_sem_sucumb,
-        "resultado_orcado_anual": ml_orcado_anual,
+        "resultado_orcado_anual": resultado_orcado_periodo,
         "resultado_orcado": resultado_orcado_periodo,
         "meta_periodo_resultado": resultado_orcado_periodo,
         "meta_periodo_meses": period_months,
@@ -262,17 +315,16 @@ def enrich_net_result(data: dict, selected_months: list[int], year: int = YEAR) 
 
 
 def enrich_revenue_and_cost_metrics(data: dict, selected_months: list[int], year: int = YEAR) -> None:
-    budget_totals = load_budget_totals()
+    budget = data.get("budget", {})
     cost_variation = calculate_cost_variation(selected_months, year)
     period_months = len(selected_months)
-    receita_orcada_anual = budget_totals["receita"] or data["revenue_mix"].get("receita_orcada", 0)
-    meta_periodo_receita = receita_orcada_anual / 12 * period_months if receita_orcada_anual and period_months else 0.0
-    custo_orcado_anual = budget_totals["despesas"]
-    meta_periodo_custos = custo_orcado_anual / 12 * period_months if custo_orcado_anual and period_months else 0.0
+    meta_periodo_receita = float(budget.get("revenue") or data["revenue_mix"].get("meta_periodo_receita", 0))
+    meta_periodo_custos = float(budget.get("costs") or data["cost_structure"].get("meta_periodo_custos", 0))
     cost_total = data["cost_structure"]["total"]
 
     data["revenue_mix"].update({
-        "receita_orcada_anual": receita_orcada_anual,
+        "receita_orcada_anual": meta_periodo_receita,
+        "receita_orcada_periodo": meta_periodo_receita,
         "meta_periodo_receita": meta_periodo_receita,
         "meta_periodo_meses": period_months,
         "pct_orcado": data["revenue_mix"]["value"] / meta_periodo_receita if meta_periodo_receita else 0.0,
@@ -280,7 +332,8 @@ def enrich_revenue_and_cost_metrics(data: dict, selected_months: list[int], year
     })
 
     data["cost_structure"].update({
-        "custo_orcado_anual": custo_orcado_anual,
+        "custo_orcado_anual": meta_periodo_custos,
+        "custo_orcado_periodo": meta_periodo_custos,
         "meta_periodo_custos": meta_periodo_custos,
         "meta_periodo_meses": period_months,
         "pct_orcado_custos": cost_total / meta_periodo_custos if meta_periodo_custos else 0.0,
@@ -308,8 +361,7 @@ def generate_dashboard_jsons() -> None:
             data["cost_structure"]["cost_subtitle"] = cost_subtitle
             enrich_net_result(data, months, YEAR)
             enrich_revenue_and_cost_metrics(data, months, YEAR)
-            with open(filename, "w", encoding="utf-8") as f:
-                json.dump(data, f, ensure_ascii=False, indent=2)
+            write_dashboard_json_safely(filename, data)
         except Exception as exc:
             print(f"    [ERRO] {exc}")
 
