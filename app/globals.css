@@ -382,11 +382,11 @@ button {
   z-index: 1;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 0.86rem;
+  gap: 0.58rem;
+  font-size: clamp(0.95rem, 0.95vw, 1.08rem);
   font-weight: 800;
   letter-spacing: 0;
-  line-height: 1.28;
+  line-height: 1.22;
   text-transform: uppercase;
 }
 
@@ -583,11 +583,13 @@ button {
 }
 
 .gd-revenue-highlight .gd-mini-row__label {
-  font-size: 0.78rem;
+  font-size: clamp(0.84rem, 0.76vw, 0.94rem);
+  line-height: 1.18;
 }
 
 .gd-revenue-highlight .gd-mini-row__value {
-  font-size: 0.82rem;
+  font-size: clamp(0.88rem, 0.78vw, 0.98rem);
+  line-height: 1.18;
 }
 
 .gd-cost-layout__left,
@@ -644,25 +646,26 @@ button {
 
 .gd-cost__label,
 .gd-cost-rect__label {
-  font-size: 0.86rem;
-  font-weight: 700;
+  font-size: clamp(0.92rem, 0.82vw, 1.02rem);
+  line-height: 1.2;
+  font-weight: 800;
   color: rgba(255, 255, 255, 0.96);
 }
 
 .gd-cost__value {
-  font-size: 1rem;
+  font-size: clamp(1.05rem, 0.95vw, 1.18rem);
   line-height: 1.05;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .gd-cost__value--xl {
-  font-size: clamp(1.9rem, 2.4vw, 2.4rem);
+  font-size: clamp(2.05rem, 2.55vw, 2.58rem);
 }
 
 .gd-cost__caption {
-  font-size: 0.78rem;
+  font-size: clamp(0.84rem, 0.72vw, 0.94rem);
   line-height: 1.4;
-  font-weight: 700;
+  font-weight: 800;
   color: rgba(255, 245, 231, 0.82);
 }
 
@@ -711,15 +714,15 @@ button {
 }
 
 .gd-cost-rect__share {
-  font-size: 0.86rem;
+  font-size: clamp(0.9rem, 0.78vw, 1rem);
   font-weight: 800;
   color: rgba(255, 239, 213, 0.96);
 }
 
 .gd-cost-rect__value {
-  font-size: 0.96rem;
+  font-size: clamp(1rem, 0.88vw, 1.12rem);
   line-height: 1.32;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .gd-cost-rect .gd-detail-rows {
@@ -877,33 +880,35 @@ button {
   z-index: 1;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.5rem;
-  margin: 0.35rem 0 0.25rem;
+  gap: 0.58rem;
+  margin: 0.38rem 0 0.28rem;
 }
 
 .gd-result-mini {
   display: grid;
-  gap: 0.2rem;
+  gap: 0.24rem;
   min-width: 0;
-  padding: 0.6rem 0.45rem;
+  padding: 0.68rem 0.52rem;
   border-radius: 10px;
   background: rgba(7, 17, 29, 0.18);
   text-align: center;
+  align-content: center;
 }
 
 .gd-result-mini span {
-  font-size: 0.68rem;
+  font-size: clamp(0.76rem, 0.72vw, 0.88rem);
   line-height: 1.2;
-  font-weight: 800;
-  color: rgba(255, 255, 255, 0.7);
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.76);
+  white-space: normal;
 }
 
 .gd-result-mini strong {
   min-width: 0;
   overflow-wrap: anywhere;
-  font-size: 1.06rem;
-  line-height: 1.25;
-  font-weight: 700;
+  font-size: clamp(1.14rem, 1vw, 1.32rem);
+  line-height: 1.18;
+  font-weight: 800;
   color: #ffffff;
 }
 
@@ -1699,6 +1704,14 @@ button {
   padding: 1.35rem 1.55rem 1.55rem;
 }
 
+.gd-donut-column {
+  display: grid;
+  gap: 0.9rem;
+  align-content: start;
+  justify-items: center;
+  min-width: 0;
+}
+
 .gd-donut-stage {
   position: relative;
   width: min(430px, 100%);
@@ -1735,6 +1748,47 @@ button {
   font-size: clamp(1.3rem, 2vw, 1.75rem);
   line-height: 1.08;
   font-weight: 900;
+}
+
+.gd-donut-hover-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 0.65rem;
+  align-items: center;
+  width: min(430px, 100%);
+  min-height: 3.25rem;
+  padding: 0.72rem 0.85rem;
+  border-radius: 14px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.26);
+}
+
+.gd-donut-hover-card strong {
+  min-width: 0;
+  color: #fff;
+  font-size: 0.92rem;
+  font-weight: 900;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gd-donut-hover-card.is-idle {
+  grid-template-columns: 1fr;
+}
+
+.gd-donut-hover-card.is-idle strong {
+  color: rgba(255, 245, 231, 0.72);
+  text-align: center;
+}
+
+.gd-donut-hover-card span {
+  color: rgba(255, 245, 231, 0.9);
+  font-size: 0.88rem;
+  font-weight: 900;
+  white-space: nowrap;
 }
 
 .gd-distribution-list {
@@ -1887,6 +1941,22 @@ button {
 
   .gd-kpi {
     font-size: 2.1rem;
+  }
+
+  .gd-result-mini-grid {
+    gap: 0.45rem;
+  }
+
+  .gd-result-mini {
+    padding: 0.62rem 0.42rem;
+  }
+
+  .gd-result-mini span {
+    font-size: clamp(0.7rem, 2.7vw, 0.8rem);
+  }
+
+  .gd-result-mini strong {
+    font-size: clamp(1rem, 3.8vw, 1.16rem);
   }
 
   .gd-row,

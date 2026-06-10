@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { type ReactNode, useEffect, useState } from "react";
 import CountUp from "react-countup";
-import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 import { EvolutionDashboardSections } from "@/components/EvolutionModal";
 import { MonthFilter } from "@/components/MonthFilter";
 import { ResultOpeningScreen } from "@/components/ResultOpeningScreen";
@@ -344,13 +344,15 @@ const COST_DISTRIBUTION_COLORS = [
 function CostCard({ data, insight, distribution }: { data: any; insight?: any; distribution?: any }) {
   const [showDistribution, setShowDistribution] = useState(false);
   const items = data?.items || [];
-  const fallbackHighlight = [...items].sort((a: any, b: any) => parseShareValue(b?.share) - parseShareValue(a?.share))[0];
-  const highlight = data?.highlight || fallbackHighlight || {};
-  const special = items.filter((item: any) => {
+  const visibleItems = items.filter((item: any) => !normalizeKey(item?.label).includes("estagiarios"));
+  const fallbackHighlight = [...visibleItems].sort((a: any, b: any) => parseShareValue(b?.share) - parseShareValue(a?.share))[0];
+  const rawHighlight = data?.highlight || fallbackHighlight || {};
+  const highlight = normalizeKey(rawHighlight?.label).includes("estagiarios") ? fallbackHighlight || {} : rawHighlight;
+  const special = visibleItems.filter((item: any) => {
     const label = normalizeKey(item.label);
-    return label.includes("socios") || label === "clt" || label.includes("estagiarios");
+    return label.includes("socios") || label === "clt";
   });
-  const remaining = items.filter((item: any) => !special.includes(item));
+  const remaining = visibleItems.filter((item: any) => !special.includes(item));
   const custoOrcadoPeriodo = data?.custo_orcado_periodo ?? data?.meta_periodo_custos ?? data?.custo_orcado_anual;
   const hasMetrics = isFiniteNumber(custoOrcadoPeriodo)
     || isFiniteNumber(data?.variacao_2025)
@@ -437,6 +439,7 @@ function CostCard({ data, insight, distribution }: { data: any; insight?: any; d
 function CostDistributionModal({ distribution, onClose }: { distribution: any; onClose: () => void }) {
   const items = distribution?.items || [];
   const total = Number(distribution?.total || 0);
+  const [hoveredItem, setHoveredItem] = useState<any | null>(null);
 
   return (
     <div className="gd-modal-backdrop" role="presentation" onClick={onClose}>
@@ -456,38 +459,52 @@ function CostDistributionModal({ distribution, onClose }: { distribution: any; o
         </div>
 
         <div className="gd-cost-distribution__body">
-          <div className="gd-donut-stage">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={items}
-                  dataKey="value"
-                  nameKey="name"
-                  cx="50%"
-                  cy="50%"
-                  innerRadius="58%"
-                  outerRadius="86%"
-                  paddingAngle={1.5}
-                  startAngle={90}
-                  endAngle={-270}
-                  minAngle={1}
-                  stroke="rgba(15, 23, 42, 0.42)"
-                  strokeWidth={2}
-                  isAnimationActive={false}
-                >
-                  {items.map((item: any, index: number) => (
-                    <Cell
-                      key={cleanText(item.name)}
-                      fill={COST_DISTRIBUTION_COLORS[index % COST_DISTRIBUTION_COLORS.length]}
-                    />
-                  ))}
-                </Pie>
-                <Tooltip content={<CostDistributionTooltip />} />
-              </PieChart>
-            </ResponsiveContainer>
-            <div className="gd-donut-center">
-              <span>Total</span>
-              <strong>{formatCurrency(total)}</strong>
+          <div className="gd-donut-column">
+            <div className="gd-donut-stage">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={items}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    innerRadius="58%"
+                    outerRadius="86%"
+                    paddingAngle={1.5}
+                    startAngle={90}
+                    endAngle={-270}
+                    minAngle={1}
+                    stroke="rgba(15, 23, 42, 0.42)"
+                    strokeWidth={2}
+                    isAnimationActive={false}
+                    onMouseEnter={(entry) => setHoveredItem(entry)}
+                    onMouseLeave={() => setHoveredItem(null)}
+                  >
+                    {items.map((item: any, index: number) => (
+                      <Cell
+                        key={cleanText(item.name)}
+                        fill={COST_DISTRIBUTION_COLORS[index % COST_DISTRIBUTION_COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="gd-donut-center">
+                <span>Total</span>
+                <strong>{formatCurrency(total)}</strong>
+              </div>
+            </div>
+            <div className={`gd-donut-hover-card ${hoveredItem ? "" : "is-idle"}`} aria-live="polite">
+              {hoveredItem ? (
+                <>
+                  <strong>{cleanText(hoveredItem.name)}</strong>
+                  <span>{formatCurrency(Number(hoveredItem.value || 0))}</span>
+                  <span>{formatPercentMetric(Number(hoveredItem.percent || 0))}</span>
+                </>
+              ) : (
+                <strong>Passe o mouse sobre uma fatia</strong>
+              )}
             </div>
           </div>
 
@@ -507,19 +524,6 @@ function CostDistributionModal({ distribution, onClose }: { distribution: any; o
           </div>
         </div>
       </div>
-    </div>
-  );
-}
-
-function CostDistributionTooltip({ active, payload }: any) {
-  if (!active || !payload?.length) return null;
-  const item = payload[0]?.payload || {};
-
-  return (
-    <div className="gd-chart-tooltip">
-      <strong>{cleanText(item.name)}</strong>
-      <span>{formatCurrency(Number(item.value || 0))}</span>
-      <span>{formatPercentMetric(Number(item.percent || 0))}</span>
     </div>
   );
 }
@@ -612,9 +616,6 @@ function PeopleCard({ data, insight }: { data: any; insight?: any }) {
               <span className="gd-row__value-group">
                 <strong>{cleanText(row.value)}</strong>
                 <span className="gd-pill gd-pill--inline">{cleanText(row.share)}</span>
-                {cleanText(row.costValue) && (
-                  <span className="gd-pill gd-pill--inline">{cleanText(row.costValue)}</span>
-                )}
               </span>
             </div>
           ))}
