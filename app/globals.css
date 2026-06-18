@@ -45,6 +45,10 @@ body {
   color: var(--text-main);
 }
 
+html {
+  font-size: 18px;
+}
+
 button,
 select,
 input {
@@ -257,7 +261,7 @@ button {
 
 .gd-top-section {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: 1.25rem;
   align-items: stretch;
 }
@@ -275,6 +279,7 @@ button {
 }
 
 .gd-top-section .gd-card {
+  width: 100%;
   align-self: stretch;
   height: 100%;
 }
@@ -382,17 +387,17 @@ button {
   z-index: 1;
   display: flex;
   align-items: center;
-  gap: 0.58rem;
-  font-size: clamp(0.95rem, 0.95vw, 1.08rem);
+  gap: 0.5rem;
+  font-size: 0.98rem;
   font-weight: 800;
   letter-spacing: 0;
-  line-height: 1.22;
+  line-height: 1.28;
   text-transform: uppercase;
 }
 
 .gd-card-title-icon {
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   object-fit: contain;
   display: inline-block;
   flex-shrink: 0;
@@ -583,13 +588,11 @@ button {
 }
 
 .gd-revenue-highlight .gd-mini-row__label {
-  font-size: clamp(0.84rem, 0.76vw, 0.94rem);
-  line-height: 1.18;
+  font-size: 0.78rem;
 }
 
 .gd-revenue-highlight .gd-mini-row__value {
-  font-size: clamp(0.88rem, 0.78vw, 0.98rem);
-  line-height: 1.18;
+  font-size: 0.82rem;
 }
 
 .gd-cost-layout__left,
@@ -646,26 +649,25 @@ button {
 
 .gd-cost__label,
 .gd-cost-rect__label {
-  font-size: clamp(0.92rem, 0.82vw, 1.02rem);
-  line-height: 1.2;
-  font-weight: 800;
+  font-size: 0.86rem;
+  font-weight: 700;
   color: rgba(255, 255, 255, 0.96);
 }
 
 .gd-cost__value {
-  font-size: clamp(1.05rem, 0.95vw, 1.18rem);
+  font-size: 1rem;
   line-height: 1.05;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .gd-cost__value--xl {
-  font-size: clamp(2.05rem, 2.55vw, 2.58rem);
+  font-size: clamp(1.9rem, 2.4vw, 2.4rem);
 }
 
 .gd-cost__caption {
-  font-size: clamp(0.84rem, 0.72vw, 0.94rem);
+  font-size: 0.78rem;
   line-height: 1.4;
-  font-weight: 800;
+  font-weight: 700;
   color: rgba(255, 245, 231, 0.82);
 }
 
@@ -714,15 +716,15 @@ button {
 }
 
 .gd-cost-rect__share {
-  font-size: clamp(0.9rem, 0.78vw, 1rem);
+  font-size: 0.86rem;
   font-weight: 800;
   color: rgba(255, 239, 213, 0.96);
 }
 
 .gd-cost-rect__value {
-  font-size: clamp(1rem, 0.88vw, 1.12rem);
+  font-size: 0.96rem;
   line-height: 1.32;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .gd-cost-rect .gd-detail-rows {
@@ -752,7 +754,8 @@ button {
 }
 
 .gd-margin-card__label {
-  font-size: 0.82rem;
+  font-size: 0.94rem;
+  line-height: 1.25;
   font-weight: 800;
   letter-spacing: 0;
   text-transform: uppercase;
@@ -760,7 +763,7 @@ button {
 }
 
 .gd-margin-card__value {
-  font-size: clamp(2rem, 3vw, 2.75rem);
+  font-size: clamp(2.2rem, 3vw, 3rem);
   line-height: 1;
   font-weight: 900;
   letter-spacing: 0;
@@ -793,7 +796,8 @@ button {
 }
 
 .gd-row__label {
-  font-size: 0.84rem;
+  font-size: 0.94rem;
+  line-height: 1.25;
   font-weight: 800;
   letter-spacing: 0;
   text-transform: uppercase;
@@ -803,6 +807,12 @@ button {
   display: flex;
   align-items: center;
   gap: 0.65rem;
+}
+
+.gd-row__value-group > strong {
+  font-size: 1.12rem;
+  line-height: 1.15;
+  font-weight: 900;
 }
 
 .gd-pill {
@@ -820,8 +830,8 @@ button {
 }
 
 .gd-pill--inline {
-  padding: 0.35rem 0.7rem;
-  font-size: 0.76rem;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.86rem;
 }
 
 .gd-card-insight {
@@ -880,35 +890,35 @@ button {
   z-index: 1;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.58rem;
-  margin: 0.38rem 0 0.28rem;
+  gap: 0.5rem;
+  margin: 0.35rem 0 0.25rem;
 }
 
 .gd-result-mini {
   display: grid;
-  gap: 0.24rem;
+  gap: 0.28rem;
   min-width: 0;
+  min-height: 4.35rem;
+  align-content: center;
   padding: 0.68rem 0.52rem;
   border-radius: 10px;
   background: rgba(7, 17, 29, 0.18);
   text-align: center;
-  align-content: center;
 }
 
 .gd-result-mini span {
-  font-size: clamp(0.76rem, 0.72vw, 0.88rem);
-  line-height: 1.2;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.76);
-  white-space: normal;
+  font-size: 0.78rem;
+  line-height: 1.25;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .gd-result-mini strong {
   min-width: 0;
   overflow-wrap: anywhere;
-  font-size: clamp(1.14rem, 1vw, 1.32rem);
-  line-height: 1.18;
-  font-weight: 800;
+  font-size: 1.16rem;
+  line-height: 1.25;
+  font-weight: 700;
   color: #ffffff;
 }
 
@@ -1344,7 +1354,7 @@ button {
   --gan-width: 43.45%;
   --gaa-width: 43.82%;
   --table-columns: 33% 16.5% 18% 32.5%;
-  --table-font-size: clamp(0.5rem, 0.64vw, 0.72rem);
+  --table-font-size: clamp(0.7rem, 0.78vw, 0.92rem);
   position: relative;
   width: min(100%, var(--template-max-width));
   max-width: var(--template-max-width);
@@ -1366,7 +1376,7 @@ button {
   width: 43%;
   text-align: center;
   color: #16110a;
-  font-size: clamp(0.58rem, 1.05vw, 1.05rem);
+  font-size: clamp(0.66rem, 1.08vw, 1.12rem);
   font-weight: 900;
   line-height: 1;
   text-transform: uppercase;
@@ -1380,7 +1390,7 @@ button {
   width: 14%;
   text-align: center;
   color: #f9d46b;
-  font-size: clamp(0.68rem, 1.05vw, 0.95rem);
+  font-size: clamp(0.76rem, 1.08vw, 1.04rem);
   font-weight: 900;
   line-height: 1.15;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.38);
@@ -1415,8 +1425,8 @@ button {
   height: var(--table-height);
   color: #fff5d1;
   font-size: var(--table-font-size);
-  font-weight: 800;
-  line-height: 1;
+  font-weight: 900;
+  line-height: 1.05;
 }
 
 .profit-advance__table--gan {
@@ -1444,7 +1454,7 @@ button {
   min-width: 0;
   height: 100%;
   margin: 0;
-  padding: 0 0.18rem;
+  padding: 0 0.12rem;
   overflow: hidden;
   line-height: 1;
   text-align: center;
@@ -1456,7 +1466,7 @@ button {
 .profit-advance__cell--level {
   justify-content: flex-start;
   text-align: left;
-  padding-left: 0.8rem;
+  padding-left: 0.68rem;
 }
 
 .profit-advance__cell--final {
@@ -1548,7 +1558,7 @@ button {
 
 .ga-company-head span {
   color: #fbbf24;
-  font-size: 0.72rem;
+  font-size: 0.82rem;
   font-weight: 900;
   letter-spacing: 0.16em;
 }
@@ -1556,7 +1566,7 @@ button {
 .ga-company-head h4 {
   margin: 0.25rem 0 0;
   color: #f8fafc;
-  font-size: 1rem;
+  font-size: 1.2rem;
   font-weight: 900;
 }
 
@@ -1577,19 +1587,21 @@ button {
 .ga-table-head {
   padding: 0 0.55rem;
   color: rgba(226, 232, 240, 0.56);
-  font-size: 0.68rem;
+  font-size: 0.84rem;
+  line-height: 1.25;
   font-weight: 900;
   text-transform: uppercase;
 }
 
 .ga-table-row {
-  min-height: 3.05rem;
-  padding: 0.65rem 0.75rem;
+  min-height: 3.4rem;
+  padding: 0.76rem 0.82rem;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.055);
   border: 1px solid rgba(255, 255, 255, 0.09);
   color: rgba(226, 232, 240, 0.9);
-  font-size: 0.84rem;
+  font-size: 1rem;
+  line-height: 1.3;
 }
 
 .ga-table-row:nth-child(odd) {
@@ -1637,6 +1649,266 @@ button {
   transform: translateY(-1px);
   background: rgba(15, 23, 42, 0.42);
   border-color: rgba(255, 255, 255, 0.38);
+}
+
+.gd-revenue-card-visual {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 0.9rem;
+  padding: 1.15rem;
+  border: 1px solid rgba(219, 234, 254, 0.2);
+  border-radius: 20px;
+  background:
+    linear-gradient(145deg, rgba(14, 60, 142, 0.34), rgba(15, 23, 42, 0.16)),
+    rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.gd-revenue-card-visual__heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.gd-revenue-card-visual__heading strong {
+  font-size: 0.92rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.gd-revenue-card-visual__heading span {
+  color: rgba(219, 234, 254, 0.8);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.gd-revenue-chart {
+  display: grid;
+  gap: 1rem;
+}
+
+.gd-revenue-chart__main {
+  display: grid;
+  grid-template-columns: minmax(330px, 0.9fr) minmax(390px, 1.1fr);
+  gap: 1.4rem;
+  align-items: center;
+}
+
+.gd-revenue-donut-stage {
+  position: relative;
+  width: min(420px, 100%);
+  height: clamp(340px, 32vw, 420px);
+  min-width: 0;
+  justify-self: center;
+}
+
+.gd-revenue-donut-stage .recharts-responsive-container {
+  min-height: 100%;
+}
+
+.gd-revenue-donut-focus {
+  pointer-events: none;
+  position: absolute;
+  inset: 50% auto auto 50%;
+  transform: translate(-50%, -50%);
+  display: grid;
+  gap: 0.25rem;
+  max-width: 9rem;
+  justify-items: center;
+  text-align: center;
+}
+
+.gd-revenue-donut-focus span {
+  color: rgba(219, 234, 254, 0.8);
+  font-size: 0.76rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.gd-revenue-donut-focus strong {
+  color: #fff;
+  font-size: clamp(1.65rem, 2.8vw, 2.5rem);
+  line-height: 1.05;
+  font-weight: 900;
+}
+
+.gd-contractual-panel {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid rgba(219, 234, 254, 0.16);
+  border-radius: 18px;
+  background: rgba(7, 30, 77, 0.24);
+}
+
+.gd-contractual-panel__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.7rem;
+  border-bottom: 1px solid rgba(219, 234, 254, 0.14);
+}
+
+.gd-contractual-panel__header span {
+  color: rgba(219, 234, 254, 0.82);
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.gd-contractual-panel__header strong {
+  color: #fff;
+  font-size: 1.15rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.gd-contractual-ranking {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.gd-contractual-ranking__row {
+  display: grid;
+  grid-template-columns: 1.8rem minmax(0, 1fr) auto;
+  gap: 0.65rem;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.65rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.075);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.gd-contractual-ranking__row > span {
+  display: grid;
+  place-items: center;
+  width: 1.7rem;
+  height: 1.7rem;
+  border-radius: 50%;
+  background: rgba(56, 189, 248, 0.18);
+  color: #bae6fd;
+  font-size: 0.74rem;
+  font-weight: 900;
+}
+
+.gd-contractual-ranking__row strong {
+  min-width: 0;
+  color: #fff;
+  font-size: 0.84rem;
+  line-height: 1.2;
+}
+
+.gd-contractual-ranking__row em {
+  color: #dbeafe;
+  font-size: 0.82rem;
+  font-style: normal;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.gd-revenue-secondary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.gd-revenue-secondary__item {
+  display: grid;
+  grid-template-columns: 0.75rem minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  align-items: center;
+  min-height: 3.65rem;
+  padding: 0.7rem 0.85rem;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.09);
+  border: 1px solid rgba(219, 234, 254, 0.14);
+}
+
+.gd-revenue-secondary__swatch {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08);
+}
+
+.gd-revenue-secondary__swatch[data-color-index="0"] { background: #38bdf8; }
+.gd-revenue-secondary__swatch[data-color-index="1"] { background: #a78bfa; }
+.gd-revenue-secondary__swatch[data-color-index="2"] { background: #22d3ee; }
+
+.gd-revenue-secondary__item > div {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.gd-revenue-secondary__item > div span {
+  color: rgba(219, 234, 254, 0.8);
+  font-size: 0.76rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.gd-revenue-secondary__item > div strong {
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.gd-revenue-secondary__item em {
+  color: #fff;
+  font-size: 1.05rem;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.gd-revenue-distribution {
+  width: min(1060px, 94vw);
+  background: linear-gradient(145deg, rgba(15, 35, 75, 0.99), rgba(18, 78, 160, 0.98));
+}
+
+.gd-revenue-distribution__body {
+  padding: 1.35rem 1.55rem 1.55rem;
+}
+
+.gd-revenue-chart--compact .gd-revenue-donut-stage {
+  width: min(390px, 100%);
+  height: clamp(320px, 28vw, 390px);
+}
+
+.gd-cost-card-visual {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 0.9rem;
+  padding: 1.15rem;
+  border: 1px solid rgba(255, 236, 214, 0.18);
+  border-radius: 20px;
+  background:
+    linear-gradient(145deg, rgba(71, 18, 12, 0.34), rgba(17, 24, 39, 0.2)),
+    rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.gd-cost-card-visual__heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.gd-cost-card-visual__heading strong {
+  font-size: 0.92rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.gd-cost-card-visual__heading span {
+  color: rgba(255, 239, 224, 0.76);
+  font-size: 0.82rem;
+  font-weight: 800;
 }
 
 .gd-modal-backdrop {
@@ -1697,17 +1969,25 @@ button {
 }
 
 .gd-cost-distribution__body {
-  display: grid;
-  grid-template-columns: minmax(320px, 0.95fr) minmax(300px, 1.05fr);
-  gap: 1.25rem;
-  align-items: stretch;
   padding: 1.35rem 1.55rem 1.55rem;
+}
+
+.gd-cost-chart {
+  display: grid;
+  grid-template-columns: minmax(330px, 0.95fr) minmax(320px, 1.05fr);
+  gap: 1.35rem;
+  align-items: center;
+  width: 100%;
+}
+
+.gd-cost-chart--compact {
+  grid-template-columns: minmax(320px, 0.82fr) minmax(420px, 1.18fr);
+  gap: 1.5rem;
 }
 
 .gd-donut-column {
   display: grid;
-  gap: 0.9rem;
-  align-content: start;
+  gap: 0.65rem;
   justify-items: center;
   min-width: 0;
 }
@@ -1724,76 +2004,34 @@ button {
   min-height: 100%;
 }
 
-.gd-donut-center {
-  pointer-events: none;
-  position: absolute;
-  inset: 50% auto auto 50%;
-  transform: translate(-50%, -50%);
+.gd-donut-total {
   display: grid;
-  gap: 0.25rem;
+  gap: 0.2rem;
   justify-items: center;
+  min-width: min(220px, 100%);
+  padding: 0.7rem 1.1rem 0.8rem;
+  border-top: 1px solid rgba(255, 235, 214, 0.2);
   text-align: center;
 }
 
-.gd-donut-center span {
+.gd-donut-total span {
   color: rgba(255, 245, 231, 0.72);
-  font-size: 0.82rem;
+  font-size: 0.76rem;
   font-weight: 900;
   text-transform: uppercase;
 }
 
-.gd-donut-center strong {
-  max-width: 9rem;
+.gd-donut-total strong {
   color: #fff;
-  font-size: clamp(1.3rem, 2vw, 1.75rem);
+  font-size: clamp(1.35rem, 2vw, 1.8rem);
   line-height: 1.08;
   font-weight: 900;
-}
-
-.gd-donut-hover-card {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
-  gap: 0.65rem;
-  align-items: center;
-  width: min(430px, 100%);
-  min-height: 3.25rem;
-  padding: 0.72rem 0.85rem;
-  border-radius: 14px;
-  background: rgba(15, 23, 42, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.26);
-}
-
-.gd-donut-hover-card strong {
-  min-width: 0;
-  color: #fff;
-  font-size: 0.92rem;
-  font-weight: 900;
-  line-height: 1.2;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.gd-donut-hover-card.is-idle {
-  grid-template-columns: 1fr;
-}
-
-.gd-donut-hover-card.is-idle strong {
-  color: rgba(255, 245, 231, 0.72);
-  text-align: center;
-}
-
-.gd-donut-hover-card span {
-  color: rgba(255, 245, 231, 0.9);
-  font-size: 0.88rem;
-  font-weight: 900;
-  white-space: nowrap;
 }
 
 .gd-distribution-list {
   display: grid;
   gap: 0.62rem;
+  align-content: center;
 }
 
 .gd-distribution-row {
@@ -1817,15 +2055,30 @@ button {
 }
 
 .gd-distribution-row__swatch[data-color-index="0"] { background: #f59c27; }
-.gd-distribution-row__swatch[data-color-index="1"] { background: #60a5fa; }
-.gd-distribution-row__swatch[data-color-index="2"] { background: #34d399; }
-.gd-distribution-row__swatch[data-color-index="3"] { background: #fb7185; }
-.gd-distribution-row__swatch[data-color-index="4"] { background: #a78bfa; }
-.gd-distribution-row__swatch[data-color-index="5"] { background: #f97316; }
-.gd-distribution-row__swatch[data-color-index="6"] { background: #22d3ee; }
-.gd-distribution-row__swatch[data-color-index="7"] { background: #a3e635; }
-.gd-distribution-row__swatch[data-color-index="8"] { background: #facc15; }
+.gd-distribution-row__swatch[data-color-index="1"] { background: #fbbf24; }
+.gd-distribution-row__swatch[data-color-index="2"] { background: #fb7185; }
+.gd-distribution-row__swatch[data-color-index="3"] { background: #f97316; }
+.gd-distribution-row__swatch[data-color-index="4"] { background: #ef4444; }
+.gd-distribution-row__swatch[data-color-index="5"] { background: #fdba74; }
+.gd-distribution-row__swatch[data-color-index="6"] { background: #e879f9; }
+.gd-distribution-row__swatch[data-color-index="7"] { background: #a78bfa; }
+.gd-distribution-row__swatch[data-color-index="8"] { background: #fde68a; }
 .gd-distribution-row__swatch[data-color-index="9"] { background: #c084fc; }
+
+.gd-cost-chart--compact .gd-donut-stage {
+  width: min(390px, 100%);
+  height: clamp(320px, 28vw, 390px);
+}
+
+.gd-cost-chart--compact .gd-distribution-row {
+  min-height: 2.75rem;
+  padding: 0.5rem 0.65rem;
+  background: rgba(255, 255, 255, 0.075);
+}
+
+.gd-cost-chart--compact .gd-distribution-row__name {
+  font-size: 0.84rem;
+}
 
 .gd-distribution-row__name {
   min-width: 0;
@@ -1886,6 +2139,80 @@ button {
   }
 }
 
+@media (min-width: 1600px) {
+  html {
+    font-size: 20px;
+  }
+
+  .profit-advance {
+    --table-font-size: clamp(0.8rem, 0.82vw, 1rem);
+  }
+
+  .profit-advance__period-text {
+    font-size: clamp(0.78rem, 1.12vw, 1.26rem);
+  }
+
+  .profit-advance__summary-value {
+    font-size: clamp(0.86rem, 1.12vw, 1.18rem);
+  }
+
+  .profit-advance__cell {
+    padding-inline: 0.24rem;
+  }
+
+  .profit-advance__cell--level {
+    padding-left: 0.9rem;
+  }
+
+  .ga-summary-card span,
+  .ga-company-head span {
+    line-height: 1.3;
+  }
+
+  .ga-table-head {
+    font-size: 0.9rem;
+    line-height: 1.25;
+  }
+
+  .ga-table-row {
+    min-height: 3.55rem;
+    font-size: 1.06rem;
+    line-height: 1.3;
+  }
+
+  .recharts-text,
+  .recharts-legend-item-text {
+    font-size: 0.92rem;
+  }
+}
+
+@media (min-width: 1900px) {
+  html {
+    font-size: 22px;
+  }
+
+  .profit-advance {
+    --table-font-size: clamp(0.86rem, 0.88vw, 1.08rem);
+  }
+
+  .profit-advance__period-text {
+    font-size: clamp(0.84rem, 1.14vw, 1.34rem);
+  }
+
+  .profit-advance__summary-value {
+    font-size: clamp(0.92rem, 1.14vw, 1.26rem);
+  }
+
+  .ga-table-head {
+    font-size: 0.94rem;
+  }
+
+  .ga-table-row {
+    min-height: 3.7rem;
+    font-size: 1.12rem;
+  }
+}
+
 @media (max-width: 1180px) {
   .gd-top-section,
   .gd-kpi-row,
@@ -1897,7 +2224,12 @@ button {
     grid-template-columns: 1fr;
   }
 
-  .gd-cost-distribution__body {
+  .gd-cost-chart,
+  .gd-cost-chart--compact {
+    grid-template-columns: 1fr;
+  }
+
+  .gd-revenue-chart__main {
     grid-template-columns: 1fr;
   }
 
@@ -1943,22 +2275,6 @@ button {
     font-size: 2.1rem;
   }
 
-  .gd-result-mini-grid {
-    gap: 0.45rem;
-  }
-
-  .gd-result-mini {
-    padding: 0.62rem 0.42rem;
-  }
-
-  .gd-result-mini span {
-    font-size: clamp(0.7rem, 2.7vw, 0.8rem);
-  }
-
-  .gd-result-mini strong {
-    font-size: clamp(1rem, 3.8vw, 1.16rem);
-  }
-
   .gd-row,
   .gd-row__value-group,
   .gd-cost-rect__head,
@@ -1985,9 +2301,63 @@ button {
     padding: 1rem;
   }
 
+  .gd-cost-card-visual {
+    padding: 0.9rem;
+  }
+
+  .gd-revenue-card-visual {
+    padding: 0.9rem;
+  }
+
+  .gd-revenue-card-visual__heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .gd-revenue-donut-stage,
+  .gd-revenue-chart--compact .gd-revenue-donut-stage {
+    height: 300px;
+    width: min(340px, 100%);
+  }
+
+  .gd-revenue-secondary {
+    grid-template-columns: 1fr;
+  }
+
+  .gd-contractual-panel__header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .gd-contractual-ranking__row {
+    grid-template-columns: 1.8rem minmax(0, 1fr);
+  }
+
+  .gd-contractual-ranking__row em {
+    grid-column: 2;
+  }
+
+  .gd-cost-card-visual__heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .gd-cost-chart,
+  .gd-cost-chart--compact {
+    gap: 0.8rem;
+  }
+
   .gd-donut-stage {
     height: 320px;
     width: min(360px, 100%);
+  }
+
+  .gd-cost-chart--compact .gd-donut-stage {
+    height: 300px;
+    width: min(340px, 100%);
   }
 
   .gd-donut-stage .recharts-responsive-container {

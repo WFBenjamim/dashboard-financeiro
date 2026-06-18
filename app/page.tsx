@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { type ReactNode, useEffect, useState } from "react";
 import CountUp from "react-countup";
-import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import { EvolutionDashboardSections } from "@/components/EvolutionModal";
 import { MonthFilter } from "@/components/MonthFilter";
 import { ResultOpeningScreen } from "@/components/ResultOpeningScreen";
@@ -255,13 +255,12 @@ function Hero({ header }: { header: any }) {
 }
 
 function RevenueCard({ data, insight, topClients }: { data: any; insight?: any; topClients?: any }) {
+  const [showRevenueView, setShowRevenueView] = useState(false);
   const rows = data?.rows || [];
   const receitaOrcadaPeriodo = data?.receita_orcada_periodo ?? data?.meta_periodo_receita ?? data?.receita_orcada_anual ?? data?.receita_orcada;
   const hasMetrics = isFiniteNumber(receitaOrcadaPeriodo)
     || isFiniteNumber(data?.variacao_2025)
     || isFiniteNumber(data?.pct_orcado);
-  const highlight = [...rows].sort((a: any, b: any) => parseShareValue(b?.share) - parseShareValue(a?.share))[0];
-  const remaining = rows.filter((row: any) => row !== highlight);
   const contractualExpansion = (data?.expansions || []).find((expansion: any) =>
     normalizeKey(expansion?.title).includes("contratuais")
   );
@@ -269,6 +268,15 @@ function RevenueCard({ data, insight, topClients }: { data: any; insight?: any; 
     ? contractualExpansion.items
     : (topClients?.ranking || []).filter((item: any) => normalizeKey(item?.name) !== "outros").slice(0, 5);
   const contractualItems = contractualDetails.slice(0, 5);
+
+  useEffect(() => {
+    if (!showRevenueView) return;
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") setShowRevenueView(false);
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [showRevenueView]);
 
   return (
     <article className="gd-card gd-card--blue">
@@ -289,70 +297,199 @@ function RevenueCard({ data, insight, topClients }: { data: any; insight?: any; 
             />
           </MetricaGrid>
         )}
-      </div>
-      <div className="gd-cost-layout gd-revenue-block-layout">
-        {highlight && (
-          <RevenueHighlight row={highlight} items={contractualItems} />
+        {!!rows.length && (
+          <div className="gd-card-actions">
+            <button
+              className="gd-secondary-action"
+              type="button"
+              onClick={() => setShowRevenueView(true)}
+            >
+              Ampliar visão
+            </button>
+          </div>
         )}
-        <div className="gd-cost-list">
-          {remaining.map((row: any) => (
-            <RevenueBlockItem key={cleanText(row.label)} row={row} />
-          ))}
-        </div>
       </div>
+      {!!rows.length && (
+        <div className="gd-revenue-card-visual">
+          <div className="gd-revenue-card-visual__heading">
+            <strong>Composição da receita</strong>
+            <span>Contratuais em destaque</span>
+          </div>
+          <RevenueDistributionChart rows={rows} contractualItems={contractualItems} compact />
+        </div>
+      )}
       <InsightNote insight={insight} />
+      {!!rows.length && showRevenueView && (
+        <RevenueDistributionModal
+          rows={rows}
+          contractualItems={contractualItems}
+          periodLabel={data?.meta_periodo_meses ? `${data.meta_periodo_meses} meses selecionados` : "Período selecionado"}
+          onClose={() => setShowRevenueView(false)}
+        />
+      )}
     </article>
   );
 }
 
-function RevenueBlockItem({ row }: { row: any }) {
+const REVENUE_DISTRIBUTION_COLORS = ["#38BDF8", "#A78BFA", "#22D3EE"];
+
+function RevenueDistributionChart({
+  rows,
+  contractualItems,
+  compact = false,
+}: {
+  rows: any[];
+  contractualItems: any[];
+  compact?: boolean;
+}) {
+  const chartItems = rows.map((row: any) => ({
+    name: cleanText(row.label),
+    value: parseCurrency(cleanText(row.value)) || 0,
+    percent: parseShareValue(row.share) / 100,
+  }));
+  const contractual = chartItems.find((item) => normalizeKey(item.name).includes("contratuais")) || chartItems[0];
+  const secondaryItems = chartItems.filter((item) => item !== contractual);
+
   return (
-    <div className="gd-cost-rect">
-      <div className="gd-cost-rect__head">
-        <span className="gd-cost-rect__label">{cleanText(row.label)}</span>
-        <span className="gd-cost-rect__share">{cleanText(row.share)}</span>
+    <div className={`gd-revenue-chart${compact ? " gd-revenue-chart--compact" : ""}`}>
+      <div className="gd-revenue-chart__main">
+        <div className="gd-revenue-donut-stage">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={chartItems}
+                dataKey="value"
+                nameKey="name"
+                cx="50%"
+                cy="50%"
+                innerRadius="57%"
+                outerRadius="87%"
+                paddingAngle={2}
+                startAngle={90}
+                endAngle={-270}
+                minAngle={2}
+                stroke="rgba(15, 35, 75, 0.62)"
+                strokeWidth={2}
+                animationBegin={80}
+                animationDuration={800}
+                animationEasing="ease-out"
+              >
+                {chartItems.map((item, index) => (
+                  <Cell
+                    key={item.name}
+                    fill={REVENUE_DISTRIBUTION_COLORS[index % REVENUE_DISTRIBUTION_COLORS.length]}
+                  />
+                ))}
+              </Pie>
+              <Tooltip content={<RevenueDistributionTooltip />} />
+            </PieChart>
+          </ResponsiveContainer>
+          <div className="gd-revenue-donut-focus">
+            <span>{contractual?.name || "Contratuais"}</span>
+            <strong>{formatPercentMetric(contractual?.percent || 0)}</strong>
+          </div>
+        </div>
+
+        <div className="gd-contractual-panel">
+          <div className="gd-contractual-panel__header">
+            <span>Principais clientes contratuais</span>
+            <strong>{formatCurrency(contractual?.value || 0)}</strong>
+          </div>
+          <div className="gd-contractual-ranking">
+            {contractualItems.map((item: any, index: number) => (
+              <div className="gd-contractual-ranking__row" key={`${cleanText(item.name)}-${index}`}>
+                <span>{index + 1}</span>
+                <strong>{cleanText(item.name)}</strong>
+                <em>{formatCurrencyText(cleanText(item.value))}</em>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
-      <div className="gd-cost-rect__value">{formatCurrencyText(cleanText(row.value))}</div>
+
+      <div className="gd-revenue-secondary">
+        {secondaryItems.map((item, index) => (
+          <div className="gd-revenue-secondary__item" key={item.name}>
+            <span
+              className="gd-revenue-secondary__swatch"
+              data-color-index={(index + 1) % REVENUE_DISTRIBUTION_COLORS.length}
+              aria-hidden="true"
+            />
+            <div>
+              <span>{item.name}</span>
+              <strong>{formatCurrency(item.value)}</strong>
+            </div>
+            <em>{formatPercentMetric(item.percent)}</em>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
 
-function RevenueHighlight({ row, items }: { row: any; items: any[] }) {
+function RevenueDistributionModal({
+  rows,
+  contractualItems,
+  periodLabel,
+  onClose,
+}: {
+  rows: any[];
+  contractualItems: any[];
+  periodLabel: string;
+  onClose: () => void;
+}) {
   return (
-    <div className="gd-cost gd-cost--highlight gd-revenue-highlight">
-      <div className="gd-cost__label">{cleanText(row.label)}</div>
-      <div className="gd-cost__value gd-cost__value--xl">{cleanText(row.share)}</div>
-      <div className="gd-cost__caption">principal origem</div>
-      {!!items.length && <DetailRows items={items} />}
+    <div className="gd-modal-backdrop" role="presentation" onClick={onClose}>
+      <div
+        className="gd-modal gd-revenue-distribution"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="gd-revenue-distribution-title"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <button className="gd-modal__close" type="button" aria-label="Fechar" onClick={onClose}>
+          ×
+        </button>
+        <div className="gd-modal__header">
+          <h2 id="gd-revenue-distribution-title">Distribuição de Receita</h2>
+          <p>{cleanText(periodLabel)}</p>
+        </div>
+        <div className="gd-revenue-distribution__body">
+          <RevenueDistributionChart rows={rows} contractualItems={contractualItems} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RevenueDistributionTooltip({ active, payload }: any) {
+  if (!active || !payload?.length) return null;
+  const item = payload[0]?.payload || {};
+
+  return (
+    <div className="gd-chart-tooltip">
+      <strong>{cleanText(item.name)}</strong>
+      <span>{formatCurrency(Number(item.value || 0))}</span>
+      <span>{formatPercentMetric(Number(item.percent || 0))}</span>
     </div>
   );
 }
 
 const COST_DISTRIBUTION_COLORS = [
   "#F59C27",
-  "#60a5fa",
-  "#34d399",
-  "#fb7185",
-  "#a78bfa",
-  "#f97316",
-  "#22d3ee",
-  "#a3e635",
-  "#facc15",
-  "#c084fc",
+  "#FBBF24",
+  "#FB7185",
+  "#F97316",
+  "#EF4444",
+  "#FDBA74",
+  "#E879F9",
+  "#A78BFA",
+  "#FDE68A",
+  "#C084FC",
 ];
 
 function CostCard({ data, insight, distribution }: { data: any; insight?: any; distribution?: any }) {
   const [showDistribution, setShowDistribution] = useState(false);
-  const items = data?.items || [];
-  const visibleItems = items.filter((item: any) => !normalizeKey(item?.label).includes("estagiarios"));
-  const fallbackHighlight = [...visibleItems].sort((a: any, b: any) => parseShareValue(b?.share) - parseShareValue(a?.share))[0];
-  const rawHighlight = data?.highlight || fallbackHighlight || {};
-  const highlight = normalizeKey(rawHighlight?.label).includes("estagiarios") ? fallbackHighlight || {} : rawHighlight;
-  const special = visibleItems.filter((item: any) => {
-    const label = normalizeKey(item.label);
-    return label.includes("socios") || label === "clt";
-  });
-  const remaining = visibleItems.filter((item: any) => !special.includes(item));
   const custoOrcadoPeriodo = data?.custo_orcado_periodo ?? data?.meta_periodo_custos ?? data?.custo_orcado_anual;
   const hasMetrics = isFiniteNumber(custoOrcadoPeriodo)
     || isFiniteNumber(data?.variacao_2025)
@@ -395,36 +532,20 @@ function CostCard({ data, insight, distribution }: { data: any; insight?: any; d
               type="button"
               onClick={() => setShowDistribution(true)}
             >
-              Ver distribuição de custos
+              Ampliar visão
             </button>
           </div>
         )}
       </div>
-      <div className="gd-cost-layout">
-        <div className="gd-cost-layout__left">
-          <div className="gd-cost gd-cost--highlight">
-            <div className="gd-cost__label">{cleanText(highlight?.label || "Principal grupo")}</div>
-            <div className="gd-cost__value gd-cost__value--xl">{cleanText(highlight?.value || highlight?.share || "0,0%")}</div>
-            {cleanText(highlight?.caption || (fallbackHighlight ? "principal grupo de custo" : "")) && (
-              <div className="gd-cost__caption">
-                {cleanText(highlight?.caption || (fallbackHighlight ? "principal grupo de custo" : ""))}
-              </div>
-            )}
+      {hasDistribution && (
+        <div className="gd-cost-card-visual">
+          <div className="gd-cost-card-visual__heading">
+            <strong>Distribuição por grupo</strong>
+            <span>{cleanText(distribution?.periodLabel || "Período selecionado")}</span>
           </div>
-          <div className="gd-cost-list">
-            {special.map((item: any) => (
-              <CostItem key={cleanText(item.label)} item={item} />
-            ))}
-          </div>
+          <CostDistributionChart distribution={distribution} compact />
         </div>
-        <div className="gd-cost-layout__right">
-          <div className="gd-cost-list">
-            {remaining.map((item: any) => (
-              <CostItem key={cleanText(item.label)} item={item} />
-            ))}
-          </div>
-        </div>
-      </div>
+      )}
       <InsightNote insight={insight} />
       {hasDistribution && showDistribution && (
         <CostDistributionModal
@@ -436,11 +557,70 @@ function CostCard({ data, insight, distribution }: { data: any; insight?: any; d
   );
 }
 
-function CostDistributionModal({ distribution, onClose }: { distribution: any; onClose: () => void }) {
+function CostDistributionChart({ distribution, compact = false }: { distribution: any; compact?: boolean }) {
   const items = distribution?.items || [];
   const total = Number(distribution?.total || 0);
-  const [hoveredItem, setHoveredItem] = useState<any | null>(null);
 
+  return (
+    <div className={`gd-cost-chart${compact ? " gd-cost-chart--compact" : ""}`}>
+      <div className="gd-donut-column">
+        <div className="gd-donut-stage">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={items}
+                dataKey="value"
+                nameKey="name"
+                cx="50%"
+                cy="50%"
+                innerRadius="58%"
+                outerRadius="86%"
+                paddingAngle={1.5}
+                startAngle={90}
+                endAngle={-270}
+                minAngle={1}
+                stroke="rgba(77, 20, 12, 0.58)"
+                strokeWidth={2}
+                animationBegin={80}
+                animationDuration={800}
+                animationEasing="ease-out"
+              >
+                {items.map((item: any, index: number) => (
+                  <Cell
+                    key={cleanText(item.name)}
+                    fill={COST_DISTRIBUTION_COLORS[index % COST_DISTRIBUTION_COLORS.length]}
+                  />
+                ))}
+              </Pie>
+              <Tooltip content={<CostDistributionTooltip />} />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+        <div className="gd-donut-total">
+          <span>Total</span>
+          <strong>{formatCurrency(total)}</strong>
+        </div>
+      </div>
+
+      <div className="gd-distribution-list">
+        {items.map((item: any, index: number) => (
+          <div className="gd-distribution-row" key={cleanText(item.name)}>
+            <span
+              className="gd-distribution-row__swatch"
+              data-color-index={index % COST_DISTRIBUTION_COLORS.length}
+              aria-hidden="true"
+            />
+            <span className="gd-distribution-row__name">{cleanText(item.name)}</span>
+            <strong>{formatCurrency(Number(item.value || 0))}</strong>
+            <span>{formatPercentMetric(Number(item.percent || 0))}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function CostDistributionModal({ distribution, onClose }: { distribution: any; onClose: () => void }) {
   return (
     <div className="gd-modal-backdrop" role="presentation" onClick={onClose}>
       <div
@@ -459,96 +639,23 @@ function CostDistributionModal({ distribution, onClose }: { distribution: any; o
         </div>
 
         <div className="gd-cost-distribution__body">
-          <div className="gd-donut-column">
-            <div className="gd-donut-stage">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={items}
-                    dataKey="value"
-                    nameKey="name"
-                    cx="50%"
-                    cy="50%"
-                    innerRadius="58%"
-                    outerRadius="86%"
-                    paddingAngle={1.5}
-                    startAngle={90}
-                    endAngle={-270}
-                    minAngle={1}
-                    stroke="rgba(15, 23, 42, 0.42)"
-                    strokeWidth={2}
-                    isAnimationActive={false}
-                    onMouseEnter={(entry) => setHoveredItem(entry)}
-                    onMouseLeave={() => setHoveredItem(null)}
-                  >
-                    {items.map((item: any, index: number) => (
-                      <Cell
-                        key={cleanText(item.name)}
-                        fill={COST_DISTRIBUTION_COLORS[index % COST_DISTRIBUTION_COLORS.length]}
-                      />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
-              <div className="gd-donut-center">
-                <span>Total</span>
-                <strong>{formatCurrency(total)}</strong>
-              </div>
-            </div>
-            <div className={`gd-donut-hover-card ${hoveredItem ? "" : "is-idle"}`} aria-live="polite">
-              {hoveredItem ? (
-                <>
-                  <strong>{cleanText(hoveredItem.name)}</strong>
-                  <span>{formatCurrency(Number(hoveredItem.value || 0))}</span>
-                  <span>{formatPercentMetric(Number(hoveredItem.percent || 0))}</span>
-                </>
-              ) : (
-                <strong>Passe o mouse sobre uma fatia</strong>
-              )}
-            </div>
-          </div>
-
-          <div className="gd-distribution-list">
-            {items.map((item: any, index: number) => (
-              <div className="gd-distribution-row" key={cleanText(item.name)}>
-                <span
-                  className="gd-distribution-row__swatch"
-                  data-color-index={index % COST_DISTRIBUTION_COLORS.length}
-                  aria-hidden="true"
-                />
-                <span className="gd-distribution-row__name">{cleanText(item.name)}</span>
-                <strong>{formatCurrency(Number(item.value || 0))}</strong>
-                <span>{formatPercentMetric(Number(item.percent || 0))}</span>
-              </div>
-            ))}
-          </div>
+          <CostDistributionChart distribution={distribution} />
         </div>
       </div>
     </div>
   );
 }
 
-function CostItem({ item }: { item: any }) {
-  const details = item?.details || [];
-  const head = (
-    <>
-      <div className="gd-cost-rect__head">
-        <span className="gd-cost-rect__label">{cleanText(item.label)}</span>
-        <span className="gd-cost-rect__share">{cleanText(item.share)}</span>
-      </div>
-      <div className="gd-cost-rect__value">{formatCurrencyText(cleanText(item.value))}</div>
-    </>
-  );
-
-  if (!details.length) {
-    return <div className="gd-cost-rect">{head}</div>;
-  }
+function CostDistributionTooltip({ active, payload }: any) {
+  if (!active || !payload?.length) return null;
+  const item = payload[0]?.payload || {};
 
   return (
-    <details className="gd-cost-rect gd-cost-rect--expandable">
-      <summary className="gd-cost-rect__summary">{head}</summary>
-      <DetailRows items={details} />
-    </details>
+    <div className="gd-chart-tooltip">
+      <strong>{cleanText(item.name)}</strong>
+      <span>{formatCurrency(Number(item.value || 0))}</span>
+      <span>{formatPercentMetric(Number(item.percent || 0))}</span>
+    </div>
   );
 }
 
