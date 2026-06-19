@@ -1,0 +1,495 @@
+{
+  "header": {
+    "title": "Encontro de Divulgação de Resultados – Gondim | 2026 (EDR)",
+    "subtitle": "Período acumulado: jan, fev, mar, abr e mai/26",
+    "band": "DATA DE DIVULGAÇÃO: 22 DE MAIO DE 2026"
+  },
+  "revenue_mix": {
+    "icon": "💰",
+    "title": "Estrutura de Receita",
+    "value": 21677990.233999997,
+    "contratual": 19162428.415395,
+    "sucumbencia": 1828090.81,
+    "outras": 687471.008605,
+    "outras_receitas": 687471.008605,
+    "pct_contratual": 0.8839577935292376,
+    "pct_sucumbencia": 0.08432934927393787,
+    "pct_outras": 0.03171285719682459,
+    "pct_orcado": 1.0338452788962935,
+    "receita_orcada": 20968311.870750003,
+    "receita_orcada_periodo": 20968311.870750003,
+    "meta_periodo_receita": 20968311.870750003,
+    "meta_periodo_meses": 5,
+    "receita_2025_periodo": 20024940.940006003,
+    "variacao_yoy": 0.08254952156645406,
+    "subtitle": "",
+    "comparison_pct": 8.254952156645407,
+    "rows": [
+      {
+        "label": "Contratuais",
+        "value": "R$ 19,16 M",
+        "share": "88,4%"
+      },
+      {
+        "label": "Sucumbência",
+        "value": "R$ 1,83 M",
+        "share": "8,4%"
+      },
+      {
+        "label": "Outras Receitas",
+        "value": "R$ 687,5 mil",
+        "share": "3,2%"
+      }
+    ],
+    "expansions": [
+      {
+        "title": "Contratuais",
+        "items": [
+          {
+            "name": "SANEAMENTO",
+            "value": "R$ 3,21 M"
+          },
+          {
+            "name": "SANTANDER",
+            "value": "R$ 2,93 M"
+          },
+          {
+            "name": "CLARO",
+            "value": "R$ 2,11 M"
+          },
+          {
+            "name": "MERCADO LIVRE",
+            "value": "R$ 1,81 M"
+          },
+          {
+            "name": "UOL",
+            "value": "R$ 1,79 M"
+          }
+        ]
+      },
+      {
+        "title": "Sucumbência",
+        "items": []
+      }
+    ],
+    "receita_orcada_anual": 20968311.870750003,
+    "variacao_2025": 0.08254952156645406
+  },
+  "cost_structure": {
+    "icon": "📉",
+    "title": "Estrutura de Custos",
+    "total": 19580379.62888831,
+    "correspondentes": 922471.7018189998,
+    "outras_despesas": 1635677.0490396726,
+    "impostos": 4154954.334295,
+    "socios_servico": 9473671.34,
+    "socios": 9473671.34,
+    "clt": 2810280.12,
+    "estagiarios": 0.0,
+    "total_pessoas_custo": 12283951.46,
+    "official_total_costs": 19580379.62888831,
+    "detailed_cost_total": 18997054.545153674,
+    "cost_total_source": "INFORMAÇÕES GERENCIAIS.xlsx / TOTAIS  20 E 21 / CUSTOS E DESPESAS",
+    "cost_total_warning": "",
+    "cost_total_anterior": 17121265.262765963,
+    "variacao_custos_yoy": 0.14362924283815887,
+    "custo_orcado_periodo": 19758586.258588683,
+    "meta_periodo_custos": 19758586.258588683,
+    "pct_orcado_custos": 0.9909808005811696,
+    "value": "R$ 19,58 M",
+    "subtitle": "+14,4% vs 2025",
+    "highlight": {
+      "label": "Sócios",
+      "value": "48,4%",
+      "caption": "principal grupo de custo"
+    },
+    "items": [
+      {
+        "label": "Impostos",
+        "value": "R$ 4,15 M",
+        "share": "21,2%",
+        "details": []
+      },
+      {
+        "label": "Sócios",
+        "value": "R$ 9,47 M",
+        "share": "48,4%",
+        "details": []
+      },
+      {
+        "label": "CLT",
+        "value": "R$ 2,81 M",
+        "share": "14,4%",
+        "details": []
+      },
+      {
+        "label": "Estagiários",
+        "value": "R$ 0",
+        "share": "0,0%",
+        "details": []
+      },
+      {
+        "label": "Correspondentes",
+        "value": "R$ 922,5 mil",
+        "share": "4,7%",
+        "details": []
+      },
+      {
+        "label": "Outras Despesas",
+        "value": "R$ 1,64 M",
+        "share": "8,4%",
+        "details": []
+      }
+    ],
+    "socios_capital": 0.0,
+    "total_folha_val": 0.0,
+    "people_costs_source": "Custos OMIE.xlsx",
+    "folha_months_used": [],
+    "folha_snapshot_month": null,
+    "cost_subtitle": "+14,4% vs 2025",
+    "custo_orcado_anual": 19758586.258588683,
+    "meta_periodo_meses": 5,
+    "variacao_2025": 0.14362924283815887
+  },
+  "net_result": {
+    "icon": "📊",
+    "title": "Resultado Líquido",
+    "value": 2097610.6051116916,
+    "subtitle": "",
+    "resultado_orcado": 1209725.612161317,
+    "meta_periodo_resultado": 1209725.612161317,
+    "meta_periodo_meses": 5,
+    "pct_vs_orcado": 1.73395568716121,
+    "resultado_2025": 2903675.6772400397,
+    "variacao_2025": -0.2776016200592063,
+    "sem_sucumbencia": 269519.7951116916,
+    "resultado_orcado_anual": 1209725.612161317,
+    "pct_ano": 0.0,
+    "resultado_operacional": 6252564.939406689
+  },
+  "margins": {
+    "icon": "📈",
+    "title": "Margens",
+    "value": "30,8%",
+    "subtitle": "",
+    "operational": 0.30759529832143656,
+    "net": 0.09477115425592104,
+    "source": "PERFORMANCE.XLSX",
+    "logic": "Linha consolidada 1 - TODOS; MO=(I-M-Q)/I; ML=Z/I",
+    "totals": {
+      "realRevenue": 21591539.563999996,
+      "realExpenses": 10810515.76094088,
+      "taxes": 4139567.749651437,
+      "realResult": 2046255.1266426658
+    },
+    "metrics": [
+      {
+        "label": "Margem Operacional",
+        "value": "30,8%",
+        "caption": ""
+      },
+      {
+        "label": "Margem Líquida",
+        "value": "9,5%",
+        "caption": ""
+      }
+    ]
+  },
+  "people": {
+    "icon": "👥",
+    "title": "Pessoas",
+    "value": "602",
+    "total": 602,
+    "socios": {
+      "qtd": 437,
+      "pct": 0.7259136212624585
+    },
+    "clt": {
+      "qtd": 126,
+      "pct": 0.20930232558139536
+    },
+    "estagiarios": {
+      "qtd": 36,
+      "pct": 0.059800664451827246
+    },
+    "subtitle": "",
+    "rows": [
+      {
+        "label": "Sócios de Serviço",
+        "value": "437",
+        "share": "72,6%",
+        "costValue": "R$ 9,47 M",
+        "costSource": "Custos OMIE.xlsx"
+      },
+      {
+        "label": "CLT",
+        "value": "126",
+        "share": "20,9%",
+        "costValue": "R$ 2,81 M",
+        "costSource": "Custos OMIE.xlsx"
+      },
+      {
+        "label": "Estagiários",
+        "value": "36",
+        "share": "6,0%",
+        "costValue": "",
+        "costSource": ""
+      }
+    ]
+  },
+  "top_clients": {
+    "icon": "🏆",
+    "title": "Top 5 Clientes",
+    "subtitle": "Faturamento em jan, fev, mar, abr e mai/26",
+    "ranking": [
+      {
+        "name": "SANEAMENTO",
+        "value": "R$ 3,21 M"
+      },
+      {
+        "name": "SANTANDER",
+        "value": "R$ 2,93 M"
+      },
+      {
+        "name": "CLARO",
+        "value": "R$ 2,11 M"
+      },
+      {
+        "name": "MERCADO LIVRE",
+        "value": "R$ 1,81 M"
+      },
+      {
+        "name": "UOL",
+        "value": "R$ 1,79 M"
+      },
+      {
+        "name": "Outros",
+        "value": "R$ 9,62 M"
+      }
+    ]
+  },
+  "insights": [
+    {
+      "tone": "red",
+      "title": "Efeito tesoura",
+      "description": "Receita e custos seguem em direções distintas, mas ainda preservam resultado operacional de R$ 2,1 M."
+    },
+    {
+      "tone": "yellow",
+      "title": "Pessoas representam 62,7% dos custos",
+      "description": "O gasto consolidado com Sócios, CLT e Estagiários soma R$ 12,28 M, representando 62,7% do total de custos do período."
+    },
+    {
+      "tone": "green",
+      "title": "Estrutura de pessoas",
+      "description": "A base segue concentrada em pessoas, com Sócios de Serviço 72,6%, CLT 20,9%, Estagiários 6,0%, o que reforça uma estrutura mais rígida no curto prazo."
+    },
+    {
+      "tone": "blue",
+      "title": "Top 5 clientes",
+      "description": "SANEAMENTO lidera um grupo que soma R$ 21,47 M e mantém concentração moderada na frente comercial."
+    }
+  ],
+  "technical_analysis": {
+    "title": "Análise técnica",
+    "paragraphs": [
+      "No acumulado do período, a receita somou R$ 21,68 M e a estrutura de custos atingiu R$ 19,58 M, produzindo resultado operacional positivo de R$ 2,1 M. O ritmo entre receita e despesas segue relativamente equilibrado.",
+      "A comparação interanual de período acumulado: jan, fev, mar, abr e mai/26 deve ser lida com cautela, mas já evidencia um descompasso mais moderado entre receita e custos. Como o painel observa um recorte parcial do ano, o efeito de base, sazonalidade e timing de reconhecimento das linhas pode ampliar ou suavizar a fotografia do período.",
+      "Mesmo sem considerar a sucumbência, o resultado líquido permaneceria em R$ 0, sugerindo que a geração recorrente ainda se sustenta com menor dependência de receitas extraordinárias.",
+      "O principal vetor de rigidez está na estrutura de pessoas: o desembolso com essa frente responde por 62,7% do total de custos, patamar relevante. Em paralelo, a linha de Sócios concentra 48,4%, o que reforça a necessidade de disciplina sobre capacidade, alocação e produtividade.",
+      "Na camada complementar, correspondentes somam R$ 922,5 mil (4,7%) e outras despesas atingem R$ 1,64 M (8,4%). Juntas, essas rubricas representam R$ 2,56 M e 13,1% dos custos, oferecendo espaço para ajustes táticos sem alterar a espinha dorsal da operação.",
+      "Na frente comercial, o faturamento segue concentrado no top 5 clientes, formado por SANEAMENTO, SANTANDER, CLARO, MERCADO LIVRE, UOL, que juntos somam R$ 21,47 M. A liderança de SANEAMENTO, com 15,0% desse bloco, sinaliza um nível relevante de concentração comercial e mantém a diversificação da carteira como agenda prioritária."
+    ],
+    "meta": {
+      "mode": "template",
+      "provider": null
+    }
+  },
+  "budget": {
+    "revenue": 20968311.870750003,
+    "costs": 19758586.258588683,
+    "result": 1209725.612161317,
+    "source": "PERFORMANCE.XLSX",
+    "logic": "Linha consolidada 1 - TODOS; soma mensal K/V/AB conforme meses selecionados",
+    "months": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "validation": {
+      "isJanuaryToPeriod": true,
+      "revenueAccumulated": 20968311.87075,
+      "costsAccumulated": 11074317.388406066,
+      "resultAccumulated": 1209725.612161317,
+      "revenueDiff": 3.725290298461914e-09,
+      "costsDiff": 8684268.870182617,
+      "resultDiff": 0.0
+    },
+    "error": null
+  },
+  "peopleCosts": {
+    "partners": 9473671.34,
+    "clt": 2810280.12,
+    "total": 12283951.46,
+    "breakdown": [
+      {
+        "name": "Sócios de Serviço e Capital",
+        "value": 9473671.34
+      },
+      {
+        "name": "Celetistas",
+        "value": 2810280.12
+      }
+    ],
+    "source": "Custos OMIE.xlsx",
+    "months": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "available": true,
+    "error": null
+  },
+  "costDistribution": {
+    "source": "Custos OMIE.xlsx",
+    "logic": "Soma da coluna Valor por Grupo Resumo Final; percentuais recalculados sobre o total do periodo",
+    "periodLabel": "jan, fev, mar, abr e mai/26",
+    "months": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "total": 19594809.34,
+    "items": [
+      {
+        "name": "Sócios de Serviço e Capital",
+        "value": 9473671.34,
+        "percent": 0.48347861801649966
+      },
+      {
+        "name": "Impostos",
+        "value": 4196014.32,
+        "percent": 0.21413907362877155
+      },
+      {
+        "name": "Celetistas",
+        "value": 2810280.12,
+        "percent": 0.1434196205350779
+      },
+      {
+        "name": "Correspondentes",
+        "value": 936874.0800000001,
+        "percent": 0.04781236008699027
+      },
+      {
+        "name": "Custo Operacional - Processos Trabalhistas",
+        "value": 541930.27,
+        "percent": 0.027656827917877564
+      },
+      {
+        "name": "Despesas Administrativas - Despesas Gerais",
+        "value": 425032.91,
+        "percent": 0.021691096995384185
+      },
+      {
+        "name": "Despesas Administrativas - Localização / Ocupação",
+        "value": 342408.31,
+        "percent": 0.017474439483369835
+      },
+      {
+        "name": "Despesas com  Marketing",
+        "value": 287123.23,
+        "percent": 0.014653024942369763
+      },
+      {
+        "name": "Outros",
+        "value": 581474.76,
+        "percent": 0.029674938393659308
+      }
+    ],
+    "rawItems": [
+      {
+        "name": "Sócios de Serviço e Capital",
+        "value": 9473671.34,
+        "percent": 0.48347861801649966
+      },
+      {
+        "name": "Impostos",
+        "value": 4196014.32,
+        "percent": 0.21413907362877155
+      },
+      {
+        "name": "Celetistas",
+        "value": 2810280.12,
+        "percent": 0.1434196205350779
+      },
+      {
+        "name": "Correspondentes",
+        "value": 936874.0800000001,
+        "percent": 0.04781236008699027
+      },
+      {
+        "name": "Custo Operacional - Processos Trabalhistas",
+        "value": 541930.27,
+        "percent": 0.027656827917877564
+      },
+      {
+        "name": "Despesas Administrativas - Despesas Gerais",
+        "value": 425032.91,
+        "percent": 0.021691096995384185
+      },
+      {
+        "name": "Despesas Administrativas - Localização / Ocupação",
+        "value": 342408.31,
+        "percent": 0.017474439483369835
+      },
+      {
+        "name": "Despesas com  Marketing",
+        "value": 287123.23,
+        "percent": 0.014653024942369763
+      },
+      {
+        "name": "Despesas Administrativas - Prestadores de Serviço",
+        "value": 220937.78,
+        "percent": 0.011275321753143427
+      },
+      {
+        "name": "Despesas Administrativas - Comunicação",
+        "value": 201006.2,
+        "percent": 0.010258135025058632
+      },
+      {
+        "name": "Despesas Administrativas - Consumo de Material",
+        "value": 77971.44,
+        "percent": 0.003979188500744045
+      },
+      {
+        "name": "Custo  Operacional - Condenações de Clientes",
+        "value": 46153.41,
+        "percent": 0.002355389593191112
+      },
+      {
+        "name": "Despesas Administrativas - Equipamentos",
+        "value": 35405.93,
+        "percent": 0.001806903521522093
+      }
+    ],
+    "available": true,
+    "error": null
+  },
+  "dataQuality": {
+    "hasSuspectRealData": false,
+    "warnings": [],
+    "zeroOfficialMonths": [],
+    "officialCostSource": "INFORMAÇÕES GERENCIAIS.xlsx / TOTAIS  20 E 21 / CUSTOS E DESPESAS",
+    "detailedCostTotal": 18997054.545153674,
+    "peopleCostSource": "Custos OMIE.xlsx"
+  },
+  "cost_subtitle": "+14,4% vs 2025"
+}

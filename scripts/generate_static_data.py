@@ -34,7 +34,7 @@ INFORMACOES_GERENCIAIS_FILE = PROJECT_ROOT / "data" / "INFORMAÇÕES GERENCIAIS.
 YEAR = 2026
 # Apenas os meses que tem dados reais na planilha.
 # Ajuste conforme os meses disponiveis no Orcamento.xlsx.
-AVAILABLE_MONTHS = [1, 2, 3, 4]
+AVAILABLE_MONTHS = [1, 2, 3, 4, 5]
 # ──────────────────────────────────────────────────────────────────────────────
 
 

@@ -8,17 +8,17 @@
     "icon": "💰",
     "title": "Estrutura de Receita",
     "value": 8319716.224,
-    "contratual": 7364623.934,
+    "contratual": 7255976.079958,
     "sucumbencia": 901990.29,
-    "outras": 53102.0,
-    "outras_receitas": 53102.0,
-    "pct_contratual": 0.8852013380883315,
+    "outras": 161749.85404200002,
+    "outras_receitas": 161749.85404200002,
+    "pct_contratual": 0.8721422563700654,
     "pct_sucumbencia": 0.10841599229046012,
-    "pct_outras": 0.0063826696212084645,
-    "pct_orcado": 0.9776056318453255,
-    "receita_orcada": 8510298.99275,
-    "receita_orcada_periodo": 8510298.99275,
-    "meta_periodo_receita": 8510298.99275,
+    "pct_outras": 0.019441751339474535,
+    "pct_orcado": 1.0071931090269433,
+    "receita_orcada": 8260298.99275,
+    "receita_orcada_periodo": 8260298.99275,
+    "meta_periodo_receita": 8260298.99275,
     "meta_periodo_meses": 2,
     "receita_2025_periodo": 8134448.619999999,
     "variacao_yoy": 0.022775680645949085,
@@ -27,8 +27,8 @@
     "rows": [
       {
         "label": "Contratuais",
-        "value": "R$ 7,36 M",
-        "share": "88,5%"
+        "value": "R$ 7,26 M",
+        "share": "87,2%"
       },
       {
         "label": "Sucumbência",
@@ -37,8 +37,8 @@
       },
       {
         "label": "Outras Receitas",
-        "value": "R$ 53,1 mil",
-        "share": "0,6%"
+        "value": "R$ 161,7 mil",
+        "share": "1,9%"
       }
     ],
     "expansions": [
@@ -72,14 +72,14 @@
         "items": []
       }
     ],
-    "receita_orcada_anual": 8510298.99275,
+    "receita_orcada_anual": 8260298.99275,
     "variacao_2025": 0.022775680645949085
   },
   "cost_structure": {
     "icon": "📉",
     "title": "Estrutura de Custos",
-    "total": 7571991.190044427,
-    "correspondentes": 250137.57773399996,
+    "total": 7571991.194872428,
+    "correspondentes": 250137.58256199997,
     "outras_despesas": 608692.7470196575,
     "impostos": 1629627.3542939997,
     "socios_servico": 3784647.61,
@@ -87,15 +87,15 @@
     "clt": 1032902.54,
     "estagiarios": 0.0,
     "total_pessoas_custo": 4817550.15,
-    "official_total_costs": 7571991.190044427,
-    "detailed_cost_total": 7306007.829047658,
+    "official_total_costs": 7571991.194872428,
+    "detailed_cost_total": 7306007.833875658,
     "cost_total_source": "INFORMAÇÕES GERENCIAIS.xlsx / TOTAIS  20 E 21 / CUSTOS E DESPESAS",
     "cost_total_warning": "",
     "cost_total_anterior": 6826084.972329735,
-    "variacao_custos_yoy": 0.10927291716090601,
-    "custo_orcado_periodo": 8103449.200445345,
-    "meta_periodo_custos": 8103449.200445345,
-    "pct_orcado_custos": 0.9344158274760691,
+    "variacao_custos_yoy": 0.1092729178681929,
+    "custo_orcado_periodo": 7960074.200445345,
+    "meta_periodo_custos": 7960074.200445345,
+    "pct_orcado_custos": 0.9512463080367762,
     "value": "R$ 7,57 M",
     "subtitle": "+10,9% vs 2025",
     "highlight": {
@@ -142,45 +142,45 @@
       }
     ],
     "socios_capital": 0.0,
-    "total_folha_val": 1933107.63,
+    "total_folha_val": 0.0,
     "people_costs_source": "Custos OMIE.xlsx",
     "folha_months_used": [],
     "folha_snapshot_month": null,
     "cost_subtitle": "+10,9% vs 2025",
-    "custo_orcado_anual": 8103449.200445345,
+    "custo_orcado_anual": 7960074.200445345,
     "meta_periodo_meses": 2,
-    "variacao_2025": 0.10927291716090601
+    "variacao_2025": 0.1092729178681929
   },
   "net_result": {
     "icon": "📊",
     "title": "Resultado Líquido",
-    "value": 747725.0339555726,
+    "value": 747725.0291275722,
     "subtitle": "",
-    "resultado_orcado": 406849.79230465554,
-    "meta_periodo_resultado": 406849.79230465554,
+    "resultado_orcado": 300224.79230465554,
+    "meta_periodo_resultado": 300224.79230465554,
     "meta_periodo_meses": 2,
-    "pct_vs_orcado": 1.837840520256833,
+    "pct_vs_orcado": 2.490550575079796,
     "resultado_2025": 1308363.6476702648,
-    "variacao_2025": -0.4285036615875045,
-    "sem_sucumbencia": -154265.25604442763,
-    "resultado_orcado_anual": 406849.79230465554,
+    "variacao_2025": -0.42850366527761047,
+    "sem_sucumbencia": -154265.2608724276,
+    "resultado_orcado_anual": 300224.79230465554,
     "pct_ano": 0.0,
-    "resultado_operacional": 2377352.3882495733
+    "resultado_operacional": 2377352.383421573
   },
   "margins": {
     "icon": "📈",
     "title": "Margens",
     "value": "30,7%",
     "subtitle": "",
-    "operational": 0.30685255307526127,
-    "net": 0.08987386316788643,
+    "operational": 0.3068525524949531,
+    "net": 0.08987386258757814,
     "source": "PERFORMANCE.XLSX",
     "logic": "Linha consolidada 1 - TODOS; MO=(I-M-Q)/I; ML=Z/I",
     "totals": {
       "realRevenue": 8319716.223999999,
-      "realExpenses": 4137162.7090657763,
+      "realExpenses": 4137162.713893776,
       "taxes": 1629627.3507381512,
-      "realResult": 747725.0375114207
+      "realResult": 747725.0326834205
     },
     "metrics": [
       {
@@ -201,37 +201,37 @@
     "value": "602",
     "total": 602,
     "socios": {
-      "qtd": 441,
-      "pct": 0.7325581395348837
+      "qtd": 437,
+      "pct": 0.7259136212624585
     },
     "clt": {
-      "qtd": 124,
-      "pct": 0.2059800664451827
+      "qtd": 126,
+      "pct": 0.20930232558139536
     },
     "estagiarios": {
-      "qtd": 34,
-      "pct": 0.05647840531561462
+      "qtd": 36,
+      "pct": 0.059800664451827246
     },
     "subtitle": "",
     "rows": [
       {
         "label": "Sócios de Serviço",
-        "value": "441",
-        "share": "73,3%",
+        "value": "437",
+        "share": "72,6%",
         "costValue": "R$ 3,78 M",
         "costSource": "Custos OMIE.xlsx"
       },
       {
         "label": "CLT",
-        "value": "124",
-        "share": "20,6%",
+        "value": "126",
+        "share": "20,9%",
         "costValue": "R$ 1,03 M",
         "costSource": "Custos OMIE.xlsx"
       },
       {
         "label": "Estagiários",
-        "value": "34",
-        "share": "5,6%",
+        "value": "36",
+        "share": "6,0%",
         "costValue": "",
         "costSource": ""
       }
@@ -282,7 +282,7 @@
     {
       "tone": "green",
       "title": "Estrutura de pessoas",
-      "description": "A base segue concentrada em pessoas, com Sócios de Serviço 73,3%, CLT 20,6%, Estagiários 5,6%, o que reforça uma estrutura mais rígida no curto prazo."
+      "description": "A base segue concentrada em pessoas, com Sócios de Serviço 72,6%, CLT 20,9%, Estagiários 6,0%, o que reforça uma estrutura mais rígida no curto prazo."
     },
     {
       "tone": "blue",
@@ -306,9 +306,9 @@
     }
   },
   "budget": {
-    "revenue": 8510298.99275,
-    "costs": 8103449.200445345,
-    "result": 406849.79230465554,
+    "revenue": 8260298.99275,
+    "costs": 7960074.200445345,
+    "result": 300224.79230465554,
     "source": "PERFORMANCE.XLSX",
     "logic": "Linha consolidada 1 - TODOS; soma mensal K/V/AB conforme meses selecionados",
     "months": [
@@ -479,7 +479,7 @@
     "warnings": [],
     "zeroOfficialMonths": [],
     "officialCostSource": "INFORMAÇÕES GERENCIAIS.xlsx / TOTAIS  20 E 21 / CUSTOS E DESPESAS",
-    "detailedCostTotal": 7306007.829047658,
+    "detailedCostTotal": 7306007.833875658,
     "peopleCostSource": "Custos OMIE.xlsx"
   },
   "cost_subtitle": "+10,9% vs 2025"

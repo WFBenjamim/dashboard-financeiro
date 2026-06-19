@@ -160,7 +160,7 @@ export default function Dashboard() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const year = 2026;
-  const currentMonth = 4;
+  const currentMonth = 5;
   const [months, setMonths] = useState<number[]>([]);
 
   useEffect(() => {
@@ -251,7 +251,7 @@ function Hero({ header }: { header: any }) {
         <h1>{cleanText(header?.title || "Encontro de Divulgação de Resultados – Gondim | 2026 (EDR)")}</h1>
         <p className="gd-hero__subtitle">{cleanText(header?.subtitle || "Período acumulado")}</p>
       </div>
-      <div className="gd-hero__band">{cleanText(header?.band || "DATA DE DIVULGAÇÃO: 22 DE MAIO DE 2026")}</div>
+      <div className="gd-hero__band">DATA DE DIVULGAÇÃO: 22 DE JUNHO DE 2026</div>
     </section>
   );
 }
