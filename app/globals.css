@@ -741,7 +741,7 @@ button {
 
 .gd-margin-card {
   display: grid;
-  gap: 0.35rem;
+  gap: 0.55rem;
   padding: 1rem 1.05rem;
   border-radius: 20px;
   background: rgba(255, 255, 255, 0.14);
@@ -773,6 +773,64 @@ button {
   font-size: 0.98rem;
   line-height: 1.4;
   color: rgba(255, 255, 255, 0.88);
+}
+
+.gd-margin-card__benchmarks {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.gd-margin-card__benchmarks > div {
+  display: grid;
+  gap: 0.18rem;
+  min-width: 0;
+  padding: 0.55rem 0.62rem;
+  border-radius: 11px;
+  background: rgba(40, 15, 80, 0.26);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.gd-margin-card__benchmarks span {
+  color: rgba(237, 233, 254, 0.72);
+  font-size: 0.72rem;
+  line-height: 1.2;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.gd-margin-card__benchmarks strong {
+  color: #fff;
+  font-size: 1rem;
+  line-height: 1.15;
+  font-weight: 900;
+}
+
+.gd-margin-progress {
+  appearance: none;
+  width: 100%;
+  height: 0.55rem;
+  overflow: hidden;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(24, 9, 52, 0.48);
+}
+
+.gd-margin-progress::-webkit-progress-bar {
+  border-radius: 999px;
+  background: rgba(24, 9, 52, 0.48);
+}
+
+.gd-margin-progress::-webkit-progress-value {
+  border-radius: 999px;
+  background: linear-gradient(90deg, #ddd6fe, #f5d0fe);
+  box-shadow: 0 0 12px rgba(216, 180, 254, 0.48);
+}
+
+.gd-margin-progress::-moz-progress-bar {
+  border-radius: 999px;
+  background: linear-gradient(90deg, #ddd6fe, #f5d0fe);
+  box-shadow: 0 0 12px rgba(216, 180, 254, 0.48);
 }
 
 .gd-row {
@@ -1354,7 +1412,7 @@ button {
   --gan-width: 43.45%;
   --gaa-width: 43.82%;
   --table-columns: 33% 16.5% 18% 32.5%;
-  --table-font-size: clamp(0.7rem, 0.78vw, 0.92rem);
+  --table-font-size: clamp(10px, 0.68vw, 14px);
   position: relative;
   width: min(100%, var(--template-max-width));
   max-width: var(--template-max-width);
@@ -1376,7 +1434,7 @@ button {
   width: 43%;
   text-align: center;
   color: #16110a;
-  font-size: clamp(0.66rem, 1.08vw, 1.12rem);
+  font-size: clamp(12px, 0.9vw, 17px);
   font-weight: 900;
   line-height: 1;
   text-transform: uppercase;
@@ -1390,7 +1448,7 @@ button {
   width: 14%;
   text-align: center;
   color: #f9d46b;
-  font-size: clamp(0.76rem, 1.08vw, 1.04rem);
+  font-size: clamp(12px, 0.78vw, 16px);
   font-weight: 900;
   line-height: 1.15;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.38);
@@ -1454,7 +1512,7 @@ button {
   min-width: 0;
   height: 100%;
   margin: 0;
-  padding: 0 0.12rem;
+  padding: 0 2px;
   overflow: hidden;
   line-height: 1;
   text-align: center;
@@ -1466,7 +1524,12 @@ button {
 .profit-advance__cell--level {
   justify-content: flex-start;
   text-align: left;
-  padding-left: 0.68rem;
+  padding-left: clamp(6px, 0.55vw, 10px);
+  overflow-wrap: anywhere;
+  white-space: normal;
+  text-overflow: clip;
+  font-size: clamp(9px, 0.64vw, 13px);
+  line-height: 1.05;
 }
 
 .profit-advance__cell--final {
@@ -1558,7 +1621,7 @@ button {
 
 .ga-company-head span {
   color: #fbbf24;
-  font-size: 0.82rem;
+  font-size: clamp(12px, 0.65vw, 15px);
   font-weight: 900;
   letter-spacing: 0.16em;
 }
@@ -1566,7 +1629,7 @@ button {
 .ga-company-head h4 {
   margin: 0.25rem 0 0;
   color: #f8fafc;
-  font-size: 1.2rem;
+  font-size: clamp(18px, 1vw, 24px);
   font-weight: 900;
 }
 
@@ -1587,14 +1650,14 @@ button {
 .ga-table-head {
   padding: 0 0.55rem;
   color: rgba(226, 232, 240, 0.56);
-  font-size: 0.84rem;
+  font-size: clamp(11px, 0.62vw, 14px);
   line-height: 1.25;
   font-weight: 900;
   text-transform: uppercase;
 }
 
 .ga-table-row {
-  min-height: 3.4rem;
+  min-height: clamp(50px, 3vw, 62px);
   padding: 0.76rem 0.82rem;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.055);
@@ -1696,6 +1759,13 @@ button {
   align-items: center;
 }
 
+.gd-revenue-donut-column {
+  display: grid;
+  gap: 0.65rem;
+  justify-items: center;
+  min-width: 0;
+}
+
 .gd-revenue-donut-stage {
   position: relative;
   width: min(420px, 100%);
@@ -1708,29 +1778,37 @@ button {
   min-height: 100%;
 }
 
-.gd-revenue-donut-focus {
-  pointer-events: none;
-  position: absolute;
-  inset: 50% auto auto 50%;
-  transform: translate(-50%, -50%);
+.gd-revenue-donut-summary {
   display: grid;
-  gap: 0.25rem;
-  max-width: 9rem;
+  grid-template-columns: auto auto;
+  gap: 0.2rem 0.65rem;
   justify-items: center;
+  min-width: min(240px, 100%);
+  padding: 0.7rem 1.1rem 0.8rem;
+  border-top: 1px solid rgba(219, 234, 254, 0.22);
   text-align: center;
 }
 
-.gd-revenue-donut-focus span {
+.gd-revenue-donut-summary span {
+  grid-column: 1 / -1;
   color: rgba(219, 234, 254, 0.8);
   font-size: 0.76rem;
   font-weight: 900;
   text-transform: uppercase;
 }
 
-.gd-revenue-donut-focus strong {
+.gd-revenue-donut-summary strong {
   color: #fff;
-  font-size: clamp(1.65rem, 2.8vw, 2.5rem);
-  line-height: 1.05;
+  font-size: clamp(1.3rem, 2vw, 1.75rem);
+  line-height: 1.08;
+  font-weight: 900;
+}
+
+.gd-revenue-donut-summary em {
+  align-self: center;
+  color: #bae6fd;
+  font-size: clamp(12px, 0.68vw, 15px);
+  font-style: normal;
   font-weight: 900;
 }
 
@@ -2144,39 +2222,8 @@ button {
     font-size: 20px;
   }
 
-  .profit-advance {
-    --table-font-size: clamp(0.8rem, 0.82vw, 1rem);
-  }
-
-  .profit-advance__period-text {
-    font-size: clamp(0.78rem, 1.12vw, 1.26rem);
-  }
-
-  .profit-advance__summary-value {
-    font-size: clamp(0.86rem, 1.12vw, 1.18rem);
-  }
-
-  .profit-advance__cell {
-    padding-inline: 0.24rem;
-  }
-
-  .profit-advance__cell--level {
-    padding-left: 0.9rem;
-  }
-
   .ga-summary-card span,
   .ga-company-head span {
-    line-height: 1.3;
-  }
-
-  .ga-table-head {
-    font-size: 0.9rem;
-    line-height: 1.25;
-  }
-
-  .ga-table-row {
-    min-height: 3.55rem;
-    font-size: 1.06rem;
     line-height: 1.3;
   }
 
@@ -2189,27 +2236,6 @@ button {
 @media (min-width: 1900px) {
   html {
     font-size: 22px;
-  }
-
-  .profit-advance {
-    --table-font-size: clamp(0.86rem, 0.88vw, 1.08rem);
-  }
-
-  .profit-advance__period-text {
-    font-size: clamp(0.84rem, 1.14vw, 1.34rem);
-  }
-
-  .profit-advance__summary-value {
-    font-size: clamp(0.92rem, 1.14vw, 1.26rem);
-  }
-
-  .ga-table-head {
-    font-size: 0.94rem;
-  }
-
-  .ga-table-row {
-    min-height: 3.7rem;
-    font-size: 1.12rem;
   }
 }
 

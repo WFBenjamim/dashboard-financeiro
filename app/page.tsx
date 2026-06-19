@@ -353,40 +353,43 @@ function RevenueDistributionChart({
   return (
     <div className={`gd-revenue-chart${compact ? " gd-revenue-chart--compact" : ""}`}>
       <div className="gd-revenue-chart__main">
-        <div className="gd-revenue-donut-stage">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={chartItems}
-                dataKey="value"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                innerRadius="57%"
-                outerRadius="87%"
-                paddingAngle={2}
-                startAngle={90}
-                endAngle={-270}
-                minAngle={2}
-                stroke="rgba(15, 35, 75, 0.62)"
-                strokeWidth={2}
-                animationBegin={80}
-                animationDuration={800}
-                animationEasing="ease-out"
-              >
-                {chartItems.map((item, index) => (
-                  <Cell
-                    key={item.name}
-                    fill={REVENUE_DISTRIBUTION_COLORS[index % REVENUE_DISTRIBUTION_COLORS.length]}
-                  />
-                ))}
-              </Pie>
-              <Tooltip content={<RevenueDistributionTooltip />} />
-            </PieChart>
-          </ResponsiveContainer>
-          <div className="gd-revenue-donut-focus">
+        <div className="gd-revenue-donut-column">
+          <div className="gd-revenue-donut-stage">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={chartItems}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  innerRadius="57%"
+                  outerRadius="87%"
+                  paddingAngle={2}
+                  startAngle={90}
+                  endAngle={-270}
+                  minAngle={2}
+                  stroke="rgba(15, 35, 75, 0.62)"
+                  strokeWidth={2}
+                  animationBegin={80}
+                  animationDuration={800}
+                  animationEasing="ease-out"
+                >
+                  {chartItems.map((item, index) => (
+                    <Cell
+                      key={item.name}
+                      fill={REVENUE_DISTRIBUTION_COLORS[index % REVENUE_DISTRIBUTION_COLORS.length]}
+                    />
+                  ))}
+                </Pie>
+                <Tooltip content={<RevenueDistributionTooltip />} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="gd-revenue-donut-summary">
             <span>{contractual?.name || "Contratuais"}</span>
-            <strong>{formatPercentMetric(contractual?.percent || 0)}</strong>
+            <strong>{formatCurrency(contractual?.value || 0)}</strong>
+            <em>{formatPercentMetric(contractual?.percent || 0)}</em>
           </div>
         </div>
 
@@ -734,15 +737,48 @@ function PeopleCard({ data, insight }: { data: any; insight?: any }) {
 }
 
 function MarginsCard({ data }: { data: any }) {
+  const marginMetrics = (data?.metrics || []).map((metric: any) => {
+    const isOperational = normalizeKey(metric.label).includes("operacional");
+    const target = isOperational ? 0.35 : 0.17;
+    const payloadValue = isOperational ? data?.operational : data?.net;
+    const actual = isFiniteNumber(payloadValue)
+      ? payloadValue
+      : parseShareValue(metric.value) / 100;
+    const attainment = target ? actual / target : 0;
+
+    return {
+      ...metric,
+      actual,
+      target,
+      attainment,
+    };
+  });
+
   return (
     <article className="gd-card gd-card--purple gd-card--margins">
       <CardTitle icon="/icones/margens.png" title={data?.title || "Margens"} />
       <OptionalSubline value={data?.subtitle} />
       <div className="gd-margins-grid">
-        {(data?.metrics || []).map((metric: any) => (
+        {marginMetrics.map((metric: any) => (
           <div className="gd-margin-card" key={cleanText(metric.label)}>
             <div className="gd-margin-card__label">{cleanText(metric.label)}</div>
             <div className="gd-margin-card__value"><AnimatedPercentKpi value={metric.value} /></div>
+            <div className="gd-margin-card__benchmarks">
+              <div>
+                <span>Meta acumulada</span>
+                <strong>{formatPercentMetric(metric.target)}</strong>
+              </div>
+              <div>
+                <span>Atingimento</span>
+                <strong>{formatPercentMetric(metric.attainment)}</strong>
+              </div>
+            </div>
+            <progress
+              className="gd-margin-progress"
+              max={1}
+              value={Math.min(Math.max(metric.attainment, 0), 1)}
+              aria-label={`Atingimento da meta de ${cleanText(metric.label)}`}
+            />
             <OptionalCaption value={metric.caption} />
           </div>
         ))}
