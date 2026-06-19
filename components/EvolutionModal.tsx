@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import {
   CartesianGrid,
@@ -202,7 +203,12 @@ export function EvolutionDashboardSections() {
 
       <section className="gd-profit-section" aria-label="Antecipação de lucros">
         <article className="gd-dashboard-chart-card gd-dashboard-chart-card--profit">
-          <div className="gd-dashboard-section-title">Antecipação de Lucros</div>
+          <div className="gd-dashboard-section-heading">
+            <div className="gd-dashboard-section-title">Antecipação de Lucros</div>
+            <Link className="gd-secondary-action" href="/antecipacao-lucros">
+              Ampliar visão
+            </Link>
+          </div>
           <div className="gd-chart-panel gd-profit-inline">
             {loading && <div className="gd-chart-state">Carregando dados...</div>}
             {!loading && profitPayload?.summary && <ProfitAdvance data={profitPayload} />}
@@ -294,7 +300,7 @@ function getRowLevel(row: ProfitAdvancePartnerRow) {
   return row.nivelSocietario || row.level || "";
 }
 
-function ProfitAdvance({ data }: { data: ProfitAdvancePayload }) {
+export function ProfitAdvance({ data }: { data: ProfitAdvancePayload }) {
   const summary = data.summary || {};
 
   return (

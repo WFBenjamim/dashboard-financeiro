@@ -1,5 +1,7 @@
 "use client";
 
+import { FullscreenButton } from "@/components/FullscreenButton";
+
 type ResultOpeningScreenProps = {
   onEnter: () => void;
 };
@@ -51,6 +53,7 @@ export function ResultOpeningScreen({ onEnter }: ResultOpeningScreenProps) {
       tabIndex={0}
       aria-label="Entrar no dashboard"
     >
+      <FullscreenButton />
       <div className="result-opening__content">
         <div className="result-opening__ordinal">{ordinal}</div>
         <div className="result-opening__title">ENCONTRO DE DIVULGAÇÃO DE RESULTADOS</div>

@@ -59,6 +59,36 @@ button {
   cursor: pointer;
 }
 
+.gd-fullscreen-button {
+  position: fixed;
+  top: max(0.85rem, env(safe-area-inset-top));
+  right: max(0.85rem, env(safe-area-inset-right));
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 9px;
+  background: rgba(15, 23, 42, 0.5);
+  color: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 8px 22px rgba(2, 6, 23, 0.2);
+  backdrop-filter: blur(10px);
+  transition: transform 0.16s ease, background 0.16s ease, border-color 0.16s ease;
+}
+
+.gd-fullscreen-button:hover {
+  transform: translateY(-1px);
+  background: rgba(15, 23, 42, 0.72);
+  border-color: rgba(255, 255, 255, 0.36);
+}
+
+.gd-fullscreen-button:focus-visible {
+  outline: 2px solid #fbbf24;
+  outline-offset: 3px;
+}
+
 .result-opening {
   position: fixed;
   inset: 0;
@@ -1132,6 +1162,17 @@ button {
   color: #f8fafc;
 }
 
+.gd-dashboard-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.gd-dashboard-section-heading .gd-secondary-action {
+  text-decoration: none;
+}
+
 .gd-dashboard-chart-card .gd-chart-panel {
   min-height: 440px;
 }
@@ -1400,6 +1441,70 @@ button {
   overflow-x: hidden;
   overflow-y: auto;
   padding-right: 6px;
+}
+
+.profit-advance-page {
+  min-height: 100vh;
+  padding: 1.25rem;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(245, 177, 42, 0.18), transparent 32%),
+    linear-gradient(145deg, #0d0e11, #21170c 58%, #120e08);
+  color: #f8fafc;
+}
+
+.profit-advance-page__header {
+  width: min(1560px, 96vw);
+  margin: 0 auto 1rem;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1rem;
+}
+
+.profit-advance-page__header h1 {
+  grid-column: 2;
+  margin: 0;
+  font-size: clamp(1.35rem, 2vw, 2rem);
+  line-height: 1.1;
+  text-align: center;
+}
+
+.profit-advance-page__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 2.4rem;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 9px;
+  background: rgba(15, 23, 42, 0.46);
+  color: #f8fafc;
+  font-size: 0.82rem;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.profit-advance-page__content {
+  width: min(1700px, 98vw);
+  min-height: calc(100vh - 6rem);
+  margin: 0 auto;
+  display: grid;
+  place-items: start center;
+  padding: 0.75rem;
+  border: 1px solid rgba(255, 238, 196, 0.16);
+  border-radius: 20px;
+  background: rgba(8, 15, 26, 0.5);
+  box-shadow: 0 24px 58px rgba(0, 0, 0, 0.34);
+}
+
+.profit-advance-page .profit-advance-scroll {
+  max-height: none;
+  overflow: visible;
+  padding-right: 0;
+}
+
+.profit-advance-page .profit-advance {
+  --template-max-width: 1600px;
 }
 
 .profit-advance {
@@ -2268,6 +2373,27 @@ button {
 @media (max-width: 760px) {
   .gd-app {
     padding-top: 1rem;
+  }
+
+  .profit-advance-page {
+    padding: 0.8rem;
+  }
+
+  .profit-advance-page__header {
+    width: 100%;
+    grid-template-columns: auto 1fr;
+  }
+
+  .profit-advance-page__header h1 {
+    grid-column: 2;
+    font-size: 1.2rem;
+    text-align: left;
+  }
+
+  .profit-advance-page__content {
+    width: 100%;
+    min-height: 0;
+    padding: 0.35rem;
   }
 
   .gd-shell {

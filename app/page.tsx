@@ -5,6 +5,7 @@ import { type ReactNode, useEffect, useState } from "react";
 import CountUp from "react-countup";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import { EvolutionDashboardSections } from "@/components/EvolutionModal";
+import { FullscreenButton } from "@/components/FullscreenButton";
 import { MonthFilter } from "@/components/MonthFilter";
 import { ResultOpeningScreen } from "@/components/ResultOpeningScreen";
 import { fetchDashboardData } from "@/lib/api";
@@ -212,6 +213,7 @@ export default function Dashboard() {
 
   return (
     <main className="gd-app">
+      <FullscreenButton />
       <div className="gd-shell">
         <div className="gd-logo-wrap">
           <Image className="gd-logo" src="/logo.png" alt="Logo Gondim" width={420} height={160} priority />
