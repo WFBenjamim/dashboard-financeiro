@@ -787,6 +787,32 @@ def _sum_fixed_row(df: pd.DataFrame, row_index: int, columns: Iterable[int]) -> 
     return sum(_to_float(df.iloc[row_index, column]) for column in columns)
 
 
+def _sum_named_rows_in_block(
+    df: pd.DataFrame,
+    labels: Iterable[str],
+    columns: Iterable[int],
+    start_label: str,
+    end_label: str,
+) -> float:
+    expected_labels = {_normalize_text(label) for label in labels}
+    normalized_start = _normalize_text(start_label)
+    normalized_end = _normalize_text(end_label)
+    inside_block = False
+    total = 0.0
+
+    for row_index in range(len(df)):
+        row_label = _normalize_text(df.iloc[row_index, 0])
+        if row_label == normalized_start:
+            inside_block = True
+            continue
+        if inside_block and row_label == normalized_end:
+            break
+        if inside_block and row_label in expected_labels:
+            total += _sum_fixed_row(df, row_index, columns)
+
+    return total
+
+
 def _row_text(df: pd.DataFrame, row_index: int, columns: Iterable[int] = (0, 1)) -> str:
     parts = []
     for column in columns:
@@ -1443,8 +1469,13 @@ def get_extracted_data(ano: int, selected_months: list[int], file_mtime_ns: int 
     contratuais = _sum_fixed_row(df_receita, 370, receita_month_columns)
     sucumb_1 = _sum_fixed_row(df_receita, 373, receita_month_columns)
     sucumb_2 = _sum_fixed_row(df_receita, 377, receita_month_columns)
-    outras_linhas = [372, 374, 375, 376, 378, 379, 380]
-    outras_receitas = sum(_sum_fixed_row(df_receita, row_index, receita_month_columns) for row_index in outras_linhas)
+    outras_receitas = _sum_named_rows_in_block(
+        df_receita,
+        labels=("RECUPERAÇÕES DIVERSAS", "OUTROS VALORES"),
+        columns=receita_month_columns,
+        start_label="TOTAL FATURAMENTO",
+        end_label="TOTAL GERAL",
+    )
     sucumb = sucumb_1 + sucumb_2
     receita_total = contratuais + sucumb + outras_receitas
     totais_bi = _load_totais_period(selected_months, ano)

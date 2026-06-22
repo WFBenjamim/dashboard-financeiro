@@ -8,13 +8,13 @@
     "icon": "💰",
     "title": "Estrutura de Receita",
     "value": 4695972.134000001,
-    "contratual": 4115800.6374790007,
+    "contratual": 4156070.624000001,
     "sucumbencia": 491009.51,
-    "outras": 89161.98652100001,
-    "outras_receitas": 89161.98652100001,
-    "pct_contratual": 0.8764533774976188,
+    "outras": 48892.0,
+    "outras_receitas": 48892.0,
+    "pct_contratual": 0.8850288088187366,
     "pct_sucumbencia": 0.10455971543037268,
-    "pct_outras": 0.01898690707200862,
+    "pct_outras": 0.010411475750890815,
     "pct_orcado": 0.9661984015233704,
     "receita_orcada": 4860256.57525,
     "receita_orcada_periodo": 4860256.57525,
@@ -27,8 +27,8 @@
     "rows": [
       {
         "label": "Contratuais",
-        "value": "R$ 4,12 M",
-        "share": "87,6%"
+        "value": "R$ 4,16 M",
+        "share": "88,5%"
       },
       {
         "label": "Sucumbência",
@@ -37,8 +37,8 @@
       },
       {
         "label": "Outras Receitas",
-        "value": "R$ 89,2 mil",
-        "share": "1,9%"
+        "value": "R$ 48,9 mil",
+        "share": "1,0%"
       }
     ],
     "expansions": [
