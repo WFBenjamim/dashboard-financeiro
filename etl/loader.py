@@ -223,6 +223,126 @@ def load_performance_budget_metrics(file_path: str, year: int, selected_months: 
     return result
 
 
+def load_resultado_orcado_budget_metrics(
+    file_path: str,
+    year: int,
+    selected_months: list[int],
+) -> dict[str, Any]:
+    """
+    Le o orcamento mensal oficial da aba Resultado Orcado.
+    So disponibiliza os valores quando todos os meses selecionados existem.
+    """
+    months = sorted({month for month in selected_months if 1 <= month <= 12})
+    result = {
+        "budgetRevenue": 0.0,
+        "budgetCosts": 0.0,
+        "budgetResult": 0.0,
+        "source": "INFORMAÇÕES GERENCIAIS.xlsx / Resultado Orçado",
+        "budgetLogic": (
+            "Soma mensal da aba Resultado Orçado: "
+            "Receita Mensal, Custos Mensal e Resultado Mensal"
+        ),
+        "months": [],
+        "validation": {
+            "requestedMonths": months,
+            "foundMonths": [],
+            "missingMonths": months,
+        },
+        "available": False,
+        "error": None,
+    }
+
+    path = Path(file_path)
+    if not path.exists():
+        result["error"] = f"Arquivo nao encontrado: {path.name}"
+        print(f"[ETL Resultado Orcado] {result['error']}")
+        return result
+
+    if not months:
+        result["error"] = "Nenhum mes valido selecionado."
+        print(f"[ETL Resultado Orcado] {result['error']}")
+        return result
+
+    workbook = None
+    try:
+        workbook = openpyxl.load_workbook(path, read_only=True, data_only=True)
+        sheet_name = next(
+            (
+                name
+                for name in workbook.sheetnames
+                if _normalize_text(name) == "resultado orcado"
+            ),
+            None,
+        )
+        if sheet_name is None:
+            raise KeyError("Aba Resultado Orçado nao encontrada.")
+        ws = workbook[sheet_name]
+
+        header_values = next(ws.iter_rows(min_row=1, max_row=1, values_only=True))
+        header_map = {
+            _normalize_text(value): index
+            for index, value in enumerate(header_values)
+            if _normalize_text(value)
+        }
+        required_headers = {
+            "mes",
+            "resultado mensal",
+            "receita mensal",
+            "custos mensal",
+        }
+        missing_headers = sorted(required_headers - set(header_map))
+        if missing_headers:
+            raise KeyError(f"Colunas ausentes: {', '.join(missing_headers)}")
+
+        found_months: set[int] = set()
+        for row in ws.iter_rows(min_row=2, values_only=True):
+            month_value = row[header_map["mes"]]
+            if isinstance(month_value, datetime):
+                month_date = month_value
+            elif isinstance(month_value, date):
+                month_date = datetime.combine(month_value, datetime.min.time())
+            elif isinstance(month_value, (int, float)):
+                try:
+                    month_date = openpyxl.utils.datetime.from_excel(month_value)
+                except (TypeError, ValueError):
+                    continue
+            else:
+                continue
+
+            if month_date.year != year or month_date.month not in months:
+                continue
+
+            found_months.add(month_date.month)
+            result["budgetRevenue"] += _to_float(row[header_map["receita mensal"]])
+            result["budgetCosts"] += _to_float(row[header_map["custos mensal"]])
+            result["budgetResult"] += _to_float(row[header_map["resultado mensal"]])
+
+        missing_months = sorted(set(months) - found_months)
+        result["months"] = sorted(found_months)
+        result["validation"] = {
+            "requestedMonths": months,
+            "foundMonths": sorted(found_months),
+            "missingMonths": missing_months,
+        }
+        if missing_months:
+            result["error"] = (
+                "Orcamento mensal indisponivel para os meses: "
+                + ", ".join(str(month) for month in missing_months)
+            )
+            print(f"[ETL Resultado Orcado] {result['error']}")
+            return result
+
+        result["available"] = True
+        return result
+    except Exception as exc:
+        result["error"] = f"Nao foi possivel ler Resultado Orçado: {exc}"
+        print(f"[ETL Resultado Orcado] {result['error']}")
+        return result
+    finally:
+        if workbook is not None:
+            workbook.close()
+
+
 def load_performance_margin_metrics(file_path: str, year: int, selected_months: list[int]) -> dict[str, Any]:
     """
     Le as margens reais da aba Performance usando apenas a linha consolidada 1 - TODOS.
@@ -1338,6 +1458,17 @@ def get_extracted_data(ano: int, selected_months: list[int], file_mtime_ns: int 
     pct_outras = (outras_receitas / receita_total) if receita_total else 0.0
 
     performance_budget = load_performance_budget_metrics(str(PERFORMANCE_FILE), ano, selected_months)
+    resultado_orcado_budget = load_resultado_orcado_budget_metrics(
+        str(ANTECIPACAO_FILE),
+        ano,
+        selected_months,
+    )
+    budget = resultado_orcado_budget if resultado_orcado_budget["available"] else performance_budget
+    if not resultado_orcado_budget["available"]:
+        budget["fallback"] = {
+            "source": resultado_orcado_budget["source"],
+            "error": resultado_orcado_budget["error"],
+        }
     performance_margins = load_performance_margin_metrics(str(PERFORMANCE_FILE), ano, selected_months)
     mo = performance_margins["operational"]
     ml = performance_margins["net"]
@@ -1371,7 +1502,7 @@ def get_extracted_data(ano: int, selected_months: list[int], file_mtime_ns: int 
             "o total oficial foi mantido como 0 e a OMIE ficou apenas no detalhe de pessoas."
         )
 
-    receita_orcada_periodo = performance_budget["budgetRevenue"]
+    receita_orcada_periodo = budget["budgetRevenue"]
     meses_periodo = len(selected_months)
     meta_periodo_receita = receita_orcada_periodo
     pct_orcado = (receita_total / meta_periodo_receita) if meta_periodo_receita else 0.0
@@ -1432,6 +1563,10 @@ def get_extracted_data(ano: int, selected_months: list[int], file_mtime_ns: int 
 
     clientes.sort(key=lambda x: x[1], reverse=True)
     top_5 = clientes[:5]
+    contractual_ranking = [
+        {"name": name, "value": _format_currency_full(value)}
+        for name, value in clientes[:6]
+    ]
     outros = sum(x[1] for x in clientes[5:])
     
     ranking = [{"name": n, "value": _format_currency_full(v)} for n, v in top_5]
@@ -1468,13 +1603,14 @@ def get_extracted_data(ano: int, selected_months: list[int], file_mtime_ns: int 
         "resultado_total": totais_bi["resultado"],
         "resultado_2025": totais_bi["resultado_2025"],
         "totais_bi": totais_bi,
-        "budget": performance_budget,
+        "budget": budget,
         "margin_metrics": performance_margins,
         "people_costs": omie_people_costs,
         "cost_distribution": cost_distribution,
         "sucumb": sucumb,
         "impostos": impostos,
         "top_5": ranking,
+        "contractual_ranking": contractual_ranking,
         "total_despesas": total_despesas,
         "total_despesas_oficial": total_despesas_oficial,
         "total_despesas_detalhado": total_despesas_detalhado,
@@ -1655,8 +1791,8 @@ def get_dashboard_data(mes: int, ano: int, selected_months: list[int] | None = N
         ],
         "expansions": [
             {
-                "title": "Contratuais", 
-                "items": [{"name": item["name"], "value": item["value"]} for item in data["top_5"][:5]]
+                "title": "Contratuais",
+                "items": data["contractual_ranking"],
             },
             {
                 "title": "Sucumbência", 
@@ -1705,7 +1841,7 @@ def get_dashboard_data(mes: int, ano: int, selected_months: list[int] | None = N
         "variacao_custos_yoy": data["variacao_custos_yoy"],
         "custo_orcado_periodo": budget["budgetCosts"],
         "meta_periodo_custos": budget["budgetCosts"],
-        "pct_orcado_custos": (cost_total / budget["budgetCosts"]) if budget["budgetCosts"] else 0.0,
+        "pct_orcado_custos": (budget["budgetCosts"] / cost_total) if cost_total else 0.0,
         "value": _format_currency(cost_total),
         "subtitle": "",
         "highlight": {

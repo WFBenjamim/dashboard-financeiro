@@ -13,6 +13,7 @@ import {
   YAxis,
 } from "recharts";
 import { fetchEvolutionData, fetchProfitAdvanceData } from "@/lib/api";
+import { getProfitAdvancePeriodLabel } from "@/lib/profitAdvancePeriod";
 import { formatCurrency } from "@/lib/formatters";
 
 type EvolutionView = "annual" | "monthly" | "profitAdvance";
@@ -307,7 +308,7 @@ export function ProfitAdvance({ data }: { data: ProfitAdvancePayload }) {
     <div className="profit-advance-scroll">
       <section className="profit-advance" aria-label={data.title || "Antecipação mensal de distribuição de lucros"}>
         <div className="profit-advance__period-text">
-          ABRIL / 2026 - PAGAMENTO EM JUNHO / 2026
+          {getProfitAdvancePeriodLabel()}
         </div>
         <div className="profit-advance__summary-value profit-advance__summary-value--resultado">
           {brCurrency.format(Number(summary.resultadoMensal || 0))}

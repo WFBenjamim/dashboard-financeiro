@@ -268,8 +268,13 @@ function RevenueCard({ data, insight, topClients }: { data: any; insight?: any; 
   );
   const contractualDetails = contractualExpansion?.items?.length
     ? contractualExpansion.items
-    : (topClients?.ranking || []).filter((item: any) => normalizeKey(item?.name) !== "outros").slice(0, 5);
-  const contractualItems = contractualDetails.slice(0, 5);
+    : (topClients?.ranking || []);
+  const contractualItems = contractualDetails
+    .filter((item: any) => {
+      const name = normalizeKey(item?.name);
+      return name !== "saneamento" && name !== "outros";
+    })
+    .slice(0, 5);
 
   useEffect(() => {
     if (!showRevenueView) return;
@@ -767,7 +772,7 @@ function MarginsCard({ data }: { data: any }) {
             <div className="gd-margin-card__value"><AnimatedPercentKpi value={metric.value} /></div>
             <div className="gd-margin-card__benchmarks">
               <div>
-                <span>Meta acumulada</span>
+                <span>Meta OKR</span>
                 <strong>{formatPercentMetric(metric.target)}</strong>
               </div>
               <div>

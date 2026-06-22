@@ -15,10 +15,10 @@
     "pct_contratual": 0.9133428224521724,
     "pct_sucumbencia": 0.05422789750302957,
     "pct_outras": 0.03242928004479792,
-    "pct_orcado": 1.049778480380014,
-    "receita_orcada": 4549335.23525,
-    "receita_orcada_periodo": 4549335.23525,
-    "meta_periodo_receita": 4549335.23525,
+    "pct_orcado": 1.0217055452045627,
+    "receita_orcada": 4674335.23525,
+    "receita_orcada_periodo": 4674335.23525,
+    "meta_periodo_receita": 4674335.23525,
     "meta_periodo_meses": 1,
     "receita_2025_periodo": 3939627.5,
     "variacao_yoy": 0.21224512469770265,
@@ -64,6 +64,10 @@
           {
             "name": "UOL",
             "value": "R$ 296,2 mil"
+          },
+          {
+            "name": "VIVO",
+            "value": "R$ 289,5 mil"
           }
         ]
       },
@@ -72,7 +76,7 @@
         "items": []
       }
     ],
-    "receita_orcada_anual": 4549335.23525,
+    "receita_orcada_anual": 4674335.23525,
     "variacao_2025": 0.21224512469770265
   },
   "cost_structure": {
@@ -93,9 +97,9 @@
     "cost_total_warning": "",
     "cost_total_anterior": 3421585.1947974907,
     "variacao_custos_yoy": 0.1690706778364136,
-    "custo_orcado_periodo": 4050338.8036563294,
-    "meta_periodo_custos": 4050338.8036563294,
-    "pct_orcado_custos": 0.9875902034037214,
+    "custo_orcado_periodo": 4163470.1419896623,
+    "meta_periodo_custos": 4163470.1419896623,
+    "pct_orcado_custos": 1.0408480396442017,
     "value": "R$ 4 M",
     "subtitle": "+16,9% vs 2025",
     "highlight": {
@@ -147,7 +151,7 @@
     "folha_months_used": [],
     "folha_snapshot_month": null,
     "cost_subtitle": "+16,9% vs 2025",
-    "custo_orcado_anual": 4050338.8036563294,
+    "custo_orcado_anual": 4163470.1419896623,
     "meta_periodo_meses": 1,
     "variacao_2025": 0.1690706778364136
   },
@@ -156,14 +160,14 @@
     "title": "Resultado Líquido",
     "value": 775719.3070430588,
     "subtitle": "",
-    "resultado_orcado": 498996.4315936705,
-    "meta_periodo_resultado": 498996.4315936705,
+    "resultado_orcado": 510865.0932603376,
+    "meta_periodo_resultado": 510865.0932603376,
     "meta_periodo_meses": 1,
-    "pct_vs_orcado": 1.5545588263338963,
+    "pct_vs_orcado": 1.5184425737378597,
     "resultado_2025": 518042.3052025093,
     "variacao_2025": 0.49740532626929057,
     "sem_sucumbencia": 516738.02704305865,
-    "resultado_orcado_anual": 498996.4315936705,
+    "resultado_orcado_anual": 510865.0932603376,
     "pct_ano": 0.0,
     "resultado_operacional": 1605533.077044059
   },
@@ -306,22 +310,22 @@
     }
   },
   "budget": {
-    "revenue": 4549335.23525,
-    "costs": 4050338.8036563294,
-    "result": 498996.4315936705,
-    "source": "PERFORMANCE.XLSX",
-    "logic": "Linha consolidada 1 - TODOS; soma mensal K/V/AB conforme meses selecionados",
+    "revenue": 4674335.23525,
+    "costs": 4163470.1419896623,
+    "result": 510865.0932603376,
+    "source": "INFORMAÇÕES GERENCIAIS.xlsx / Resultado Orçado",
+    "logic": "Soma mensal da aba Resultado Orçado: Receita Mensal, Custos Mensal e Resultado Mensal",
     "months": [
       4
     ],
     "validation": {
-      "isJanuaryToPeriod": false,
-      "revenueAccumulated": 0.0,
-      "costsAccumulated": 0.0,
-      "resultAccumulated": 0.0,
-      "revenueDiff": 0.0,
-      "costsDiff": 0.0,
-      "resultDiff": 0.0
+      "requestedMonths": [
+        4
+      ],
+      "foundMonths": [
+        4
+      ],
+      "missingMonths": []
     },
     "error": null
   },

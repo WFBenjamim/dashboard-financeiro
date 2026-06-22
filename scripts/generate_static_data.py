@@ -336,7 +336,7 @@ def enrich_revenue_and_cost_metrics(data: dict, selected_months: list[int], year
         "custo_orcado_periodo": meta_periodo_custos,
         "meta_periodo_custos": meta_periodo_custos,
         "meta_periodo_meses": period_months,
-        "pct_orcado_custos": cost_total / meta_periodo_custos if meta_periodo_custos else 0.0,
+        "pct_orcado_custos": meta_periodo_custos / cost_total if cost_total else 0.0,
         "variacao_2025": cost_variation if cost_variation is not None else data["cost_structure"].get("variacao_custos_yoy", 0),
     })
 
