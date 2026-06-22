@@ -53,7 +53,19 @@ def build_dashboard_metrics(content: dict[str, Any]) -> DashboardMetrics:
     costs = content["cost_structure"]
     result = content["net_result"]
     people = content["people"]
-    clients = content["top_clients"]["ranking"]
+    contractual_expansion = next(
+        (
+            expansion
+            for expansion in revenue.get("expansions", [])
+            if "contratuais" in normalize_key(str(expansion.get("title", "")))
+        ),
+        {},
+    )
+    clients = [
+        item
+        for item in contractual_expansion.get("items", content["top_clients"]["ranking"])
+        if normalize_key(str(item.get("name", ""))) not in {"saneamento", "outros"}
+    ][:5]
 
     revenue_total = parse_currency(revenue["value"])
     cost_total = parse_currency(costs["value"])

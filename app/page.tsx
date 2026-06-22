@@ -518,7 +518,7 @@ function CostCard({ data, insight, distribution }: { data: any; insight?: any; d
   return (
     <article className="gd-card gd-card--gray">
       <div className="gd-card__header">
-        <CardTitle icon="/icones/custo.png" title={data?.title || "Estrutura de Custos"} />
+        <CardTitle icon="/icones/custo.png" title="Estrutura de Custos e Despesas" />
         <div className="gd-kpi"><AnimatedCurrencyKpi value={data?.value} /></div>
         {hasMetrics && (
           <MetricaGrid>
