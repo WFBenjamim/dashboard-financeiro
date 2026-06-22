@@ -68,7 +68,7 @@ def build_dashboard_metrics(content: dict[str, Any]) -> DashboardMetrics:
     ][:5]
 
     revenue_total = parse_currency(revenue["value"])
-    cost_total = parse_currency(costs["value"])
+    cost_total = parse_currency(costs.get("total", costs["value"]))
     operating_result = revenue_total - cost_total
     revenue_change_pct = float(revenue.get("comparison_pct", extract_primary_percent(revenue["subtitle"])))
     cost_total_anterior = float(costs.get("cost_total_anterior") or 0.0)
@@ -80,20 +80,46 @@ def build_dashboard_metrics(content: dict[str, Any]) -> DashboardMetrics:
 
     sucumbency_row = _find_item_by_label(revenue["rows"], "Sucumbência")
     sucumbency_share_pct = parse_percent(sucumbency_row["share"])
-    net_without_sucumbency = extract_currency_from_text(result["subtitle"])
+    net_without_sucumbency = parse_currency(
+        result.get("sem_sucumbencia", extract_currency_from_text(result["subtitle"]))
+    )
 
-    socios_de_servico = _to_breakdown_metric(_find_item_by_label(costs["items"], "Sócios"))
-    clt_cost = _to_breakdown_metric(_find_item_by_label(costs["items"], "CLT"))
-    estagiarios_cost = _to_breakdown_metric(_find_item_by_label(costs["items"], "Estagiários"))
+    socios_de_servico = _to_breakdown_metric(
+        _find_item_by_label(costs["items"], "Sócios"),
+        amount=costs.get("socios"),
+        total=cost_total,
+    )
+    clt_cost = _to_breakdown_metric(
+        _find_item_by_label(costs["items"], "CLT"),
+        amount=costs.get("clt"),
+        total=cost_total,
+    )
+    estagiarios_cost = _to_breakdown_metric(
+        _find_item_by_label(costs["items"], "Estagiários"),
+        amount=costs.get("estagiarios"),
+        total=cost_total,
+    )
     people_cost_value = socios_de_servico.amount + clt_cost.amount + estagiarios_cost.amount
     people_share_pct = (
         people_cost_value / cost_total * 100
         if cost_total
         else socios_de_servico.share_pct + clt_cost.share_pct + estagiarios_cost.share_pct
     )
-    taxes = _to_breakdown_metric(_find_item_by_label(costs["items"], "Impostos"))
-    correspondents = _to_breakdown_metric(_find_item_by_label(costs["items"], "Correspondentes"))
-    other_expenses = _to_breakdown_metric(_find_item_by_label(costs["items"], "Outras Despesas"))
+    taxes = _to_breakdown_metric(
+        _find_item_by_label(costs["items"], "Impostos"),
+        amount=costs.get("impostos"),
+        total=cost_total,
+    )
+    correspondents = _to_breakdown_metric(
+        _find_item_by_label(costs["items"], "Correspondentes"),
+        amount=costs.get("correspondentes"),
+        total=cost_total,
+    )
+    other_expenses = _to_breakdown_metric(
+        _find_item_by_label(costs["items"], "Outras Despesas"),
+        amount=costs.get("outras_despesas"),
+        total=cost_total,
+    )
 
     people_breakdown = tuple(_to_breakdown_metric(item) for item in people["rows"])
     top_clients = tuple(_to_client_metric(item) for item in clients)
@@ -217,13 +243,19 @@ def _find_item_by_label(items: list[dict[str, Any]], label: str) -> dict[str, An
     raise KeyError(f"Item '{label}' não encontrado.")
 
 
-def _to_breakdown_metric(item: dict[str, str]) -> BreakdownMetric:
+def _to_breakdown_metric(
+    item: dict[str, str],
+    amount: Any = None,
+    total: float | None = None,
+) -> BreakdownMetric:
+    resolved_amount = parse_currency(amount) if amount is not None else parse_currency(item["value"])
+    resolved_share = resolved_amount / total * 100 if total else parse_percent(item["share"])
     return BreakdownMetric(
         label=item["label"],
         value=item["value"],
         share=item["share"],
-        amount=parse_currency(item["value"]),
-        share_pct=parse_percent(item["share"]),
+        amount=resolved_amount,
+        share_pct=resolved_share,
     )
 
 

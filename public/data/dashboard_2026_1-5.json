@@ -276,12 +276,12 @@
     {
       "tone": "red",
       "title": "Efeito tesoura",
-      "description": "Receita e custos seguem em direções distintas, mas ainda preservam resultado operacional de R$ 572,5 mil."
+      "description": "No período selecionado, receita e custos preservam resultado operacional de R$ 574,2 mil."
     },
     {
       "tone": "yellow",
-      "title": "Pessoas representam 61,3% dos custos",
-      "description": "O gasto consolidado com Sócios, CLT e Estagiários soma R$ 4,91 M, representando 61,3% do total de custos do período."
+      "title": "Pessoas representam 61,4% dos custos",
+      "description": "O gasto consolidado com Sócios, CLT e Estagiários soma R$ 4,92 M, representando 61,4% do total de custos do período."
     },
     {
       "tone": "green",
@@ -291,18 +291,18 @@
     {
       "tone": "blue",
       "title": "Top 5 clientes",
-      "description": "SANTANDER lidera um grupo que soma R$ 4,34 M e mantém concentração relevante na frente comercial."
+      "description": "SANTANDER lidera os cinco clientes exibidos, que somam R$ 4,34 M no período selecionado e mantêm concentração relevante na frente comercial."
     }
   ],
   "technical_analysis": {
     "title": "Análise técnica",
     "paragraphs": [
-      "No acumulado do período, a receita somou R$ 8,58 M e a estrutura de custos atingiu R$ 8,01 M, produzindo resultado operacional positivo de R$ 572,5 mil. O ritmo entre receita e despesas segue relativamente equilibrado.",
+      "No período selecionado, a receita somou R$ 8,58 M e a estrutura de custos atingiu R$ 8,01 M, produzindo resultado operacional positivo de R$ 574,2 mil. O ritmo entre receita e despesas segue relativamente equilibrado.",
       "A comparação interanual de período acumulado: jan e mai/26 deve ser lida com cautela, mas já evidencia um descompasso mais moderado entre receita e custos. Como o painel observa um recorte parcial do ano, o efeito de base, sazonalidade e timing de reconhecimento das linhas pode ampliar ou suavizar a fotografia do período.",
-      "Mesmo sem considerar a sucumbência, o resultado líquido permaneceria em R$ 0, sugerindo que a geração recorrente ainda se sustenta com menor dependência de receitas extraordinárias.",
-      "O principal vetor de rigidez está na estrutura de pessoas: o desembolso com essa frente responde por 61,3% do total de custos, patamar relevante. Em paralelo, a linha de Sócios concentra 46,9%, o que reforça a necessidade de disciplina sobre capacidade, alocação e produtividade.",
+      "Sem a contribuição da sucumbência, o resultado líquido ficaria em R$ -93 mil, o que reforça a dependência dessa linha não recorrente para amortecer a pressão operacional. Hoje ela representa 7,8% do mix de receitas.",
+      "O principal vetor de rigidez está na estrutura de pessoas: o desembolso com essa frente responde por 61,4% do total de custos, patamar relevante. Em paralelo, a linha de Sócios concentra 46,9%, o que reforça a necessidade de disciplina sobre capacidade, alocação e produtividade.",
       "Na camada complementar, correspondentes somam R$ 479,7 mil (6,0%) e outras despesas atingem R$ 662,8 mil (8,3%). Juntas, essas rubricas representam R$ 1,14 M e 14,3% dos custos, oferecendo espaço para ajustes táticos sem alterar a espinha dorsal da operação.",
-      "Na frente comercial, o faturamento segue concentrado no top 5 clientes, formado por SANTANDER, CLARO, UOL, VIVO, RECUPERA, que juntos somam R$ 4,34 M. A liderança de SANTANDER, com 29,3% desse bloco, sinaliza um nível relevante de concentração comercial e mantém a diversificação da carteira como agenda prioritária."
+      "Na frente comercial, o faturamento do período selecionado se concentra nos cinco clientes exibidos: SANTANDER, CLARO, UOL, VIVO, RECUPERA, que juntos somam R$ 4,34 M. A liderança de SANTANDER, com 29,3% desse bloco, sinaliza um nível relevante de concentração comercial e mantém a diversificação da carteira como agenda prioritária."
     ],
     "meta": {
       "mode": "template",

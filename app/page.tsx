@@ -258,6 +258,7 @@ function Hero({ header }: { header: any }) {
 
 function RevenueCard({ data, insight, topClients }: { data: any; insight?: any; topClients?: any }) {
   const [showRevenueView, setShowRevenueView] = useState(false);
+  const showRevenueTopClientsSummary = false;
   const rows = data?.rows || [];
   const receitaOrcadaPeriodo = data?.receita_orcada_periodo ?? data?.meta_periodo_receita ?? data?.receita_orcada_anual ?? data?.receita_orcada;
   const hasMetrics = isFiniteNumber(receitaOrcadaPeriodo)
@@ -325,7 +326,7 @@ function RevenueCard({ data, insight, topClients }: { data: any; insight?: any; 
           <RevenueDistributionChart rows={rows} contractualItems={contractualItems} compact />
         </div>
       )}
-      <InsightNote insight={insight} />
+      {showRevenueTopClientsSummary && <InsightNote insight={insight} />}
       {!!rows.length && showRevenueView && (
         <RevenueDistributionModal
           rows={rows}

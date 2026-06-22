@@ -24,6 +24,8 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from etl.loader import get_dashboard_content, load_antecipacao_lucros  # noqa: E402
+from utils.analysis_generator import generate_insights, generate_technical_analysis  # noqa: E402
+from utils.dashboard_metrics import build_dashboard_metrics  # noqa: E402
 
 OUTPUT_DIR = PROJECT_ROOT / "public" / "data"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -361,6 +363,9 @@ def generate_dashboard_jsons() -> None:
             data["cost_structure"]["cost_subtitle"] = cost_subtitle
             enrich_net_result(data, months, YEAR)
             enrich_revenue_and_cost_metrics(data, months, YEAR)
+            metrics = build_dashboard_metrics(data)
+            data["technical_analysis"] = generate_technical_analysis(data, metrics=metrics)
+            data["insights"] = generate_insights(data, metrics=metrics)
             write_dashboard_json_safely(filename, data)
         except Exception as exc:
             print(f"    [ERRO] {exc}")

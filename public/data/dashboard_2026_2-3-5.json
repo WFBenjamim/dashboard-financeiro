@@ -276,12 +276,12 @@
     {
       "tone": "red",
       "title": "Efeito tesoura",
-      "description": "Receita e custos seguem em direções distintas, mas ainda preservam resultado operacional de R$ 1,36 M."
+      "description": "No período selecionado, receita e custos preservam resultado operacional de R$ 1,36 M."
     },
     {
       "tone": "yellow",
-      "title": "Pessoas representam 62,8% dos custos",
-      "description": "O gasto consolidado com Sócios, CLT e Estagiários soma R$ 7,35 M, representando 62,8% do total de custos do período."
+      "title": "Pessoas representam 62,7% dos custos",
+      "description": "O gasto consolidado com Sócios, CLT e Estagiários soma R$ 7,34 M, representando 62,7% do total de custos do período."
     },
     {
       "tone": "green",
@@ -291,18 +291,18 @@
     {
       "tone": "blue",
       "title": "Top 5 clientes",
-      "description": "SANTANDER lidera um grupo que soma R$ 6,13 M e mantém concentração relevante na frente comercial."
+      "description": "SANTANDER lidera os cinco clientes exibidos, que somam R$ 6,13 M no período selecionado e mantêm concentração relevante na frente comercial."
     }
   ],
   "technical_analysis": {
     "title": "Análise técnica",
     "paragraphs": [
-      "No acumulado do período, a receita somou R$ 13,06 M e a estrutura de custos atingiu R$ 11,7 M, produzindo resultado operacional positivo de R$ 1,36 M. O ritmo entre receita e despesas segue relativamente equilibrado.",
+      "No período selecionado, a receita somou R$ 13,06 M e a estrutura de custos atingiu R$ 11,7 M, produzindo resultado operacional positivo de R$ 1,36 M. O ritmo entre receita e despesas segue relativamente equilibrado.",
       "A comparação interanual de período acumulado: fev, mar e mai/26 deve ser lida com cautela, mas já evidencia um descompasso mais moderado entre receita e custos. Como o painel observa um recorte parcial do ano, o efeito de base, sazonalidade e timing de reconhecimento das linhas pode ampliar ou suavizar a fotografia do período.",
-      "Mesmo sem considerar a sucumbência, o resultado líquido permaneceria em R$ 0, sugerindo que a geração recorrente ainda se sustenta com menor dependência de receitas extraordinárias.",
-      "O principal vetor de rigidez está na estrutura de pessoas: o desembolso com essa frente responde por 62,8% do total de custos, patamar relevante. Em paralelo, a linha de Sócios concentra 49,1%, o que reforça a necessidade de disciplina sobre capacidade, alocação e produtividade.",
-      "Na camada complementar, correspondentes somam R$ 516,2 mil (4,4%) e outras despesas atingem R$ 918,6 mil (7,8%). Juntas, essas rubricas representam R$ 1,43 M e 12,2% dos custos, oferecendo espaço para ajustes táticos sem alterar a espinha dorsal da operação.",
-      "Na frente comercial, o faturamento segue concentrado no top 5 clientes, formado por SANTANDER, CLARO, MRS, UOL, RECUPERA, que juntos somam R$ 6,13 M. A liderança de SANTANDER, com 27,9% desse bloco, sinaliza um nível relevante de concentração comercial e mantém a diversificação da carteira como agenda prioritária."
+      "Mesmo sem considerar a sucumbência, o resultado líquido permaneceria em R$ 221,1 mil, sugerindo que a geração recorrente ainda se sustenta com menor dependência de receitas extraordinárias.",
+      "O principal vetor de rigidez está na estrutura de pessoas: o desembolso com essa frente responde por 62,7% do total de custos, patamar relevante. Em paralelo, a linha de Sócios concentra 49,1%, o que reforça a necessidade de disciplina sobre capacidade, alocação e produtividade.",
+      "Na camada complementar, correspondentes somam R$ 516,2 mil (4,4%) e outras despesas atingem R$ 918,6 mil (7,8%). Juntas, essas rubricas representam R$ 1,43 M e 12,3% dos custos, oferecendo espaço para ajustes táticos sem alterar a espinha dorsal da operação.",
+      "Na frente comercial, o faturamento do período selecionado se concentra nos cinco clientes exibidos: SANTANDER, CLARO, MRS, UOL, RECUPERA, que juntos somam R$ 6,13 M. A liderança de SANTANDER, com 27,9% desse bloco, sinaliza um nível relevante de concentração comercial e mantém a diversificação da carteira como agenda prioritária."
     ],
     "meta": {
       "mode": "template",

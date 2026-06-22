@@ -87,7 +87,7 @@ def _generate_insights_with_template(metrics: DashboardMetrics) -> list[dict[str
         f"{format_percent(metrics.cost_change_pct)}, pressionando {format_brl(operating_pressure)} no operacional."
         if metrics.operating_result < 0
         else
-        f"Receita e custos seguem em direções distintas, mas ainda preservam resultado operacional de "
+        f"No período selecionado, receita e custos preservam resultado operacional de "
         f"{format_brl(metrics.operating_result)}."
     )
 
@@ -103,8 +103,9 @@ def _generate_insights_with_template(metrics: DashboardMetrics) -> list[dict[str
     )
 
     top_clients_description = (
-        f"{metrics.lead_client_name} lidera um grupo que soma {format_brl(metrics.top_group_total)} "
-        f"e mantém {top_group_risk} na frente comercial."
+        f"{metrics.lead_client_name} lidera os cinco clientes exibidos, que somam "
+        f"{format_brl(metrics.top_group_total)} no período selecionado e mantêm "
+        f"{top_group_risk} na frente comercial."
         if metrics.top_clients
         else "Sem faturamento por cliente no período selecionado."
     )
@@ -151,7 +152,7 @@ def _generate_insights_with_llm(
 def _build_operational_paragraph(metrics: DashboardMetrics) -> str:
     if metrics.operating_result < 0:
         return (
-            f"No acumulado do período, a receita somou {format_brl(metrics.revenue_total)} e ficou "
+            f"No período selecionado, a receita somou {format_brl(metrics.revenue_total)} e ficou "
             f"{format_percent(abs(metrics.revenue_change_pct))} abaixo da base comparativa, enquanto a "
             f"estrutura de custos alcançou {format_brl(metrics.cost_total)} após avanço de "
             f"{format_percent(metrics.cost_change_pct)}. Esse descompasso levou o resultado operacional "
@@ -159,7 +160,7 @@ def _build_operational_paragraph(metrics: DashboardMetrics) -> str:
         )
 
     return (
-        f"No acumulado do período, a receita somou {format_brl(metrics.revenue_total)} e a estrutura "
+        f"No período selecionado, a receita somou {format_brl(metrics.revenue_total)} e a estrutura "
         f"de custos atingiu {format_brl(metrics.cost_total)}, produzindo resultado operacional positivo "
         f"de {format_brl(metrics.operating_result)}. O ritmo entre receita e despesas segue relativamente equilibrado."
     )
@@ -230,8 +231,9 @@ def _build_client_risk_paragraph(metrics: DashboardMetrics) -> str:
         else "um nível relevante de concentração comercial"
     )
     return (
-        f"Na frente comercial, o faturamento segue concentrado no top 5 clientes, formado por {client_names}, "
-        f"que juntos somam {format_brl(metrics.top_group_total)}. A liderança de {metrics.lead_client_name}, "
+        f"Na frente comercial, o faturamento do período selecionado se concentra nos cinco clientes "
+        f"exibidos: {client_names}, que juntos somam {format_brl(metrics.top_group_total)}. "
+        f"A liderança de {metrics.lead_client_name}, "
         f"com {format_percent(metrics.lead_client_share_pct)} desse bloco, sinaliza {concentration} e mantém a "
         f"diversificação da carteira como agenda prioritária."
     )
