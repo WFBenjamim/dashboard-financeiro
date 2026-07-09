@@ -493,5 +493,48 @@
     "detailedCostTotal": 7638087.175416067,
     "peopleCostSource": "Custos OMIE.xlsx"
   },
-  "cost_subtitle": "+15,0% vs 2025"
+  "cost_subtitle": "+15,0% vs 2025",
+  "topSucumbencias": {
+    "title": "Top 5 Sucumbências",
+    "source": "Orçamento.xlsx",
+    "sheet": "Sucumbência",
+    "nameColumn": "Cabeçalho do bloco do cliente",
+    "valueColumns": "jan-dez na linha Sucumbência",
+    "periodFilterable": true,
+    "items": [
+      {
+        "position": 1,
+        "name": "Valor Legal",
+        "value": 675274.88
+      },
+      {
+        "position": 2,
+        "name": "Casos Estratégicos",
+        "value": 51646.18
+      },
+      {
+        "position": 3,
+        "name": "Imobiliário",
+        "value": 23069.73
+      }
+    ]
+  },
+  "topGlosas": {
+    "title": "Top 5 Glosas",
+    "source": "INFORMAÇÕES GERENCIAIS.xlsx",
+    "sheet": "GLOSAS",
+    "nameColumn": "Data",
+    "valueColumns": [
+      "Mar/2026",
+      "Apr/2026"
+    ],
+    "periodFilterable": true,
+    "items": [
+      {
+        "position": 1,
+        "name": "RECUPERA",
+        "value": 42101.490000000005
+      }
+    ]
+  }
 }

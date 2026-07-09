@@ -8,13 +8,13 @@
     "icon": "💰",
     "title": "Estrutura de Receita",
     "value": 8319716.224,
-    "contratual": 7255976.079958,
+    "contratual": 7368833.934,
     "sucumbencia": 901990.29,
-    "outras": 161749.85404200002,
-    "outras_receitas": 161749.85404200002,
-    "pct_contratual": 0.8721422563700654,
+    "outras": 48892.0,
+    "outras_receitas": 48892.0,
+    "pct_contratual": 0.885707364963125,
     "pct_sucumbencia": 0.10841599229046012,
-    "pct_outras": 0.019441751339474535,
+    "pct_outras": 0.005876642746414904,
     "pct_orcado": 0.9776056318453255,
     "receita_orcada": 8510298.99275,
     "receita_orcada_periodo": 8510298.99275,
@@ -27,8 +27,8 @@
     "rows": [
       {
         "label": "Contratuais",
-        "value": "R$ 7,26 M",
-        "share": "87,2%"
+        "value": "R$ 7,37 M",
+        "share": "88,6%"
       },
       {
         "label": "Sucumbência",
@@ -37,8 +37,8 @@
       },
       {
         "label": "Outras Receitas",
-        "value": "R$ 161,7 mil",
-        "share": "1,9%"
+        "value": "R$ 48,9 mil",
+        "share": "0,6%"
       }
     ],
     "expansions": [
@@ -488,5 +488,78 @@
     "detailedCostTotal": 7306007.833875658,
     "peopleCostSource": "Custos OMIE.xlsx"
   },
-  "cost_subtitle": "+10,9% vs 2025"
+  "cost_subtitle": "+10,9% vs 2025",
+  "topSucumbencias": {
+    "title": "Top 5 Sucumbências",
+    "source": "Orçamento.xlsx",
+    "sheet": "Sucumbência",
+    "nameColumn": "Cabeçalho do bloco do cliente",
+    "valueColumns": "jan-dez na linha Sucumbência",
+    "periodFilterable": true,
+    "items": [
+      {
+        "position": 1,
+        "name": "Valor Legal",
+        "value": 845494.5700000001
+      },
+      {
+        "position": 2,
+        "name": "Casos Estratégicos",
+        "value": 30053.15
+      },
+      {
+        "position": 3,
+        "name": "Claro",
+        "value": 16056.91
+      },
+      {
+        "position": 4,
+        "name": "Santander",
+        "value": 7651.14
+      },
+      {
+        "position": 5,
+        "name": "Mercado Livre",
+        "value": 2922.02
+      }
+    ]
+  },
+  "topGlosas": {
+    "title": "Top 5 Glosas",
+    "source": "INFORMAÇÕES GERENCIAIS.xlsx",
+    "sheet": "GLOSAS",
+    "nameColumn": "Data",
+    "valueColumns": [
+      "Feb/2026",
+      "Mar/2026"
+    ],
+    "periodFilterable": true,
+    "items": [
+      {
+        "position": 1,
+        "name": "RECUPERA",
+        "value": 31308.160000000003
+      },
+      {
+        "position": 2,
+        "name": "PATRIMÔNIO",
+        "value": 18000.0
+      },
+      {
+        "position": 3,
+        "name": "DAYCOVAL",
+        "value": 3782.05
+      },
+      {
+        "position": 4,
+        "name": "VIVO",
+        "value": 1530.0
+      },
+      {
+        "position": 5,
+        "name": "CLARO",
+        "value": 238.52
+      }
+    ]
+  }
 }

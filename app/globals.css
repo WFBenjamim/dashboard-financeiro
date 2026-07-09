@@ -311,6 +311,13 @@ button {
   height: 100%;
 }
 
+.gd-ranking-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+  align-items: stretch;
+}
+
 .gd-top-section .gd-card {
   width: 100%;
   align-self: stretch;
@@ -672,6 +679,114 @@ button {
   object-fit: contain;
   display: inline-block;
   flex-shrink: 0;
+}
+
+.gd-ranking-card {
+  display: grid;
+  gap: 0.95rem;
+  align-content: start;
+  min-height: 0;
+  padding: 1.25rem;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 8px 32px rgba(64, 64, 64, 0.18);
+}
+
+.gd-ranking-card--dark {
+  color: #f2f2f2;
+  background: linear-gradient(145deg, #404040, #303030);
+  border-color: rgba(255, 212, 24, 0.16);
+}
+
+.gd-ranking-card--gold {
+  color: #ffffff;
+  background: linear-gradient(145deg, #f2ad28, #d98f10);
+  border-color: rgba(64, 64, 64, 0.14);
+  box-shadow: 0 8px 32px rgba(242, 173, 40, 0.22);
+}
+
+.gd-ranking-card__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.gd-ranking-card__header strong {
+  min-width: 0;
+  font-size: 1rem;
+  line-height: 1.25;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.gd-ranking-card__header span {
+  flex-shrink: 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.gd-ranking-list {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.gd-ranking-item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.7rem;
+  min-height: 3rem;
+  padding: 0.62rem 0.72rem;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.gd-ranking-card--gold .gd-ranking-item {
+  background: rgba(64, 64, 64, 0.28);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.gd-ranking-item__badge {
+  display: inline-grid;
+  place-items: center;
+  width: 1.65rem;
+  height: 1.65rem;
+  border-radius: 999px;
+  background: rgba(255, 212, 24, 0.22);
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 900;
+}
+
+.gd-ranking-card--gold .gd-ranking-item__badge {
+  background: rgba(64, 64, 64, 0.32);
+}
+
+.gd-ranking-item__name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.95rem;
+  font-weight: 850;
+}
+
+.gd-ranking-item strong {
+  white-space: nowrap;
+  font-size: 0.95rem;
+  font-weight: 900;
+}
+
+.gd-ranking-empty {
+  padding: 1rem;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.82);
+  font-weight: 800;
 }
 
 .gd-kpi {
@@ -2629,6 +2744,7 @@ button {
 
 @media (max-width: 1180px) {
   .gd-top-section,
+  .gd-ranking-row,
   .gd-kpi-row,
   .gd-insights {
     grid-template-columns: 1fr;

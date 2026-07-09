@@ -8,13 +8,13 @@
     "icon": "💰",
     "title": "Estrutura de Receita",
     "value": 12158774.184,
-    "contratual": 10611768.531437,
+    "contratual": 10777318.474,
     "sucumbencia": 1332563.71,
-    "outras": 214441.94256300002,
-    "outras_receitas": 214441.94256300002,
-    "pct_contratual": 0.8727663143379422,
+    "outras": 48892.0,
+    "outras_receitas": 48892.0,
+    "pct_contratual": 0.8863819913838116,
     "pct_sucumbencia": 0.10959687957306996,
-    "pct_outras": 0.017636806088987895,
+    "pct_outras": 0.004021129043118348,
     "pct_orcado": 1.0127325512920597,
     "receita_orcada": 12005908.34025,
     "receita_orcada_periodo": 12005908.34025,
@@ -27,8 +27,8 @@
     "rows": [
       {
         "label": "Contratuais",
-        "value": "R$ 10,61 M",
-        "share": "87,3%"
+        "value": "R$ 10,78 M",
+        "share": "88,6%"
       },
       {
         "label": "Sucumbência",
@@ -37,8 +37,8 @@
       },
       {
         "label": "Outras Receitas",
-        "value": "R$ 214,4 mil",
-        "share": "1,8%"
+        "value": "R$ 48,9 mil",
+        "share": "0,4%"
       }
     ],
     "expansions": [
@@ -493,5 +493,79 @@
     "detailedCostTotal": 11146044.864539076,
     "peopleCostSource": "Custos OMIE.xlsx"
   },
-  "cost_subtitle": "+11,6% vs 2025"
+  "cost_subtitle": "+11,6% vs 2025",
+  "topSucumbencias": {
+    "title": "Top 5 Sucumbências",
+    "source": "Orçamento.xlsx",
+    "sheet": "Sucumbência",
+    "nameColumn": "Cabeçalho do bloco do cliente",
+    "valueColumns": "jan-dez na linha Sucumbência",
+    "periodFilterable": true,
+    "items": [
+      {
+        "position": 1,
+        "name": "Valor Legal",
+        "value": 1174621.1
+      },
+      {
+        "position": 2,
+        "name": "Casos Estratégicos",
+        "value": 64876.97
+      },
+      {
+        "position": 3,
+        "name": "Claro",
+        "value": 34978.979999999996
+      },
+      {
+        "position": 4,
+        "name": "Santander",
+        "value": 21526.15
+      },
+      {
+        "position": 5,
+        "name": "UOL PagSeguro",
+        "value": 15016.93
+      }
+    ]
+  },
+  "topGlosas": {
+    "title": "Top 5 Glosas",
+    "source": "INFORMAÇÕES GERENCIAIS.xlsx",
+    "sheet": "GLOSAS",
+    "nameColumn": "Data",
+    "valueColumns": [
+      "Jan/2026",
+      "Feb/2026",
+      "Mar/2026"
+    ],
+    "periodFilterable": true,
+    "items": [
+      {
+        "position": 1,
+        "name": "RECUPERA",
+        "value": 31308.160000000003
+      },
+      {
+        "position": 2,
+        "name": "PATRIMÔNIO",
+        "value": 18000.0
+      },
+      {
+        "position": 3,
+        "name": "DAYCOVAL",
+        "value": 7564.09
+      },
+      {
+        "position": 4,
+        "name": "CLARO",
+        "value": 2836.0
+      },
+      {
+        "position": 5,
+        "name": "BRADESCO",
+        "value": 2195.83
+      }
+    ]
+  }
 }

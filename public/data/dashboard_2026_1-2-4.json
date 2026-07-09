@@ -493,5 +493,79 @@
     "detailedCostTotal": 11382546.18249425,
     "peopleCostSource": "Custos OMIE.xlsx"
   },
-  "cost_subtitle": "+12,8% vs 2025"
+  "cost_subtitle": "+12,8% vs 2025",
+  "topSucumbencias": {
+    "title": "Top 5 Sucumbências",
+    "source": "Orçamento.xlsx",
+    "sheet": "Sucumbência",
+    "nameColumn": "Cabeçalho do bloco do cliente",
+    "valueColumns": "jan-dez na linha Sucumbência",
+    "periodFilterable": true,
+    "items": [
+      {
+        "position": 1,
+        "name": "Valor Legal",
+        "value": 867876.96
+      },
+      {
+        "position": 2,
+        "name": "Casos Estratégicos",
+        "value": 116523.15
+      },
+      {
+        "position": 3,
+        "name": "Claro",
+        "value": 34978.979999999996
+      },
+      {
+        "position": 4,
+        "name": "Imobiliário",
+        "value": 33396.31
+      },
+      {
+        "position": 5,
+        "name": "Santander",
+        "value": 21526.15
+      }
+    ]
+  },
+  "topGlosas": {
+    "title": "Top 5 Glosas",
+    "source": "INFORMAÇÕES GERENCIAIS.xlsx",
+    "sheet": "GLOSAS",
+    "nameColumn": "Data",
+    "valueColumns": [
+      "Jan/2026",
+      "Feb/2026",
+      "Apr/2026"
+    ],
+    "periodFilterable": true,
+    "items": [
+      {
+        "position": 1,
+        "name": "PATRIMÔNIO",
+        "value": 18000.0
+      },
+      {
+        "position": 2,
+        "name": "RECUPERA",
+        "value": 10793.33
+      },
+      {
+        "position": 3,
+        "name": "DAYCOVAL",
+        "value": 7564.09
+      },
+      {
+        "position": 4,
+        "name": "CLARO",
+        "value": 2836.0
+      },
+      {
+        "position": 5,
+        "name": "BRADESCO",
+        "value": 2195.83
+      }
+    ]
+  }
 }

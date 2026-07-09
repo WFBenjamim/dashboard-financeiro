@@ -8,13 +8,13 @@
     "icon": "💰",
     "title": "Estrutura de Receita",
     "value": 9439393.954,
-    "contratual": 8304523.139958,
+    "contratual": 8650723.624,
     "sucumbencia": 727555.3300000001,
-    "outras": 407315.484042,
-    "outras_receitas": 407315.484042,
-    "pct_contratual": 0.8797729155523706,
+    "outras": 61115.0,
+    "outras_receitas": 61115.0,
+    "pct_contratual": 0.9164490502416422,
     "pct_sucumbencia": 0.0770764874890823,
-    "pct_outras": 0.043150596958547074,
+    "pct_outras": 0.006474462269275471,
     "pct_orcado": 0.9808869679684373,
     "receita_orcada": 9623324.8705,
     "receita_orcada_periodo": 9623324.8705,
@@ -27,8 +27,8 @@
     "rows": [
       {
         "label": "Contratuais",
-        "value": "R$ 8,3 M",
-        "share": "88,0%"
+        "value": "R$ 8,65 M",
+        "share": "91,6%"
       },
       {
         "label": "Sucumbência",
@@ -37,8 +37,8 @@
       },
       {
         "label": "Outras Receitas",
-        "value": "R$ 407,3 mil",
-        "share": "4,3%"
+        "value": "R$ 61,1 mil",
+        "share": "0,6%"
       }
     ],
     "expansions": [
@@ -488,5 +488,53 @@
     "detailedCostTotal": 7614508.362659424,
     "peopleCostSource": "Custos OMIE.xlsx"
   },
-  "cost_subtitle": "+16,6% vs 2025"
+  "cost_subtitle": "+16,6% vs 2025",
+  "topSucumbencias": {
+    "title": "Top 5 Sucumbências",
+    "source": "Orçamento.xlsx",
+    "sheet": "Sucumbência",
+    "nameColumn": "Cabeçalho do bloco do cliente",
+    "valueColumns": "jan-dez na linha Sucumbência",
+    "periodFilterable": true,
+    "items": [
+      {
+        "position": 1,
+        "name": "Valor Legal",
+        "value": 652378.3300000001
+      },
+      {
+        "position": 2,
+        "name": "Imobiliário",
+        "value": 70525.59
+      },
+      {
+        "position": 3,
+        "name": "Casos Estratégicos",
+        "value": 4651.41
+      }
+    ]
+  },
+  "topGlosas": {
+    "title": "Top 5 Glosas",
+    "source": "INFORMAÇÕES GERENCIAIS.xlsx",
+    "sheet": "GLOSAS",
+    "nameColumn": "Data",
+    "valueColumns": [
+      "Mar/2026",
+      "May/2026"
+    ],
+    "periodFilterable": true,
+    "items": [
+      {
+        "position": 1,
+        "name": "RECUPERA",
+        "value": 39266.51
+      },
+      {
+        "position": 2,
+        "name": "SANEAMENTO - BRK",
+        "value": 420.0
+      }
+    ]
+  }
 }

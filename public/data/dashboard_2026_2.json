@@ -483,5 +483,72 @@
     "detailedCostTotal": 3605214.90514521,
     "peopleCostSource": "Custos OMIE.xlsx"
   },
-  "cost_subtitle": "+8,7% vs 2025"
+  "cost_subtitle": "+8,7% vs 2025",
+  "topSucumbencias": {
+    "title": "Top 5 Sucumbências",
+    "source": "Orçamento.xlsx",
+    "sheet": "Sucumbência",
+    "nameColumn": "Cabeçalho do bloco do cliente",
+    "valueColumns": "jan-dez na linha Sucumbência",
+    "periodFilterable": true,
+    "items": [
+      {
+        "position": 1,
+        "name": "Valor Legal",
+        "value": 354485.06
+      },
+      {
+        "position": 2,
+        "name": "Casos Estratégicos",
+        "value": 30053.15
+      },
+      {
+        "position": 3,
+        "name": "Claro",
+        "value": 16056.91
+      },
+      {
+        "position": 4,
+        "name": "Santander",
+        "value": 7651.14
+      },
+      {
+        "position": 5,
+        "name": "Mercado Livre",
+        "value": 2922.02
+      }
+    ]
+  },
+  "topGlosas": {
+    "title": "Top 5 Glosas",
+    "source": "INFORMAÇÕES GERENCIAIS.xlsx",
+    "sheet": "GLOSAS",
+    "nameColumn": "Data",
+    "valueColumns": [
+      "Feb/2026"
+    ],
+    "periodFilterable": true,
+    "items": [
+      {
+        "position": 1,
+        "name": "PATRIMÔNIO",
+        "value": 18000.0
+      },
+      {
+        "position": 2,
+        "name": "DAYCOVAL",
+        "value": 3782.05
+      },
+      {
+        "position": 3,
+        "name": "VIVO",
+        "value": 1530.0
+      },
+      {
+        "position": 4,
+        "name": "CLARO",
+        "value": 238.52
+      }
+    ]
+  }
 }

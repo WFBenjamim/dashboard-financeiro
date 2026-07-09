@@ -232,6 +232,8 @@ export default function Dashboard() {
           <CostCard data={data.cost_structure} insight={costInsight} distribution={data.costDistribution} />
         </section>
 
+        <RankingCardsRow sucumbencias={data.topSucumbencias} glosas={data.topGlosas} />
+
         <section className="gd-kpi-row">
           <ResultCard data={data.net_result} insight={resultInsight} />
           <PeopleCard data={data.people} insight={peopleInsight} />
@@ -628,6 +630,43 @@ function CostDistributionChart({ distribution, compact = false }: { distribution
         ))}
       </div>
     </div>
+  );
+}
+
+function RankingCardsRow({ sucumbencias, glosas }: { sucumbencias?: any; glosas?: any }) {
+  return (
+    <section className="gd-ranking-row" aria-label="Rankings do período">
+      <RankingCard data={sucumbencias} title="Top 5 Sucumbências" tone="dark" />
+      <RankingCard data={glosas} title="Top 5 Glosas" tone="gold" />
+    </section>
+  );
+}
+
+function RankingCard({ data, title, tone }: { data?: any; title: string; tone: "dark" | "gold" }) {
+  const items = Array.isArray(data?.items) ? data.items.slice(0, 5) : [];
+
+  return (
+    <article className={`gd-ranking-card gd-ranking-card--${tone}`}>
+      <div className="gd-ranking-card__header">
+        <strong>{cleanText(data?.title || title)}</strong>
+        <span>{cleanText(data?.sheet || "")}</span>
+      </div>
+      <div className="gd-ranking-list">
+        {items.length > 0 ? (
+          items.map((item: any, index: number) => (
+            <div className="gd-ranking-item" key={`${cleanText(item.name)}-${index}`}>
+              <span className="gd-ranking-item__badge">{Number(item.position || index + 1)}</span>
+              <span className="gd-ranking-item__name" title={cleanText(item.name)}>
+                {cleanText(item.name)}
+              </span>
+              <strong>{formatCurrency(Number(item.value || 0))}</strong>
+            </div>
+          ))
+        ) : (
+          <div className="gd-ranking-empty">Sem dados para o período selecionado.</div>
+        )}
+      </div>
+    </article>
   );
 }
 

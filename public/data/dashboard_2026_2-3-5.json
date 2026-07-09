@@ -493,5 +493,79 @@
     "detailedCostTotal": 11219723.267804634,
     "peopleCostSource": "Custos OMIE.xlsx"
   },
-  "cost_subtitle": "+14,0% vs 2025"
+  "cost_subtitle": "+14,0% vs 2025",
+  "topSucumbencias": {
+    "title": "Top 5 Sucumbências",
+    "source": "Orçamento.xlsx",
+    "sheet": "Sucumbência",
+    "nameColumn": "Cabeçalho do bloco do cliente",
+    "valueColumns": "jan-dez na linha Sucumbência",
+    "periodFilterable": true,
+    "items": [
+      {
+        "position": 1,
+        "name": "Valor Legal",
+        "value": 1006863.39
+      },
+      {
+        "position": 2,
+        "name": "Imobiliário",
+        "value": 70525.59
+      },
+      {
+        "position": 3,
+        "name": "Casos Estratégicos",
+        "value": 34704.56
+      },
+      {
+        "position": 4,
+        "name": "Claro",
+        "value": 16056.91
+      },
+      {
+        "position": 5,
+        "name": "Santander",
+        "value": 7651.14
+      }
+    ]
+  },
+  "topGlosas": {
+    "title": "Top 5 Glosas",
+    "source": "INFORMAÇÕES GERENCIAIS.xlsx",
+    "sheet": "GLOSAS",
+    "nameColumn": "Data",
+    "valueColumns": [
+      "Feb/2026",
+      "Mar/2026",
+      "May/2026"
+    ],
+    "periodFilterable": true,
+    "items": [
+      {
+        "position": 1,
+        "name": "RECUPERA",
+        "value": 39266.51
+      },
+      {
+        "position": 2,
+        "name": "PATRIMÔNIO",
+        "value": 18000.0
+      },
+      {
+        "position": 3,
+        "name": "DAYCOVAL",
+        "value": 3782.05
+      },
+      {
+        "position": 4,
+        "name": "VIVO",
+        "value": 1530.0
+      },
+      {
+        "position": 5,
+        "name": "SANEAMENTO - BRK",
+        "value": 420.0
+      }
+    ]
+  }
 }

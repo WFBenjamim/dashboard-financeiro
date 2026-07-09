@@ -483,5 +483,52 @@
     "detailedCostTotal": 3913715.4339289763,
     "peopleCostSource": "Custos OMIE.xlsx"
   },
-  "cost_subtitle": "+20,1% vs 2025"
+  "cost_subtitle": "+20,1% vs 2025",
+  "topSucumbencias": {
+    "title": "Top 5 Sucumbências",
+    "source": "Orçamento.xlsx",
+    "sheet": "Sucumbência",
+    "nameColumn": "Cabeçalho do bloco do cliente",
+    "valueColumns": "jan-dez na linha Sucumbência",
+    "periodFilterable": true,
+    "items": [
+      {
+        "position": 1,
+        "name": "Valor Legal",
+        "value": 161368.82
+      },
+      {
+        "position": 2,
+        "name": "Imobiliário",
+        "value": 70525.59
+      },
+      {
+        "position": 3,
+        "name": "Casos Estratégicos",
+        "value": 4651.41
+      }
+    ]
+  },
+  "topGlosas": {
+    "title": "Top 5 Glosas",
+    "source": "INFORMAÇÕES GERENCIAIS.xlsx",
+    "sheet": "GLOSAS",
+    "nameColumn": "Data",
+    "valueColumns": [
+      "May/2026"
+    ],
+    "periodFilterable": true,
+    "items": [
+      {
+        "position": 1,
+        "name": "RECUPERA",
+        "value": 7958.35
+      },
+      {
+        "position": 2,
+        "name": "SANEAMENTO - BRK",
+        "value": 420.0
+      }
+    ]
+  }
 }

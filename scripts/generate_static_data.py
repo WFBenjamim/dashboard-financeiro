@@ -142,6 +142,137 @@ def normalize_label(value) -> str:
     return " ".join(text.lower().split())
 
 
+def _month_label_to_number(value) -> int | None:
+    month_map = {
+        "jan": 1,
+        "janeiro": 1,
+        "fev": 2,
+        "fevereiro": 2,
+        "mar": 3,
+        "marco": 3,
+        "março": 3,
+        "abr": 4,
+        "abril": 4,
+        "mai": 5,
+        "maio": 5,
+        "jun": 6,
+        "junho": 6,
+        "jul": 7,
+        "julho": 7,
+        "ago": 8,
+        "agosto": 8,
+        "set": 9,
+        "setembro": 9,
+        "out": 10,
+        "outubro": 10,
+        "nov": 11,
+        "novembro": 11,
+        "dez": 12,
+        "dezembro": 12,
+    }
+    label = normalize_label(value)
+    return month_map.get(label)
+
+
+def _top_items_from_totals(totals: dict[str, float], limit: int = 5) -> list[dict[str, float | str | int]]:
+    ranked = sorted(
+        (
+            {"position": index + 1, "name": name, "value": value}
+            for index, (name, value) in enumerate(
+                sorted(totals.items(), key=lambda item: abs(item[1]), reverse=True)
+            )
+            if abs(value) > 0.01
+        ),
+        key=lambda item: item["position"],
+    )
+    return ranked[:limit]
+
+
+def load_top_sucumbencias(selected_months: list[int]) -> dict:
+    xl = pd.ExcelFile(ORCAMENTO_FILE, engine="openpyxl")
+    sheet_name = next((sheet for sheet in xl.sheet_names if normalize_label(sheet) == "sucumbencia"), None)
+    if not sheet_name:
+        return {"source": "Orçamento.xlsx", "sheet": "Sucumbência", "periodFilterable": False, "items": []}
+
+    df = pd.read_excel(ORCAMENTO_FILE, sheet_name=sheet_name, header=None, engine="openpyxl")
+    totals: dict[str, float] = {}
+    current_client = ""
+    month_columns: dict[int, int] = {}
+
+    for _, row in df.iterrows():
+        first_cell = row.iloc[0]
+        first_label = normalize_label(first_cell)
+
+        row_months = {
+            column_index: _month_label_to_number(row.iloc[column_index])
+            for column_index in range(len(row))
+        }
+        detected_months = {
+            month_number: column_index
+            for column_index, month_number in row_months.items()
+            if month_number is not None
+        }
+        if detected_months:
+            current_client = str(first_cell).strip() if first_cell is not None and not pd.isna(first_cell) else ""
+            month_columns = detected_months
+            continue
+
+        if current_client and normalize_label(current_client) != "total" and first_label == "sucumbencia":
+            value = sum(
+                to_number(row.iloc[column_index])
+                for month in selected_months
+                for column_index in [month_columns.get(month)]
+                if column_index is not None
+            )
+            totals[current_client] = totals.get(current_client, 0.0) + value
+
+    return {
+        "title": "Top 5 Sucumbências",
+        "source": "Orçamento.xlsx",
+        "sheet": sheet_name,
+        "nameColumn": "Cabeçalho do bloco do cliente",
+        "valueColumns": "jan-dez na linha Sucumbência",
+        "periodFilterable": True,
+        "items": _top_items_from_totals(totals),
+    }
+
+
+def load_top_glosas(selected_months: list[int], year: int = YEAR) -> dict:
+    df = pd.read_excel(
+        INFORMACOES_GERENCIAIS_FILE,
+        sheet_name="GLOSAS",
+        header=0,
+        engine="openpyxl",
+    )
+
+    period_columns = [
+        column
+        for column in df.columns
+        if hasattr(column, "year") and column.year == year and column.month in selected_months
+    ]
+    if not period_columns:
+        return {"source": "INFORMAÇÕES GERENCIAIS.xlsx", "sheet": "GLOSAS", "periodFilterable": False, "items": []}
+
+    name_column = "Data" if "Data" in df.columns else df.columns[1]
+    totals: dict[str, float] = {}
+    for _, row in df.iterrows():
+        name = str(row.get(name_column, "")).strip()
+        if not name or name.lower() == "nan":
+            continue
+        value = sum(to_number(row.get(column, 0)) for column in period_columns)
+        totals[name] = totals.get(name, 0.0) + value
+
+    return {
+        "title": "Top 5 Glosas",
+        "source": "INFORMAÇÕES GERENCIAIS.xlsx",
+        "sheet": "GLOSAS",
+        "nameColumn": str(name_column),
+        "valueColumns": [column.strftime("%b/%Y") for column in period_columns],
+        "periodFilterable": True,
+        "items": _top_items_from_totals(totals),
+    }
+
+
 def load_totais_df() -> pd.DataFrame:
     df = pd.read_excel(
         INFORMACOES_GERENCIAIS_FILE,
@@ -363,6 +494,8 @@ def generate_dashboard_jsons() -> None:
             data["cost_structure"]["cost_subtitle"] = cost_subtitle
             enrich_net_result(data, months, YEAR)
             enrich_revenue_and_cost_metrics(data, months, YEAR)
+            data["topSucumbencias"] = load_top_sucumbencias(months)
+            data["topGlosas"] = load_top_glosas(months, YEAR)
             metrics = build_dashboard_metrics(data)
             data["technical_analysis"] = generate_technical_analysis(data, metrics=metrics)
             data["insights"] = generate_insights(data, metrics=metrics)
