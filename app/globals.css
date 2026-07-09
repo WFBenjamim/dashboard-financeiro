@@ -19,9 +19,9 @@
   --color-text: #f5f0e8;
   --color-text-muted: #9c9587;
   --color-text-dim: #6b6358;
-  --bg-start: #121316;
-  --bg-mid: #211b12;
-  --bg-end: #33220d;
+  --bg-start: #f2f2f2;
+  --bg-mid: #efe8c8;
+  --bg-end: #404040;
   --text-main: #f8fafc;
   --text-soft: #dbe7f5;
   --surface-line: rgba(255, 255, 255, 0.14);
@@ -38,11 +38,11 @@ body {
   min-height: 100%;
   margin: 0;
   background:
-    radial-gradient(circle at 48% -4%, rgba(245, 177, 42, 0.24), transparent 34%),
-    radial-gradient(circle at 100% 18%, rgba(245, 177, 42, 0.16), transparent 28%),
-    radial-gradient(circle at 8% 8%, rgba(30, 64, 175, 0.12), transparent 22%),
-    linear-gradient(145deg, var(--bg-start) 0%, var(--bg-mid) 44%, var(--bg-end) 100%);
+    radial-gradient(circle at 50% 0%, rgba(255, 212, 24, 0.34), transparent 35%),
+    radial-gradient(circle at 92% 18%, rgba(255, 212, 24, 0.16), transparent 28%),
+    linear-gradient(160deg, var(--bg-start) 0%, var(--bg-mid) 55%, var(--bg-end) 140%);
   color: var(--text-main);
+  font-family: var(--font-fira-sans), sans-serif;
 }
 
 html {
@@ -51,8 +51,11 @@ html {
 
 button,
 select,
-input {
+input,
+textarea,
+svg text {
   font: inherit;
+  font-family: inherit;
 }
 
 button {
@@ -364,28 +367,37 @@ button {
 }
 
 .gd-card--blue {
-  background: linear-gradient(145deg, #1e40af, #60a5fa);
-  box-shadow: 0 8px 32px rgba(37, 99, 235, 0.3);
+  color: #f2f2f2;
+  background: linear-gradient(145deg, #404040, #303030);
+  border-color: rgba(255, 212, 24, 0.16);
+  box-shadow: 0 8px 32px rgba(64, 64, 64, 0.28);
 }
 
 .gd-card--gray {
-  background: linear-gradient(145deg, #8f3324, #bf4830);
-  box-shadow: 0 8px 32px rgba(185, 28, 28, 0.3);
+  color: #303030;
+  background: linear-gradient(145deg, #f2ad28, #d98f10);
+  border-color: rgba(64, 64, 64, 0.14);
+  box-shadow: 0 8px 32px rgba(242, 173, 40, 0.28);
 }
 
 .gd-card--orange {
-  background: linear-gradient(145deg, #c2410c, #fb923c);
-  box-shadow: 0 8px 32px rgba(234, 88, 12, 0.3);
+  color: #303030;
+  background: linear-gradient(145deg, #f2ad28, #d98f10);
+  border-color: rgba(64, 64, 64, 0.14);
+  box-shadow: 0 8px 32px rgba(242, 173, 40, 0.28);
 }
 
 .gd-card--green {
-  background: linear-gradient(145deg, #047857, #34d399);
-  box-shadow: 0 8px 32px rgba(5, 150, 105, 0.3);
+  color: #404040;
+  background: linear-gradient(145deg, #f2f2f2, #ffffff);
+  border-color: rgba(64, 64, 64, 0.12);
+  box-shadow: 0 8px 32px rgba(64, 64, 64, 0.16);
 }
 
 .gd-card--purple {
-  background: linear-gradient(145deg, #6d28d9, #a78bfa);
-  box-shadow: 0 8px 32px rgba(124, 58, 237, 0.3);
+  background: linear-gradient(145deg, #404040, #2f2f2f);
+  border-color: rgba(255, 212, 24, 0.18);
+  box-shadow: 0 8px 32px rgba(64, 64, 64, 0.28);
 }
 
 .gd-card--yellow {
@@ -405,6 +417,235 @@ button {
   justify-content: space-between;
   gap: 1rem;
   height: 100%;
+}
+
+.gd-card--blue .gd-title,
+.gd-card--blue .gd-kpi,
+.gd-card--blue .gd-cost__label,
+.gd-card--blue .gd-cost__value,
+.gd-card--blue .gd-cost__caption,
+.gd-card--blue .gd-cost-rect__label,
+.gd-card--blue .gd-cost-rect__value,
+.gd-card--blue .gd-cost-rect__caption,
+.gd-card--blue .gd-mini-row__label,
+.gd-card--blue .gd-mini-row__value,
+.gd-card--blue .gd-card-insight strong,
+.gd-card--blue .gd-card-insight span {
+  color: #f2f2f2;
+}
+
+.gd-card--blue .gd-cost,
+.gd-card--blue .gd-cost-rect,
+.gd-card--blue .gd-mini-row,
+.gd-card--blue .gd-card-insight {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 212, 24, 0.14);
+}
+
+.gd-card--blue .gd-cost:hover,
+.gd-card--blue .gd-cost-rect:hover,
+.gd-card--blue .gd-mini-row:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.gd-card--blue .gd-secondary-action {
+  color: #f2f2f2;
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 212, 24, 0.18);
+}
+
+.gd-card--blue .gd-secondary-action:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 212, 24, 0.28);
+}
+
+.gd-card--gray .gd-secondary-action {
+  color: #ffffff;
+  background: rgba(64, 64, 64, 0.28);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.gd-card--gray .gd-secondary-action:hover {
+  background: rgba(64, 64, 64, 0.36);
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.gd-card--gray .gd-title,
+.gd-card--gray .gd-kpi,
+.gd-card--gray .gd-cost__label,
+.gd-card--gray .gd-cost__value,
+.gd-card--gray .gd-cost__caption,
+.gd-card--gray .gd-cost-rect__label,
+.gd-card--gray .gd-cost-rect__value,
+.gd-card--gray .gd-cost-rect__caption,
+.gd-card--gray .gd-mini-row__label,
+.gd-card--gray .gd-mini-row__value,
+.gd-card--gray .gd-card-insight strong,
+.gd-card--gray .gd-card-insight span,
+.gd-card--gray .gd-donut-total span,
+.gd-card--gray .gd-donut-total strong,
+.gd-card--gray .gd-cost-card-visual__heading strong,
+.gd-card--gray .gd-distribution-row__name,
+.gd-card--gray .gd-distribution-row strong,
+.gd-card--gray .gd-distribution-row span:last-child {
+  color: #ffffff;
+}
+
+.gd-card--gray .gd-cost,
+.gd-card--gray .gd-cost-rect,
+.gd-card--gray .gd-mini-row,
+.gd-card--gray .gd-card-insight,
+.gd-card--gray .gd-result-mini,
+.gd-card--gray .gd-distribution-row {
+  background: rgba(64, 64, 64, 0.28);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.gd-card--gray .gd-cost:hover,
+.gd-card--gray .gd-cost-rect:hover,
+.gd-card--gray .gd-mini-row:hover,
+.gd-card--gray .gd-distribution-row:hover {
+  background: rgba(64, 64, 64, 0.36);
+}
+
+.gd-card--gray .gd-donut-total {
+  border-top-color: rgba(255, 255, 255, 0.22);
+}
+
+.gd-card--gray .gd-distribution-row__swatch {
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.14);
+}
+
+.gd-card--gray .gd-cost-chart--compact .gd-distribution-row {
+  background: rgba(64, 64, 64, 0.28);
+}
+
+.gd-card--gray .gd-result-mini span,
+.gd-card--gray .gd-result-mini strong {
+  color: #ffffff;
+}
+
+.gd-card--orange .gd-title,
+.gd-card--orange .gd-kpi,
+.gd-card--orange .gd-card-insight strong,
+.gd-card--orange .gd-result-mini strong {
+  color: #ffffff;
+}
+
+.gd-card--orange .gd-card-insight,
+.gd-card--orange .gd-result-mini {
+  background: rgba(64, 64, 64, 0.28);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.gd-card--orange .gd-card-insight span,
+.gd-card--orange .gd-result-mini span {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.gd-card--orange .gd-result-mini__value--red {
+  color: #fecaca !important;
+}
+
+.gd-card--orange .gd-result-mini__value--green {
+  color: #bbf7d0 !important;
+}
+
+.gd-card--gray .gd-result-mini__value--red,
+.gd-card--orange .gd-result-mini__value--red {
+  color: #fecaca !important;
+}
+
+.gd-card--gray .gd-result-mini__value--green,
+.gd-card--orange .gd-result-mini__value--green {
+  color: #bbf7d0 !important;
+}
+
+.gd-card--gray .gd-result-mini-grid .gd-result-mini:nth-child(n + 2) strong,
+.gd-card--orange .gd-result-mini-grid .gd-result-mini:nth-child(n + 2) strong {
+  color: #c93636 !important;
+}
+
+.gd-card--gray .gd-result-mini:has(.gd-result-mini__value--red) span,
+.gd-card--orange .gd-result-mini:has(.gd-result-mini__value--red) span {
+  color: #fecaca;
+}
+
+.gd-card--gray .gd-result-mini:has(.gd-result-mini__value--green) span,
+.gd-card--orange .gd-result-mini:has(.gd-result-mini__value--green) span {
+  color: #bbf7d0;
+}
+
+.gd-card--gray .gd-result-mini-grid .gd-result-mini:nth-child(n + 2) span,
+.gd-card--orange .gd-result-mini-grid .gd-result-mini:nth-child(n + 2) span {
+  color: #ffffff;
+}
+
+.gd-card--green .gd-title,
+.gd-card--green .gd-kpi,
+.gd-card--green .gd-row__label,
+.gd-card--green .gd-row strong,
+.gd-card--green .gd-card-insight strong {
+  color: #404040;
+}
+
+.gd-card--green .gd-subline,
+.gd-card--green .gd-card-insight span {
+  color: rgba(64, 64, 64, 0.76);
+}
+
+.gd-card--green .gd-row,
+.gd-card--green .gd-card-insight {
+  background: rgba(64, 64, 64, 0.08);
+  border-color: rgba(64, 64, 64, 0.14);
+}
+
+.gd-card--green .gd-row:hover {
+  background: rgba(64, 64, 64, 0.12);
+}
+
+.gd-card--green .gd-pill {
+  color: #404040;
+  background: rgba(255, 212, 24, 0.38);
+  border-color: rgba(64, 64, 64, 0.12);
+}
+
+.gd-card--purple .gd-margin-card {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 212, 24, 0.14);
+}
+
+.gd-card--purple .gd-margin-card:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.gd-card--purple .gd-margin-card__label,
+.gd-card--purple .gd-margin-card__caption {
+  color: rgba(242, 242, 242, 0.88);
+}
+
+.gd-card--purple .gd-margin-card__benchmarks > div {
+  background: rgba(255, 212, 24, 0.1);
+  border-color: rgba(255, 212, 24, 0.16);
+}
+
+.gd-card--purple .gd-margin-card__benchmarks span {
+  color: rgba(242, 242, 242, 0.76);
+}
+
+.gd-card--purple .gd-margin-progress,
+.gd-card--purple .gd-margin-progress::-webkit-progress-bar {
+  background: rgba(242, 242, 242, 0.18);
+}
+
+.gd-card--purple .gd-margin-progress::-webkit-progress-value {
+  background: linear-gradient(90deg, #ffd418, #fff3a5);
+  box-shadow: 0 0 12px rgba(255, 212, 24, 0.38);
+}
+
+.gd-card--purple .gd-margin-progress::-moz-progress-bar {
+  background: linear-gradient(90deg, #ffd418, #fff3a5);
+  box-shadow: 0 0 12px rgba(255, 212, 24, 0.38);
 }
 
 .gd-card__header {
@@ -1183,6 +1424,48 @@ button {
 
 .gd-dashboard-chart-card--profit {
   padding: 1rem;
+}
+
+.gd-evolution-section .gd-dashboard-chart-card {
+  background: linear-gradient(180deg, #404040, #303030);
+  border-color: rgba(255, 212, 24, 0.16);
+  box-shadow: 0 8px 32px rgba(64, 64, 64, 0.22);
+}
+
+.gd-evolution-section .gd-dashboard-section-title,
+.gd-evolution-section .gd-chart-title {
+  color: #f2f2f2;
+}
+
+.gd-evolution-section .gd-chart-panel {
+  background: rgba(48, 48, 48, 0.72);
+  border-color: rgba(255, 212, 24, 0.16);
+}
+
+.gd-evolution-section .gd-chart-state {
+  color: rgba(242, 242, 242, 0.76);
+}
+
+.gd-evolution-section .recharts-text,
+.gd-evolution-section .recharts-legend-item-text {
+  fill: #f2f2f2 !important;
+  color: #f2f2f2 !important;
+}
+
+.gd-profit-section .gd-dashboard-chart-card,
+.gd-dashboard-chart-card--profit {
+  background: linear-gradient(180deg, #404040, #303030);
+  border-color: rgba(255, 212, 24, 0.16);
+  box-shadow: 0 8px 32px rgba(64, 64, 64, 0.22);
+}
+
+.gd-profit-section .gd-dashboard-section-title {
+  color: #f2f2f2;
+}
+
+.gd-profit-section .gd-chart-panel {
+  background: rgba(64, 64, 64, 0.72);
+  border-color: rgba(255, 212, 24, 0.16);
 }
 
 .gd-profit-inline {

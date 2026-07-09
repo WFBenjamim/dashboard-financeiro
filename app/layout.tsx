@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
-import { Manrope } from "next/font/google";
+import { Fira_Sans } from "next/font/google";
 import "./globals.css";
 
-const manrope = Manrope({ subsets: ["latin"] });
+const firaSans = Fira_Sans({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  variable: "--font-fira-sans",
+});
 
 export const metadata: Metadata = {
   title: "Dashboard Financeiro Executivo",
@@ -15,8 +19,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className="dark">
-      <body className={manrope.className}>
+    <html lang="pt-BR" className={`dark ${firaSans.variable}`}>
+      <body className={firaSans.className}>
         {children}
       </body>
     </html>

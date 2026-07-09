@@ -262,20 +262,20 @@ function EvolutionChart({ chart, height = 390 }: { chart: EvolutionPayload; heig
       </div>
       <ResponsiveContainer width="100%" height={height}>
         <LineChart data={chart.data} margin={{ top: 24, right: 28, left: 8, bottom: 8 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="rgba(226,232,240,0.12)" />
-          <XAxis dataKey="label" stroke="rgba(226,232,240,0.68)" tick={{ fill: "rgba(226,232,240,0.68)" }} />
+          <CartesianGrid strokeDasharray="3 3" stroke="rgba(242,242,242,0.16)" />
+          <XAxis dataKey="label" stroke="rgba(242,242,242,0.68)" tick={{ fill: "rgba(242,242,242,0.76)" }} />
           <YAxis
-            stroke="rgba(226,232,240,0.68)"
-            tick={{ fill: "rgba(226,232,240,0.68)" }}
+            stroke="rgba(242,242,242,0.68)"
+            tick={{ fill: "rgba(242,242,242,0.76)" }}
             tickFormatter={(value) => formatCurrency(Number(value))}
           />
           <Tooltip
             formatter={(value, name) => [formatCurrency(Number(value)), String(name)]}
             contentStyle={{
-              background: "#0f172a",
-              border: "1px solid rgba(148,163,184,0.22)",
+              background: "#303030",
+              border: "1px solid rgba(255,212,24,0.22)",
               borderRadius: 14,
-              color: "#f8fafc",
+              color: "#f2f2f2",
             }}
           />
           <Legend />
