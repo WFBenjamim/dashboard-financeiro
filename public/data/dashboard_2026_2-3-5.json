@@ -77,6 +77,10 @@
       }
     ],
     "receita_orcada_anual": 13273367.288,
+    "averagePeriod": 4354379.348,
+    "previousYearPeriod": 11682659.5,
+    "media_periodo": 4354379.348,
+    "faturamento_2025": 11682659.5,
     "variacao_2025": 0.11816475041492049
   },
   "cost_structure": {
@@ -153,6 +157,10 @@
     "cost_subtitle": "+14,0% vs 2025",
     "custo_orcado_anual": 12307269.315011673,
     "meta_periodo_meses": 3,
+    "averagePeriod": 3901180.3645577896,
+    "previousYearPeriod": 10265721.904378735,
+    "media_periodo": 3901180.3645577896,
+    "despesas_2025": 10265721.904378735,
     "variacao_2025": 0.1400602122955764
   },
   "net_result": {
@@ -168,6 +176,10 @@
     "variacao_2025": -0.04046801035686597,
     "sem_sucumbencia": 221060.8403266319,
     "resultado_orcado_anual": 966097.9729883275,
+    "averagePeriod": 453198.9834422106,
+    "previousYearPeriod": 1416937.595621266,
+    "media_periodo": 453198.9834422106,
+    "periodo_2025": 1416937.595621266,
     "pct_ano": 0.0,
     "resultado_operacional": 3801897.9946206305
   },
@@ -501,6 +513,8 @@
     "nameColumn": "Cabeçalho do bloco do cliente",
     "valueColumns": "jan-dez na linha Sucumbência",
     "periodFilterable": true,
+    "totalPeriod": 1138536.11,
+    "totalLabel": "Total de sucumbencia no periodo",
     "items": [
       {
         "position": 1,
@@ -540,6 +554,8 @@
       "May/2026"
     ],
     "periodFilterable": true,
+    "totalPeriod": 63237.08,
+    "totalLabel": "Total de glosas no periodo",
     "items": [
       {
         "position": 1,

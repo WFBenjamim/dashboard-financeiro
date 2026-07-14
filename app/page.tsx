@@ -266,7 +266,9 @@ function RevenueCard({ data, insight, topClients }: { data: any; insight?: any; 
   const receitaOrcadaPeriodo = data?.receita_orcada_periodo ?? data?.meta_periodo_receita ?? data?.receita_orcada_anual ?? data?.receita_orcada;
   const hasMetrics = isFiniteNumber(receitaOrcadaPeriodo)
     || isFiniteNumber(data?.variacao_2025)
-    || isFiniteNumber(data?.pct_orcado);
+    || isFiniteNumber(data?.pct_orcado)
+    || isFiniteNumber(data?.averagePeriod)
+    || isFiniteNumber(data?.previousYearPeriod);
   const contractualExpansion = (data?.expansions || []).find((expansion: any) =>
     normalizeKey(expansion?.title).includes("contratuais")
   );
@@ -305,6 +307,14 @@ function RevenueCard({ data, insight, topClients }: { data: any; insight?: any; 
             <MetricaMini
               label="% Orçado Periodo"
               value={formatPercentMetric(data?.pct_orcado)}
+            />
+            <MetricaMini
+              label="Média"
+              value={isFiniteNumber(data?.averagePeriod) ? formatCurrency(data.averagePeriod) : ""}
+            />
+            <MetricaMini
+              label="Faturamento 2025"
+              value={isFiniteNumber(data?.previousYearPeriod) ? formatCurrency(data.previousYearPeriod) : ""}
             />
           </MetricaGrid>
         )}
@@ -507,7 +517,9 @@ function CostCard({ data, insight, distribution }: { data: any; insight?: any; d
   const custoOrcadoPeriodo = data?.custo_orcado_periodo ?? data?.meta_periodo_custos ?? data?.custo_orcado_anual;
   const hasMetrics = isFiniteNumber(custoOrcadoPeriodo)
     || isFiniteNumber(data?.variacao_2025)
-    || isFiniteNumber(data?.pct_orcado_custos);
+    || isFiniteNumber(data?.pct_orcado_custos)
+    || isFiniteNumber(data?.averagePeriod)
+    || isFiniteNumber(data?.previousYearPeriod);
   const hasDistribution = Boolean(distribution?.available && distribution?.items?.length);
 
   useEffect(() => {
@@ -530,12 +542,20 @@ function CostCard({ data, insight, distribution }: { data: any; insight?: any; d
             <MetricaMini
               label="vs 2025"
               value={formatSignedPercentMetric(data?.variacao_2025)}
-              tone={isFiniteNumber(data?.variacao_2025) && data.variacao_2025 > 0 ? "red" : "green"}
+              tone={isFiniteNumber(data?.variacao_2025) && data.variacao_2025 > 0 ? "green" : data?.variacao_2025 < 0 ? "red" : undefined}
             />
             <MetricaMini
               label="% Orçado Periodo"
               value={formatPercentMetric(data?.pct_orcado_custos)}
-              tone={isFiniteNumber(data?.pct_orcado_custos) && data.pct_orcado_custos > 1 ? "red" : "green"}
+              tone={isFiniteNumber(data?.pct_orcado_custos) && data.pct_orcado_custos < 0 ? "red" : undefined}
+            />
+            <MetricaMini
+              label="Média"
+              value={isFiniteNumber(data?.averagePeriod) ? formatCurrency(data.averagePeriod) : ""}
+            />
+            <MetricaMini
+              label="Despesas 2025"
+              value={isFiniteNumber(data?.previousYearPeriod) ? formatCurrency(data.previousYearPeriod) : ""}
             />
           </MetricaGrid>
         )}
@@ -645,6 +665,7 @@ function RankingCardsRow({ sucumbencias, glosas }: { sucumbencias?: any; glosas?
 
 function RankingCard({ data, title, tone }: { data?: any; title: string; tone: "dark" | "gold" }) {
   const items = Array.isArray(data?.items) ? data.items.slice(0, 5) : [];
+  const hasTotalPeriod = isFiniteNumber(data?.totalPeriod);
 
   return (
     <article className={`gd-ranking-card gd-ranking-card--${tone}`}>
@@ -667,6 +688,12 @@ function RankingCard({ data, title, tone }: { data?: any; title: string; tone: "
           <div className="gd-ranking-empty">Sem dados para o período selecionado.</div>
         )}
       </div>
+      {hasTotalPeriod && (
+        <div className="gd-ranking-total">
+          <span>{cleanText(data?.totalLabel || "Total no período")}</span>
+          <strong>{formatCurrency(data.totalPeriod)}</strong>
+        </div>
+      )}
     </article>
   );
 }
@@ -802,7 +829,9 @@ function CostDistributionTooltip({ active, payload }: any) {
 function ResultCard({ data, insight }: { data: any; insight?: any }) {
   const hasMetrics = isFiniteNumber(data?.resultado_orcado)
     || isFiniteNumber(data?.variacao_2025)
-    || isFiniteNumber(data?.pct_vs_orcado);
+    || isFiniteNumber(data?.pct_vs_orcado)
+    || isFiniteNumber(data?.averagePeriod)
+    || isFiniteNumber(data?.previousYearPeriod);
 
   return (
     <article className="gd-card gd-card--orange gd-card--compact">
@@ -814,11 +843,20 @@ function ResultCard({ data, insight }: { data: any; insight?: any }) {
           <MetricaMini
             label="vs 2025"
             value={formatSignedPercentMetric(data?.variacao_2025)}
-            tone={isFiniteNumber(data?.variacao_2025) && data.variacao_2025 < 0 ? "red" : "green"}
+            tone={isFiniteNumber(data?.variacao_2025) && data.variacao_2025 > 0 ? "green" : data?.variacao_2025 < 0 ? "red" : undefined}
           />
           <MetricaMini
             label="% Orçado Periodo"
             value={formatPercentMetric(data?.pct_vs_orcado)}
+            tone={isFiniteNumber(data?.pct_vs_orcado) && data.pct_vs_orcado < 0 ? "red" : undefined}
+          />
+          <MetricaMini
+            label="Média"
+            value={isFiniteNumber(data?.averagePeriod) ? formatCurrency(data.averagePeriod) : ""}
+          />
+          <MetricaMini
+            label="Resultado 2025"
+            value={isFiniteNumber(data?.previousYearPeriod) ? formatCurrency(data.previousYearPeriod) : ""}
           />
         </MetricaGrid>
       )}
@@ -841,10 +879,12 @@ function CardTitle({ icon, title }: { icon: string; title: unknown }) {
 }
 
 function MetricaMini({ label, value, tone }: { label: string; value: string; tone?: "red" | "green" }) {
+  const valueClassName = tone ? `gd-result-mini__value--${tone}` : undefined;
+
   return (
-    <div className="gd-result-mini">
+    <div className={`gd-result-mini${tone ? "" : " gd-result-mini--neutral"}`}>
       <span>{label}</span>
-      <strong className={tone ? `gd-result-mini__value--${tone}` : undefined}>{value}</strong>
+      <strong className={valueClassName}>{value}</strong>
     </div>
   );
 }

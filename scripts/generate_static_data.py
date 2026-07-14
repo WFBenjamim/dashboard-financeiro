@@ -381,11 +381,15 @@ def load_sucumbencias_glosas(selected_months: list[int], year: int = YEAR) -> di
         "topSucumbencias": {
             "title": "Top 5 Sucumbências",
             **sucumbencias_meta,
+            "totalPeriod": round(sucumbencias_total, 2),
+            "totalLabel": "Total de sucumbencia no periodo",
             "items": _top_items_from_totals(sucumbencias_totals),
         },
         "topGlosas": {
             "title": "Top 5 Glosas",
             **glosas_meta,
+            "totalPeriod": round(glosas_total, 2),
+            "totalLabel": "Total de glosas no periodo",
             "items": _top_items_from_totals(glosas_totals),
         },
     }
@@ -537,6 +541,7 @@ def load_totais(selected_months: list[int], year: int = YEAR) -> dict[str, float
     custos_2025 = sum_row("CUSTOS E DESPESAS", previous_cols)
     resultado_2025 = sum_row("RESULTADO IG", previous_cols)
     resultado_sem_sucumbencia = sum_row("RESULTADO SEM SUCUMBENCIAS", period_cols)
+    period_months = len(selected_months) or 1
 
     return {
         "receita": receita,
@@ -544,6 +549,9 @@ def load_totais(selected_months: list[int], year: int = YEAR) -> dict[str, float
         "resultado": resultado,
         "impostos": impostos,
         "sucumbencia": sucumbencia,
+        "receita_media_periodo": receita / period_months,
+        "custos_media_periodo": custos / period_months,
+        "resultado_media_periodo": resultado / period_months,
         "receita_2025": receita_2025,
         "custos_2025": custos_2025,
         "resultado_2025": resultado_2025,
@@ -617,8 +625,8 @@ def _sum_result_row(df: pd.DataFrame, header_row: int, columns: list[int]) -> fl
     return 0.0
 
 
-def enrich_net_result(data: dict, selected_months: list[int], year: int = YEAR) -> None:
-    totais = load_totais(selected_months, year)
+def enrich_net_result(data: dict, selected_months: list[int], year: int = YEAR, totais: dict[str, float] | None = None) -> None:
+    totais = totais or load_totais(selected_months, year)
     budget = data.get("budget", {})
     resultado_orcado_periodo = float(budget.get("result") or data.get("net_result", {}).get("resultado_orcado") or 0.0)
     period_months = len(selected_months)
@@ -643,6 +651,10 @@ def enrich_net_result(data: dict, selected_months: list[int], year: int = YEAR) 
         "meta_periodo_resultado": resultado_orcado_periodo,
         "meta_periodo_meses": period_months,
         "resultado_2025": resultado_2025,
+        "averagePeriod": totais["resultado_media_periodo"],
+        "previousYearPeriod": resultado_2025,
+        "media_periodo": totais["resultado_media_periodo"],
+        "periodo_2025": resultado_2025,
         "pct_vs_orcado": pct_vs_orcado,
         "variacao_2025": variacao_2025,
         "pct_ano": pct_ano,
@@ -650,7 +662,8 @@ def enrich_net_result(data: dict, selected_months: list[int], year: int = YEAR) 
     })
 
 
-def enrich_revenue_and_cost_metrics(data: dict, selected_months: list[int], year: int = YEAR) -> None:
+def enrich_revenue_and_cost_metrics(data: dict, selected_months: list[int], year: int = YEAR, totais: dict[str, float] | None = None) -> None:
+    totais = totais or load_totais(selected_months, year)
     budget = data.get("budget", {})
     cost_variation = calculate_cost_variation(selected_months, year)
     period_months = len(selected_months)
@@ -663,6 +676,10 @@ def enrich_revenue_and_cost_metrics(data: dict, selected_months: list[int], year
         "receita_orcada_periodo": meta_periodo_receita,
         "meta_periodo_receita": meta_periodo_receita,
         "meta_periodo_meses": period_months,
+        "averagePeriod": totais["receita_media_periodo"],
+        "previousYearPeriod": totais["receita_2025"],
+        "media_periodo": totais["receita_media_periodo"],
+        "faturamento_2025": totais["receita_2025"],
         "pct_orcado": data["revenue_mix"]["value"] / meta_periodo_receita if meta_periodo_receita else 0.0,
         "variacao_2025": data["revenue_mix"].get("variacao_yoy", 0),
     })
@@ -672,6 +689,10 @@ def enrich_revenue_and_cost_metrics(data: dict, selected_months: list[int], year
         "custo_orcado_periodo": meta_periodo_custos,
         "meta_periodo_custos": meta_periodo_custos,
         "meta_periodo_meses": period_months,
+        "averagePeriod": totais["custos_media_periodo"],
+        "previousYearPeriod": totais["custos_2025"],
+        "media_periodo": totais["custos_media_periodo"],
+        "despesas_2025": totais["custos_2025"],
         "pct_orcado_custos": meta_periodo_custos / cost_total if cost_total else 0.0,
         "variacao_2025": cost_variation if cost_variation is not None else data["cost_structure"].get("variacao_custos_yoy", 0),
     })
@@ -695,8 +716,9 @@ def generate_dashboard_jsons() -> None:
             data["cost_subtitle"] = cost_subtitle
             data["cost_structure"]["subtitle"] = cost_subtitle
             data["cost_structure"]["cost_subtitle"] = cost_subtitle
-            enrich_net_result(data, months, YEAR)
-            enrich_revenue_and_cost_metrics(data, months, YEAR)
+            totais = load_totais(months, YEAR)
+            enrich_net_result(data, months, YEAR, totais=totais)
+            enrich_revenue_and_cost_metrics(data, months, YEAR, totais=totais)
             sucumbencias_glosas = load_sucumbencias_glosas(months, YEAR)
             data["topSucumbencias"] = sucumbencias_glosas.pop("topSucumbencias")
             data["topGlosas"] = sucumbencias_glosas.pop("topGlosas")
