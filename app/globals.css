@@ -789,6 +789,174 @@ button {
   font-weight: 800;
 }
 
+.gd-balance-section {
+  display: grid;
+  gap: 1rem;
+  padding: 1.35rem;
+  border-radius: 26px;
+  background: linear-gradient(145deg, #404040, #303030);
+  border: 1px solid rgba(255, 212, 24, 0.16);
+  box-shadow: 0 8px 32px rgba(64, 64, 64, 0.24);
+  color: #f2f2f2;
+}
+
+.gd-balance-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.gd-balance-header h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  line-height: 1.25;
+  font-weight: 900;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.gd-balance-header p {
+  margin: 0.3rem 0 0;
+  color: rgba(242, 242, 242, 0.78);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.gd-balance-header > span {
+  flex-shrink: 0;
+  padding: 0.45rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(255, 212, 24, 0.1);
+  border: 1px solid rgba(255, 212, 24, 0.22);
+  color: #ffd976;
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.gd-balance-metrics {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.gd-balance-metric {
+  display: grid;
+  align-content: center;
+  gap: 0.28rem;
+  min-height: 4.2rem;
+  padding: 0.7rem;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.09);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.gd-balance-metric span {
+  color: rgba(242, 242, 242, 0.72);
+  font-size: 0.72rem;
+  line-height: 1.2;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.gd-balance-metric strong {
+  color: #ffffff;
+  font-size: 0.98rem;
+  line-height: 1.18;
+  font-weight: 900;
+}
+
+.gd-balance-metric--positive strong {
+  color: #bbf7d0;
+}
+
+.gd-balance-metric--negative strong {
+  color: #fecaca;
+}
+
+.gd-balance-metric--warning strong {
+  color: #f2ad28;
+}
+
+.gd-balance-content {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(420px, 0.95fr);
+  align-items: stretch;
+  gap: 1rem;
+}
+
+.gd-balance-chart,
+.gd-balance-ranking {
+  display: grid;
+  gap: 0.75rem;
+  min-width: 0;
+  padding: 1rem;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.gd-balance-subtitle {
+  color: #ffffff;
+  font-size: 0.92rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.gd-balance-table {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.gd-balance-table__head,
+.gd-balance-table__row {
+  display: grid;
+  grid-template-columns: minmax(130px, 1.4fr) repeat(4, minmax(82px, 0.75fr));
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.gd-balance-table__head {
+  color: rgba(242, 242, 242, 0.7);
+  font-size: 0.68rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.gd-balance-table__row {
+  min-height: 2.65rem;
+  padding: 0.55rem 0.65rem;
+  border-radius: 12px;
+  background: rgba(64, 64, 64, 0.34);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.82rem;
+}
+
+.gd-balance-table__row strong {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gd-balance-table__row span {
+  white-space: nowrap;
+  font-weight: 800;
+}
+
+.gd-balance-table__negative {
+  color: #fecaca;
+}
+
+.gd-balance-empty {
+  padding: 1rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(242, 242, 242, 0.78);
+  font-weight: 800;
+}
+
 .gd-kpi {
   position: relative;
   z-index: 1;
@@ -2745,9 +2913,14 @@ button {
 @media (max-width: 1180px) {
   .gd-top-section,
   .gd-ranking-row,
+  .gd-balance-content,
   .gd-kpi-row,
   .gd-insights {
     grid-template-columns: 1fr;
+  }
+
+  .gd-balance-metrics {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .gd-cost-layout {
@@ -2838,6 +3011,23 @@ button {
 
   .gd-month-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .gd-balance-header {
+    display: grid;
+  }
+
+  .gd-balance-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .gd-balance-table {
+    overflow-x: auto;
+  }
+
+  .gd-balance-table__head,
+  .gd-balance-table__row {
+    min-width: 680px;
   }
 
   .gd-modal-backdrop {

@@ -550,5 +550,108 @@
         "value": 238.52
       }
     ]
+  },
+  "sucumbenciasGlosas": {
+    "title": "Balanço de Sucumbências x Glosas",
+    "periodFilterable": true,
+    "summary": {
+      "sucumbenciasTotal": 410980.78,
+      "glosasTotal": 23550.57,
+      "diferenca": 387430.21,
+      "glosasPercent": 0.05730333666698476,
+      "okrGlosas": 0.005,
+      "okrAtingimento": 11.460667333396952
+    },
+    "monthly": [
+      {
+        "month": 2,
+        "label": "fev",
+        "sucumbencias": 410980.78,
+        "glosas": 23550.57,
+        "diferenca": 387430.21
+      }
+    ],
+    "ranking": [
+      {
+        "name": "PATRIMÔNIO",
+        "sucumbencias": 0.0,
+        "glosas": 18000.0,
+        "diferenca": -18000.0,
+        "glosasPercent": null
+      },
+      {
+        "name": "Daycoval",
+        "sucumbencias": 0.0,
+        "glosas": 3782.05,
+        "diferenca": -3782.05,
+        "glosasPercent": null
+      },
+      {
+        "name": "Vivo",
+        "sucumbencias": 0.0,
+        "glosas": 1530.0,
+        "diferenca": -1530.0,
+        "glosasPercent": null
+      },
+      {
+        "name": "Claro",
+        "sucumbencias": 16056.91,
+        "glosas": 238.52,
+        "diferenca": 15818.39,
+        "glosasPercent": 0.014854663817633656
+      },
+      {
+        "name": "Santander",
+        "sucumbencias": 7651.14,
+        "glosas": 0.0,
+        "diferenca": 7651.14,
+        "glosasPercent": 0.0
+      },
+      {
+        "name": "Mercado Livre",
+        "sucumbencias": 2922.02,
+        "glosas": 0.0,
+        "diferenca": 2922.02,
+        "glosasPercent": 0.0
+      },
+      {
+        "name": "UOL PagSeguro",
+        "sucumbencias": -187.5,
+        "glosas": 0.0,
+        "diferenca": -187.5,
+        "glosasPercent": -0.0
+      },
+      {
+        "name": "Casos Estratégicos",
+        "sucumbencias": 30053.15,
+        "glosas": 0.0,
+        "diferenca": 30053.15,
+        "glosasPercent": 0.0
+      }
+    ],
+    "sources": {
+      "sucumbencias": {
+        "source": "Orçamento.xlsx",
+        "sheet": "Sucumbência",
+        "nameColumn": "Cabeçalho do bloco do cliente",
+        "valueColumns": "jan-dez na linha Sucumbência",
+        "periodFilterable": true
+      },
+      "glosas": {
+        "source": "INFORMAÇÕES GERENCIAIS.xlsx",
+        "sheet": "GLOSAS",
+        "nameColumn": "Data",
+        "valueColumns": [
+          "Feb/2026"
+        ],
+        "periodFilterable": true
+      },
+      "okr": {
+        "source": "INFORMAÇÕES GERENCIAIS.xlsx",
+        "sheet": "OKR",
+        "column": "OKR GLOSAS",
+        "value": 0.005
+      }
+    }
   }
 }

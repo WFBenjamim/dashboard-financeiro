@@ -188,6 +188,209 @@ def _top_items_from_totals(totals: dict[str, float], limit: int = 5) -> list[dic
     return ranked[:limit]
 
 
+def _collect_sucumbencias_by_month(selected_months: list[int]) -> tuple[dict[str, dict[int, float]], dict]:
+    xl = pd.ExcelFile(ORCAMENTO_FILE, engine="openpyxl")
+    sheet_name = next((sheet for sheet in xl.sheet_names if normalize_label(sheet) == "sucumbencia"), None)
+    if not sheet_name:
+        return {}, {"source": "Orçamento.xlsx", "sheet": "Sucumbência", "periodFilterable": False}
+
+    df = pd.read_excel(ORCAMENTO_FILE, sheet_name=sheet_name, header=None, engine="openpyxl")
+    values: dict[str, dict[int, float]] = {}
+    current_client = ""
+    month_columns: dict[int, int] = {}
+
+    for _, row in df.iterrows():
+        first_cell = row.iloc[0]
+        first_label = normalize_label(first_cell)
+        detected_months = {
+            month_number: column_index
+            for column_index, month_number in (
+                (column_index, _month_label_to_number(row.iloc[column_index]))
+                for column_index in range(len(row))
+            )
+            if month_number is not None
+        }
+
+        if detected_months:
+            current_client = str(first_cell).strip() if first_cell is not None and not pd.isna(first_cell) else ""
+            month_columns = detected_months
+            continue
+
+        if not current_client or normalize_label(current_client) == "total" or first_label != "sucumbencia":
+            continue
+
+        monthly_values = values.setdefault(current_client, {})
+        for month in selected_months:
+            column_index = month_columns.get(month)
+            if column_index is not None:
+                monthly_values[month] = monthly_values.get(month, 0.0) + to_number(row.iloc[column_index])
+
+    return values, {
+        "source": "Orçamento.xlsx",
+        "sheet": sheet_name,
+        "nameColumn": "Cabeçalho do bloco do cliente",
+        "valueColumns": "jan-dez na linha Sucumbência",
+        "periodFilterable": True,
+    }
+
+
+def _collect_glosas_by_month(selected_months: list[int], year: int = YEAR) -> tuple[dict[str, dict[int, float]], dict]:
+    df = pd.read_excel(
+        INFORMACOES_GERENCIAIS_FILE,
+        sheet_name="GLOSAS",
+        header=0,
+        engine="openpyxl",
+    )
+    period_columns = [
+        column
+        for column in df.columns
+        if hasattr(column, "year") and column.year == year and column.month in selected_months
+    ]
+    if not period_columns:
+        return {}, {"source": "INFORMAÇÕES GERENCIAIS.xlsx", "sheet": "GLOSAS", "periodFilterable": False}
+
+    name_column = "Data" if "Data" in df.columns else df.columns[1]
+    values: dict[str, dict[int, float]] = {}
+    for _, row in df.iterrows():
+        name = str(row.get(name_column, "")).strip()
+        if not name or name.lower() == "nan":
+            continue
+
+        monthly_values = values.setdefault(name, {})
+        for column in period_columns:
+            monthly_values[column.month] = monthly_values.get(column.month, 0.0) + to_number(row.get(column, 0))
+
+    return values, {
+        "source": "INFORMAÇÕES GERENCIAIS.xlsx",
+        "sheet": "GLOSAS",
+        "nameColumn": str(name_column),
+        "valueColumns": [column.strftime("%b/%Y") for column in period_columns],
+        "periodFilterable": True,
+    }
+
+
+def _sum_monthly(values: dict[int, float], selected_months: list[int]) -> float:
+    return sum(values.get(month, 0.0) for month in selected_months)
+
+
+def load_okr_glosas(selected_months: list[int], year: int = YEAR) -> dict | None:
+    try:
+        df = pd.read_excel(INFORMACOES_GERENCIAIS_FILE, sheet_name="OKR", header=0, engine="openpyxl")
+    except Exception:
+        return None
+
+    okr_values = []
+    for _, row in df.iterrows():
+        date_value = row.get("Ano")
+        okr_value = row.get("OKR GLOSAS")
+        if hasattr(date_value, "year") and date_value.year == year and date_value.month in selected_months:
+            if okr_value is not None and not pd.isna(okr_value):
+                okr_values.append(float(okr_value))
+
+    if not okr_values:
+        return None
+
+    return {
+        "source": "INFORMAÇÕES GERENCIAIS.xlsx",
+        "sheet": "OKR",
+        "column": "OKR GLOSAS",
+        "value": sum(okr_values) / len(okr_values),
+    }
+
+
+def load_sucumbencias_glosas(selected_months: list[int], year: int = YEAR) -> dict:
+    sucumbencias, sucumbencias_meta = _collect_sucumbencias_by_month(selected_months)
+    glosas, glosas_meta = _collect_glosas_by_month(selected_months, year)
+
+    key_to_name: dict[str, str] = {}
+    for name in list(sucumbencias.keys()) + list(glosas.keys()):
+        key_to_name.setdefault(normalize_label(name), name)
+
+    monthly = []
+    for month in sorted(selected_months):
+        sucumbencias_total = sum(values.get(month, 0.0) for values in sucumbencias.values())
+        glosas_total = sum(values.get(month, 0.0) for values in glosas.values())
+        monthly.append({
+            "month": month,
+            "label": {
+                1: "jan", 2: "fev", 3: "mar", 4: "abr", 5: "mai", 6: "jun",
+                7: "jul", 8: "ago", 9: "set", 10: "out", 11: "nov", 12: "dez",
+            }.get(month, str(month)),
+            "sucumbencias": round(sucumbencias_total, 2),
+            "glosas": round(glosas_total, 2),
+            "diferenca": round(sucumbencias_total - glosas_total, 2),
+        })
+
+    ranking = []
+    for key, name in key_to_name.items():
+        sucumbencias_total = _sum_monthly(
+            sucumbencias.get(name, sucumbencias.get(next((s for s in sucumbencias if normalize_label(s) == key), ""), {})),
+            selected_months,
+        )
+        glosas_total = _sum_monthly(
+            glosas.get(name, glosas.get(next((g for g in glosas if normalize_label(g) == key), ""), {})),
+            selected_months,
+        )
+        if abs(sucumbencias_total) < 0.01 and abs(glosas_total) < 0.01:
+            continue
+        ranking.append({
+            "name": name,
+            "sucumbencias": round(sucumbencias_total, 2),
+            "glosas": round(glosas_total, 2),
+            "diferenca": round(sucumbencias_total - glosas_total, 2),
+            "glosasPercent": glosas_total / sucumbencias_total if sucumbencias_total else None,
+        })
+    ranking.sort(key=lambda item: abs(item["glosas"]), reverse=True)
+    ranking = ranking[:8]
+
+    sucumbencias_total = sum(item["sucumbencias"] for item in monthly)
+    glosas_total = sum(item["glosas"] for item in monthly)
+    glosas_percent = glosas_total / sucumbencias_total if sucumbencias_total else None
+    okr = load_okr_glosas(selected_months, year)
+
+    summary = {
+        "sucumbenciasTotal": round(sucumbencias_total, 2),
+        "glosasTotal": round(glosas_total, 2),
+        "diferenca": round(sucumbencias_total - glosas_total, 2),
+        "glosasPercent": glosas_percent,
+    }
+    if okr:
+        summary["okrGlosas"] = okr["value"]
+        summary["okrAtingimento"] = glosas_percent / okr["value"] if glosas_percent is not None and okr["value"] else None
+
+    sucumbencias_totals = {
+        name: _sum_monthly(values, selected_months)
+        for name, values in sucumbencias.items()
+    }
+    glosas_totals = {
+        name: _sum_monthly(values, selected_months)
+        for name, values in glosas.items()
+    }
+
+    return {
+        "title": "Balanço de Sucumbências x Glosas",
+        "periodFilterable": sucumbencias_meta.get("periodFilterable") and glosas_meta.get("periodFilterable"),
+        "summary": summary,
+        "monthly": monthly,
+        "ranking": ranking,
+        "sources": {
+            "sucumbencias": sucumbencias_meta,
+            "glosas": glosas_meta,
+            "okr": okr,
+        },
+        "topSucumbencias": {
+            "title": "Top 5 Sucumbências",
+            **sucumbencias_meta,
+            "items": _top_items_from_totals(sucumbencias_totals),
+        },
+        "topGlosas": {
+            "title": "Top 5 Glosas",
+            **glosas_meta,
+            "items": _top_items_from_totals(glosas_totals),
+        },
+    }
+
+
 def load_top_sucumbencias(selected_months: list[int]) -> dict:
     xl = pd.ExcelFile(ORCAMENTO_FILE, engine="openpyxl")
     sheet_name = next((sheet for sheet in xl.sheet_names if normalize_label(sheet) == "sucumbencia"), None)
@@ -494,8 +697,10 @@ def generate_dashboard_jsons() -> None:
             data["cost_structure"]["cost_subtitle"] = cost_subtitle
             enrich_net_result(data, months, YEAR)
             enrich_revenue_and_cost_metrics(data, months, YEAR)
-            data["topSucumbencias"] = load_top_sucumbencias(months)
-            data["topGlosas"] = load_top_glosas(months, YEAR)
+            sucumbencias_glosas = load_sucumbencias_glosas(months, YEAR)
+            data["topSucumbencias"] = sucumbencias_glosas.pop("topSucumbencias")
+            data["topGlosas"] = sucumbencias_glosas.pop("topGlosas")
+            data["sucumbenciasGlosas"] = sucumbencias_glosas
             metrics = build_dashboard_metrics(data)
             data["technical_analysis"] = generate_technical_analysis(data, metrics=metrics)
             data["insights"] = generate_insights(data, metrics=metrics)

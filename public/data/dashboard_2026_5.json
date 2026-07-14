@@ -530,5 +530,87 @@
         "value": 420.0
       }
     ]
+  },
+  "sucumbenciasGlosas": {
+    "title": "Balanço de Sucumbências x Glosas",
+    "periodFilterable": true,
+    "summary": {
+      "sucumbenciasTotal": 236545.82,
+      "glosasTotal": 8378.35,
+      "diferenca": 228167.47,
+      "glosasPercent": 0.035419564801441004,
+      "okrGlosas": 0.005,
+      "okrAtingimento": 7.083912960288201
+    },
+    "monthly": [
+      {
+        "month": 5,
+        "label": "mai",
+        "sucumbencias": 236545.82,
+        "glosas": 8378.35,
+        "diferenca": 228167.47
+      }
+    ],
+    "ranking": [
+      {
+        "name": "RECUPERA",
+        "sucumbencias": 0.0,
+        "glosas": 7958.35,
+        "diferenca": -7958.35,
+        "glosasPercent": null
+      },
+      {
+        "name": "SANEAMENTO - BRK",
+        "sucumbencias": 0.0,
+        "glosas": 420.0,
+        "diferenca": -420.0,
+        "glosasPercent": null
+      },
+      {
+        "name": "Imobiliário",
+        "sucumbencias": 70525.59,
+        "glosas": 0.0,
+        "diferenca": 70525.59,
+        "glosasPercent": 0.0
+      },
+      {
+        "name": "Casos Estratégicos",
+        "sucumbencias": 4651.41,
+        "glosas": 0.0,
+        "diferenca": 4651.41,
+        "glosasPercent": 0.0
+      },
+      {
+        "name": "Valor Legal",
+        "sucumbencias": 161368.82,
+        "glosas": 0.0,
+        "diferenca": 161368.82,
+        "glosasPercent": 0.0
+      }
+    ],
+    "sources": {
+      "sucumbencias": {
+        "source": "Orçamento.xlsx",
+        "sheet": "Sucumbência",
+        "nameColumn": "Cabeçalho do bloco do cliente",
+        "valueColumns": "jan-dez na linha Sucumbência",
+        "periodFilterable": true
+      },
+      "glosas": {
+        "source": "INFORMAÇÕES GERENCIAIS.xlsx",
+        "sheet": "GLOSAS",
+        "nameColumn": "Data",
+        "valueColumns": [
+          "May/2026"
+        ],
+        "periodFilterable": true
+      },
+      "okr": {
+        "source": "INFORMAÇÕES GERENCIAIS.xlsx",
+        "sheet": "OKR",
+        "column": "OKR GLOSAS",
+        "value": 0.005
+      }
+    }
   }
 }

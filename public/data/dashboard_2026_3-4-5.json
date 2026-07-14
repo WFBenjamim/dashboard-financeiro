@@ -547,5 +547,103 @@
         "value": 420.0
       }
     ]
+  },
+  "sucumbenciasGlosas": {
+    "title": "Balanço de Sucumbências x Glosas",
+    "periodFilterable": true,
+    "summary": {
+      "sucumbenciasTotal": 986536.61,
+      "glosasTotal": 50479.84,
+      "diferenca": 936056.77,
+      "glosasPercent": 0.051168744766603234,
+      "okrGlosas": 0.005,
+      "okrAtingimento": 10.233748953320646
+    },
+    "monthly": [
+      {
+        "month": 3,
+        "label": "mar",
+        "sucumbencias": 491009.51,
+        "glosas": 31308.16,
+        "diferenca": 459701.35
+      },
+      {
+        "month": 4,
+        "label": "abr",
+        "sucumbencias": 258981.28,
+        "glosas": 10793.33,
+        "diferenca": 248187.95
+      },
+      {
+        "month": 5,
+        "label": "mai",
+        "sucumbencias": 236545.82,
+        "glosas": 8378.35,
+        "diferenca": 228167.47
+      }
+    ],
+    "ranking": [
+      {
+        "name": "RECUPERA",
+        "sucumbencias": 0.0,
+        "glosas": 50059.84,
+        "diferenca": -50059.84,
+        "glosasPercent": null
+      },
+      {
+        "name": "SANEAMENTO - BRK",
+        "sucumbencias": 0.0,
+        "glosas": 420.0,
+        "diferenca": -420.0,
+        "glosasPercent": null
+      },
+      {
+        "name": "Imobiliário",
+        "sucumbencias": 93595.32,
+        "glosas": 0.0,
+        "diferenca": 93595.32,
+        "glosasPercent": 0.0
+      },
+      {
+        "name": "Casos Estratégicos",
+        "sucumbencias": 56297.59,
+        "glosas": 0.0,
+        "diferenca": 56297.59,
+        "glosasPercent": 0.0
+      },
+      {
+        "name": "Valor Legal",
+        "sucumbencias": 836643.7,
+        "glosas": 0.0,
+        "diferenca": 836643.7,
+        "glosasPercent": 0.0
+      }
+    ],
+    "sources": {
+      "sucumbencias": {
+        "source": "Orçamento.xlsx",
+        "sheet": "Sucumbência",
+        "nameColumn": "Cabeçalho do bloco do cliente",
+        "valueColumns": "jan-dez na linha Sucumbência",
+        "periodFilterable": true
+      },
+      "glosas": {
+        "source": "INFORMAÇÕES GERENCIAIS.xlsx",
+        "sheet": "GLOSAS",
+        "nameColumn": "Data",
+        "valueColumns": [
+          "Mar/2026",
+          "Apr/2026",
+          "May/2026"
+        ],
+        "periodFilterable": true
+      },
+      "okr": {
+        "source": "INFORMAÇÕES GERENCIAIS.xlsx",
+        "sheet": "OKR",
+        "column": "OKR GLOSAS",
+        "value": 0.005
+      }
+    }
   }
 }

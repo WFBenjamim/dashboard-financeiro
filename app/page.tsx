@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { type ReactNode, useEffect, useState } from "react";
 import CountUp from "react-countup";
-import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+import { Bar, CartesianGrid, Cell, ComposedChart, Legend, Line, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { EvolutionDashboardSections } from "@/components/EvolutionModal";
 import { FullscreenButton } from "@/components/FullscreenButton";
 import { MonthFilter } from "@/components/MonthFilter";
@@ -233,6 +233,7 @@ export default function Dashboard() {
         </section>
 
         <RankingCardsRow sucumbencias={data.topSucumbencias} glosas={data.topGlosas} />
+        <SucumbenciasGlosasBalance data={data.sucumbenciasGlosas} />
 
         <section className="gd-kpi-row">
           <ResultCard data={data.net_result} insight={resultInsight} />
@@ -667,6 +668,95 @@ function RankingCard({ data, title, tone }: { data?: any; title: string; tone: "
         )}
       </div>
     </article>
+  );
+}
+
+function SucumbenciasGlosasBalance({ data }: { data?: any }) {
+  if (!data?.summary) return null;
+
+  const summary = data.summary || {};
+  const monthly = Array.isArray(data.monthly) ? data.monthly : [];
+  const ranking = Array.isArray(data.ranking) ? data.ranking.slice(0, 8) : [];
+  const hasOkr = isFiniteNumber(summary.okrGlosas);
+
+  return (
+    <section className="gd-balance-section" aria-label="Balanço de Sucumbências x Glosas">
+      <div className="gd-balance-header">
+        <div>
+          <h2>{cleanText(data.title || "Balanço de Sucumbências x Glosas")}</h2>
+          <p>Comparativo do período selecionado entre recuperação por sucumbências e impacto de glosas.</p>
+        </div>
+        <span>{data.periodFilterable ? "Filtrado pelo período" : "Visão consolidada"}</span>
+      </div>
+
+      <div className="gd-balance-metrics">
+        <BalanceMetric label="Total de Sucumbências" value={formatCurrency(Number(summary.sucumbenciasTotal || 0))} tone="positive" />
+        <BalanceMetric label="Total de Glosas" value={formatCurrency(Number(summary.glosasTotal || 0))} tone="negative" />
+        <BalanceMetric label="Diferença líquida" value={formatCurrency(Number(summary.diferenca || 0))} tone={Number(summary.diferenca || 0) >= 0 ? "positive" : "negative"} />
+        <BalanceMetric label="% Glosas / Sucumbências" value={formatPercentMetric(summary.glosasPercent)} tone="warning" />
+        {hasOkr && <BalanceMetric label="OKR Glosas" value={formatPercentMetric(summary.okrGlosas)} tone="neutral" />}
+        {hasOkr && <BalanceMetric label="% Atingimento OKR" value={formatPercentMetric(summary.okrAtingimento)} tone={Number(summary.okrAtingimento || 0) <= 1 ? "positive" : "negative"} />}
+      </div>
+
+      <div className="gd-balance-content">
+        <div className="gd-balance-chart">
+          <div className="gd-balance-subtitle">Evolução mensal</div>
+          <ResponsiveContainer width="100%" height={320}>
+            <ComposedChart data={monthly} margin={{ top: 18, right: 18, left: 4, bottom: 4 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.14)" />
+              <XAxis dataKey="label" stroke="rgba(255,255,255,0.72)" tick={{ fill: "rgba(255,255,255,0.78)" }} />
+              <YAxis stroke="rgba(255,255,255,0.72)" tick={{ fill: "rgba(255,255,255,0.78)" }} tickFormatter={(value) => formatCurrency(Number(value))} />
+              <Tooltip
+                formatter={(value, name) => [formatCurrency(Number(value)), String(name)]}
+                contentStyle={{
+                  background: "#303030",
+                  border: "1px solid rgba(255,212,24,0.24)",
+                  borderRadius: 14,
+                  color: "#f2f2f2",
+                }}
+              />
+              <Legend />
+              <Bar dataKey="sucumbencias" name="Sucumbências" fill="#6ee7b7" radius={[6, 6, 0, 0]} />
+              <Bar dataKey="glosas" name="Glosas" fill="#c93636" radius={[6, 6, 0, 0]} />
+              <Line type="monotone" dataKey="diferenca" name="Diferença líquida" stroke="#f2ad28" strokeWidth={3} dot={{ r: 4 }} />
+            </ComposedChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="gd-balance-ranking">
+          <div className="gd-balance-subtitle">Maiores impactos por glosa</div>
+          <div className="gd-balance-table">
+            <div className="gd-balance-table__head">
+              <span>Cliente/Grupo</span>
+              <span>Sucumb.</span>
+              <span>Glosas</span>
+              <span>Dif.</span>
+              <span>% Glosa</span>
+            </div>
+            {ranking.length > 0 ? ranking.map((item: any) => (
+              <div className="gd-balance-table__row" key={cleanText(item.name)}>
+                <strong title={cleanText(item.name)}>{cleanText(item.name)}</strong>
+                <span>{formatCurrency(Number(item.sucumbencias || 0))}</span>
+                <span className="gd-balance-table__negative">{formatCurrency(Number(item.glosas || 0))}</span>
+                <span>{formatCurrency(Number(item.diferenca || 0))}</span>
+                <span>{formatPercentMetric(item.glosasPercent)}</span>
+              </div>
+            )) : (
+              <div className="gd-balance-empty">Sem dados comparativos para o período selecionado.</div>
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function BalanceMetric({ label, value, tone }: { label: string; value: string; tone: "positive" | "negative" | "warning" | "neutral" }) {
+  return (
+    <div className={`gd-balance-metric gd-balance-metric--${tone}`}>
+      <span>{label}</span>
+      <strong>{value}</strong>
+    </div>
   );
 }
 

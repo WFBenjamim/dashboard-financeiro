@@ -530,5 +530,80 @@
         "value": 10793.33
       }
     ]
+  },
+  "sucumbenciasGlosas": {
+    "title": "Balanço de Sucumbências x Glosas",
+    "periodFilterable": true,
+    "summary": {
+      "sucumbenciasTotal": 258981.28,
+      "glosasTotal": 10793.33,
+      "diferenca": 248187.95,
+      "glosasPercent": 0.041676101067999974,
+      "okrGlosas": 0.005,
+      "okrAtingimento": 8.335220213599994
+    },
+    "monthly": [
+      {
+        "month": 4,
+        "label": "abr",
+        "sucumbencias": 258981.28,
+        "glosas": 10793.33,
+        "diferenca": 248187.95
+      }
+    ],
+    "ranking": [
+      {
+        "name": "RECUPERA",
+        "sucumbencias": 0.0,
+        "glosas": 10793.33,
+        "diferenca": -10793.33,
+        "glosasPercent": null
+      },
+      {
+        "name": "Imobiliário",
+        "sucumbencias": 23069.73,
+        "glosas": 0.0,
+        "diferenca": 23069.73,
+        "glosasPercent": 0.0
+      },
+      {
+        "name": "Casos Estratégicos",
+        "sucumbencias": 51646.18,
+        "glosas": 0.0,
+        "diferenca": 51646.18,
+        "glosasPercent": 0.0
+      },
+      {
+        "name": "Valor Legal",
+        "sucumbencias": 184265.37,
+        "glosas": 0.0,
+        "diferenca": 184265.37,
+        "glosasPercent": 0.0
+      }
+    ],
+    "sources": {
+      "sucumbencias": {
+        "source": "Orçamento.xlsx",
+        "sheet": "Sucumbência",
+        "nameColumn": "Cabeçalho do bloco do cliente",
+        "valueColumns": "jan-dez na linha Sucumbência",
+        "periodFilterable": true
+      },
+      "glosas": {
+        "source": "INFORMAÇÕES GERENCIAIS.xlsx",
+        "sheet": "GLOSAS",
+        "nameColumn": "Data",
+        "valueColumns": [
+          "Apr/2026"
+        ],
+        "periodFilterable": true
+      },
+      "okr": {
+        "source": "INFORMAÇÕES GERENCIAIS.xlsx",
+        "sheet": "OKR",
+        "column": "OKR GLOSAS",
+        "value": 0.005
+      }
+    }
   }
 }
