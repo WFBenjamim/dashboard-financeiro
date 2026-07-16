@@ -29,6 +29,8 @@ from utils.dashboard_metrics import build_dashboard_metrics  # noqa: E402
 
 OUTPUT_DIR = PROJECT_ROOT / "public" / "data"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+GLOSAS_CONDENACOES_FILE = PROJECT_ROOT / "data" / "Glosas - Condena\u00e7\u00f5es - 2026.xlsx"
+GLOSAS_CONDENACOES_FALLBACK_FILE = PROJECT_ROOT / "data" / "Glosas - Condenacoes - 2026.xlsx"
 ORCAMENTO_FILE = PROJECT_ROOT / "data" / "Orçamento.xlsx"
 INFORMACOES_GERENCIAIS_FILE = PROJECT_ROOT / "data" / "INFORMAÇÕES GERENCIAIS.xlsx"
 
@@ -132,7 +134,12 @@ def excel_date(value):
 def to_number(value) -> float:
     if value is None or pd.isna(value):
         return 0.0
-    return float(value)
+    if isinstance(value, (int, float)):
+        return float(value)
+    try:
+        return float(str(value).replace(".", "").replace(",", "."))
+    except ValueError:
+        return 0.0
 
 
 def normalize_label(value) -> str:
@@ -186,6 +193,153 @@ def _top_items_from_totals(totals: dict[str, float], limit: int = 5) -> list[dic
         key=lambda item: item["position"],
     )
     return ranked[:limit]
+
+
+def _with_display_aliases(items: list[dict], aliases: dict[str, str]) -> list[dict]:
+    return [
+        {
+            **item,
+            "name": aliases.get(normalize_label(item.get("name")), item.get("name")),
+        }
+        for item in items
+    ]
+
+
+def _find_glosas_condenacoes_file() -> Path | None:
+    for candidate in (GLOSAS_CONDENACOES_FILE, GLOSAS_CONDENACOES_FALLBACK_FILE):
+        if candidate.exists():
+            return candidate
+
+    expected = normalize_label("Glosas - Condenacoes - 2026")
+    for file_path in (PROJECT_ROOT / "data").glob("*.xlsx"):
+        if normalize_label(file_path.stem) == expected:
+            return file_path
+    return None
+
+
+def _is_month_header(value, month: int, year: int = YEAR) -> bool:
+    if hasattr(value, "year") and hasattr(value, "month"):
+        return value.year == year and value.month == month
+
+    label = normalize_label(value)
+    if not label:
+        return False
+
+    month_number = _month_label_to_number(label)
+    if month_number == month:
+        return True
+
+    month_tokens = {
+        1: ("jan", "janeiro"),
+        2: ("fev", "fevereiro"),
+        3: ("mar", "marco"),
+        4: ("abr", "abril"),
+        5: ("mai", "maio"),
+        6: ("jun", "junho"),
+        7: ("jul", "julho"),
+        8: ("ago", "agosto"),
+        9: ("set", "setembro"),
+        10: ("out", "outubro"),
+        11: ("nov", "novembro"),
+        12: ("dez", "dezembro"),
+    }
+    return any(token in label for token in month_tokens.get(month, ())) and str(year) in label
+
+
+def load_recupera_glosas_breakdown(selected_months: list[int], year: int = YEAR) -> dict:
+    file_path = _find_glosas_condenacoes_file()
+    if not file_path:
+        return {
+            "available": False,
+            "source": "Glosas - Condenacoes - 2026.xlsx",
+            "sheet": "Resumo",
+            "items": [],
+            "total": 0.0,
+            "message": "Planilha de detalhamento nao encontrada em data/.",
+        }
+
+    try:
+        xl = pd.ExcelFile(file_path, engine="openpyxl")
+        sheet_name = next((sheet for sheet in xl.sheet_names if normalize_label(sheet) == "resumo"), xl.sheet_names[0])
+        df = pd.read_excel(file_path, sheet_name=sheet_name, header=None, engine="openpyxl")
+    except Exception as exc:
+        return {
+            "available": False,
+            "source": file_path.name,
+            "sheet": "Resumo",
+            "items": [],
+            "total": 0.0,
+            "message": f"Nao foi possivel ler a planilha: {exc}",
+        }
+
+    header_row = -1
+    month_columns: dict[int, int] = {}
+    for row_index in range(len(df)):
+        all_months = {
+            month: column_index
+            for column_index in range(len(df.columns))
+            for month in range(1, 13)
+            if _is_month_header(df.iloc[row_index, column_index], month, year)
+        }
+        detected = {
+            month: column_index
+            for column_index in range(len(df.columns))
+            for month in selected_months
+            if _is_month_header(df.iloc[row_index, column_index], month, year)
+        }
+        if detected and len(all_months) >= 3:
+            header_row = row_index
+            month_columns = detected
+            break
+
+    if header_row < 0 or not month_columns:
+        return {
+            "available": False,
+            "source": file_path.name,
+            "sheet": sheet_name,
+            "items": [],
+            "total": 0.0,
+            "message": "Nao foram encontradas colunas mensais na aba Resumo.",
+        }
+
+    name_column = next(
+        (
+            column_index
+            for column_index in range(len(df.columns))
+            if normalize_label(df.iloc[header_row, column_index]) in {"centro de custo", "cliente", "item"}
+        ),
+        0,
+    )
+
+    totals: dict[str, float] = {}
+    for row_index in range(header_row + 1, len(df)):
+        cell = df.iloc[row_index, name_column]
+        name = str(cell).strip() if cell is not None and not pd.isna(cell) else ""
+        normalized_name = normalize_label(name)
+        if normalized_name in {"total", "total geral"}:
+            break
+        if not normalized_name or normalized_name in {"bruno", "dif", "recupera"}:
+            continue
+
+        value = sum(
+            to_number(df.iloc[row_index, column_index])
+            for column_index in month_columns.values()
+            if column_index < len(df.columns)
+        )
+        if abs(value) > 0.01:
+            totals[name] = totals.get(name, 0.0) + value
+
+    items = _top_items_from_totals(totals, limit=50)
+    total = round(sum(float(item["value"]) for item in items), 2)
+    return {
+        "available": bool(items),
+        "source": file_path.name,
+        "sheet": sheet_name,
+        "periodFilterable": True,
+        "items": items,
+        "total": total,
+        "message": "" if items else "Sem dados detalhados para o periodo selecionado.",
+    }
 
 
 def _collect_sucumbencias_by_month(selected_months: list[int]) -> tuple[dict[str, dict[int, float]], dict]:
@@ -366,6 +520,7 @@ def load_sucumbencias_glosas(selected_months: list[int], year: int = YEAR) -> di
         name: _sum_monthly(values, selected_months)
         for name, values in glosas.items()
     }
+    recupera_breakdown = load_recupera_glosas_breakdown(selected_months, year)
 
     return {
         "title": "Balanço de Sucumbências x Glosas",
@@ -383,13 +538,17 @@ def load_sucumbencias_glosas(selected_months: list[int], year: int = YEAR) -> di
             **sucumbencias_meta,
             "totalPeriod": round(sucumbencias_total, 2),
             "totalLabel": "Total de sucumbencia no periodo",
-            "items": _top_items_from_totals(sucumbencias_totals),
+            "items": _with_display_aliases(
+                _top_items_from_totals(sucumbencias_totals),
+                {"valor legal": "RECUPERA"},
+            ),
         },
         "topGlosas": {
             "title": "Top 5 Glosas",
             **glosas_meta,
             "totalPeriod": round(glosas_total, 2),
             "totalLabel": "Total de glosas no periodo",
+            "recuperaBreakdown": recupera_breakdown,
             "items": _top_items_from_totals(glosas_totals),
         },
     }

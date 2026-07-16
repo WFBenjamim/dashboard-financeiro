@@ -730,9 +730,15 @@ button {
 
 .gd-ranking-card__header {
   display: flex;
-  align-items: baseline;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 0.75rem;
+  min-width: 0;
+}
+
+.gd-ranking-card__title {
+  display: grid;
+  gap: 0.35rem;
   min-width: 0;
 }
 
@@ -742,6 +748,14 @@ button {
   line-height: 1.25;
   font-weight: 900;
   text-transform: uppercase;
+}
+
+.gd-ranking-card__title em {
+  color: #ffffff;
+  font-size: 1.85rem;
+  line-height: 1;
+  font-style: normal;
+  font-weight: 900;
 }
 
 .gd-ranking-card__header span {
@@ -790,12 +804,42 @@ button {
 }
 
 .gd-ranking-item__name {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
   min-width: 0;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
   font-size: 0.95rem;
   font-weight: 850;
+}
+
+.gd-ranking-item__name > span,
+.gd-ranking-item__name {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gd-ranking-detail-button {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 1.25rem;
+  height: 1.25rem;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  border-radius: 999px;
+  background: rgba(64, 64, 64, 0.32);
+  color: #ffffff;
+  font-size: 0.9rem;
+  line-height: 1;
+  font-weight: 900;
+  transition: transform 0.16s ease, background 0.16s ease, border-color 0.16s ease;
+}
+
+.gd-ranking-detail-button:hover {
+  transform: translateY(-1px);
+  background: rgba(64, 64, 64, 0.48);
+  border-color: rgba(255, 255, 255, 0.56);
 }
 
 .gd-ranking-item strong {
@@ -840,6 +884,98 @@ button {
   font-size: 1.15rem;
   line-height: 1.2;
   font-weight: 900;
+}
+
+.gd-recupera-modal {
+  max-width: min(760px, 96vw);
+}
+
+.gd-recupera-modal__body {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem 1.25rem;
+}
+
+.gd-recupera-list {
+  display: grid;
+  gap: 0.45rem;
+  max-height: min(52vh, 520px);
+  overflow: auto;
+  padding-right: 0.15rem;
+}
+
+.gd-recupera-row {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.7rem;
+  min-height: 2.75rem;
+  padding: 0.58rem 0.72rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.gd-recupera-row span {
+  display: inline-grid;
+  place-items: center;
+  width: 1.55rem;
+  height: 1.55rem;
+  border-radius: 999px;
+  background: rgba(242, 173, 40, 0.22);
+  color: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.gd-recupera-row strong {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 850;
+}
+
+.gd-recupera-row em {
+  color: #ffffff;
+  font-style: normal;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.gd-recupera-empty,
+.gd-recupera-total {
+  padding: 0.9rem 1rem;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.82);
+  font-weight: 800;
+}
+
+.gd-recupera-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: rgba(242, 173, 40, 0.16);
+  border-color: rgba(242, 173, 40, 0.28);
+}
+
+.gd-recupera-total span {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.82rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.gd-recupera-total strong {
+  color: #ffffff;
+  font-size: 1.18rem;
+  font-weight: 900;
+  white-space: nowrap;
 }
 
 .gd-balance-section {

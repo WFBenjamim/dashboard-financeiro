@@ -664,37 +664,117 @@ function RankingCardsRow({ sucumbencias, glosas }: { sucumbencias?: any; glosas?
 }
 
 function RankingCard({ data, title, tone }: { data?: any; title: string; tone: "dark" | "gold" }) {
+  const [showRecuperaDetails, setShowRecuperaDetails] = useState(false);
   const items = Array.isArray(data?.items) ? data.items.slice(0, 5) : [];
   const hasTotalPeriod = isFiniteNumber(data?.totalPeriod);
+  const isGlosasCard = normalizeKey(title).includes("glosas");
+  const recuperaItem = items.find((item: any) => normalizeKey(item?.name) === "recupera");
+  const canShowRecuperaDetails = isGlosasCard && Boolean(recuperaItem);
 
   return (
-    <article className={`gd-ranking-card gd-ranking-card--${tone}`}>
-      <div className="gd-ranking-card__header">
-        <strong>{cleanText(data?.title || title)}</strong>
-        <span>{cleanText(data?.sheet || "")}</span>
-      </div>
-      <div className="gd-ranking-list">
-        {items.length > 0 ? (
-          items.map((item: any, index: number) => (
-            <div className="gd-ranking-item" key={`${cleanText(item.name)}-${index}`}>
-              <span className="gd-ranking-item__badge">{Number(item.position || index + 1)}</span>
-              <span className="gd-ranking-item__name" title={cleanText(item.name)}>
-                {cleanText(item.name)}
-              </span>
-              <strong>{formatCurrency(Number(item.value || 0))}</strong>
-            </div>
-          ))
-        ) : (
-          <div className="gd-ranking-empty">Sem dados para o período selecionado.</div>
-        )}
-      </div>
-      {hasTotalPeriod && (
-        <div className="gd-ranking-total">
-          <span>{cleanText(data?.totalLabel || "Total no período")}</span>
-          <strong>{formatCurrency(data.totalPeriod)}</strong>
+    <>
+      <article className={`gd-ranking-card gd-ranking-card--${tone}`}>
+        <div className="gd-ranking-card__header">
+          <div className="gd-ranking-card__title">
+            <strong>{cleanText(data?.title || title)}</strong>
+            {hasTotalPeriod && <em>{formatCurrency(data.totalPeriod)}</em>}
+          </div>
+          <span>{cleanText(data?.sheet || "")}</span>
         </div>
+        <div className="gd-ranking-list">
+          {items.length > 0 ? (
+            items.map((item: any, index: number) => {
+              const isRecupera = canShowRecuperaDetails && normalizeKey(item?.name) === "recupera";
+
+              return (
+                <div className="gd-ranking-item" key={`${cleanText(item.name)}-${index}`}>
+                  <span className="gd-ranking-item__badge">{Number(item.position || index + 1)}</span>
+                  <span className="gd-ranking-item__name" title={cleanText(item.name)}>
+                    {cleanText(item.name)}
+                    {isRecupera && (
+                      <button
+                        className="gd-ranking-detail-button"
+                        type="button"
+                        aria-label="Ver detalhamento de RECUPERA"
+                        title="Ver detalhamento de RECUPERA"
+                        onClick={() => setShowRecuperaDetails(true)}
+                      >
+                        +
+                      </button>
+                    )}
+                  </span>
+                  <strong>{formatCurrency(Number(item.value || 0))}</strong>
+                </div>
+              );
+            })
+          ) : (
+            <div className="gd-ranking-empty">Sem dados para o período selecionado.</div>
+          )}
+        </div>
+      </article>
+      {showRecuperaDetails && (
+        <RecuperaBreakdownModal
+          breakdown={data?.recuperaBreakdown}
+          expectedTotal={Number(recuperaItem?.value || 0)}
+          onClose={() => setShowRecuperaDetails(false)}
+        />
       )}
-    </article>
+    </>
+  );
+}
+
+function RecuperaBreakdownModal({
+  breakdown,
+  expectedTotal,
+  onClose,
+}: {
+  breakdown?: any;
+  expectedTotal: number;
+  onClose: () => void;
+}) {
+  const items = Array.isArray(breakdown?.items) ? breakdown.items : [];
+  const detailTotal = expectedTotal;
+
+  return (
+    <div className="gd-modal-backdrop" role="presentation" onClick={onClose}>
+      <div
+        className="gd-modal gd-recupera-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="gd-recupera-modal-title"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <button className="gd-modal__close" type="button" aria-label="Fechar" onClick={onClose}>
+          ×
+        </button>
+        <div className="gd-modal__header">
+          <h2 id="gd-recupera-modal-title">Detalhamento RECUPERA - Glosas</h2>
+          <p>{cleanText(breakdown?.sheet ? `${breakdown.source} • ${breakdown.sheet}` : "Período selecionado")}</p>
+        </div>
+
+        <div className="gd-recupera-modal__body">
+          {items.length > 0 ? (
+            <div className="gd-recupera-list">
+              {items.map((item: any, index: number) => (
+                <div className="gd-recupera-row" key={`${cleanText(item.name)}-${index}`}>
+                  <span>{Number(item.position || index + 1)}</span>
+                  <strong title={cleanText(item.name)}>{cleanText(item.name)}</strong>
+                  <em>{formatCurrency(Number(item.value || 0))}</em>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="gd-recupera-empty">
+              {cleanText(breakdown?.message || "Sem dados detalhados para o período selecionado.")}
+            </div>
+          )}
+          <div className="gd-recupera-total">
+            <span>Total RECUPERA no período</span>
+            <strong>{formatCurrency(detailTotal)}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 

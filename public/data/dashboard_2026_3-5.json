@@ -513,7 +513,7 @@
     "items": [
       {
         "position": 1,
-        "name": "Valor Legal",
+        "name": "RECUPERA",
         "value": 652378.3300000001
       },
       {
@@ -540,6 +540,36 @@
     "periodFilterable": true,
     "totalPeriod": 39686.51,
     "totalLabel": "Total de glosas no periodo",
+    "recuperaBreakdown": {
+      "available": true,
+      "source": "Glosas - Condenações - 2026.xlsx",
+      "sheet": "Resumo",
+      "periodFilterable": true,
+      "items": [
+        {
+          "position": 1,
+          "name": "Saneamento",
+          "value": 22920.0
+        },
+        {
+          "position": 2,
+          "name": "Santander",
+          "value": 9662.75
+        },
+        {
+          "position": 3,
+          "name": "Claro Contencioso",
+          "value": 6803.76
+        },
+        {
+          "position": 4,
+          "name": "Nio",
+          "value": 300.0
+        }
+      ],
+      "total": 39686.51,
+      "message": ""
+    },
     "items": [
       {
         "position": 1,

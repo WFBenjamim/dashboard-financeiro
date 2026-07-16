@@ -523,7 +523,7 @@
     "items": [
       {
         "position": 1,
-        "name": "Valor Legal",
+        "name": "RECUPERA",
         "value": 674760.72
       },
       {
@@ -561,6 +561,46 @@
     "periodFilterable": true,
     "totalPeriod": 28285.72,
     "totalLabel": "Total de glosas no periodo",
+    "recuperaBreakdown": {
+      "available": true,
+      "source": "Glosas - Condenações - 2026.xlsx",
+      "sheet": "Resumo",
+      "periodFilterable": true,
+      "items": [
+        {
+          "position": 1,
+          "name": "Santander",
+          "value": 17534.77
+        },
+        {
+          "position": 2,
+          "name": "Claro Contencioso",
+          "value": 3803.08
+        },
+        {
+          "position": 3,
+          "name": "Daycoval",
+          "value": 3782.04
+        },
+        {
+          "position": 4,
+          "name": "Bradesco",
+          "value": 2195.83
+        },
+        {
+          "position": 5,
+          "name": "Saneamento",
+          "value": 670.0
+        },
+        {
+          "position": 6,
+          "name": "Vivo",
+          "value": 300.0
+        }
+      ],
+      "total": 28285.72,
+      "message": ""
+    },
     "items": [
       {
         "position": 1,
