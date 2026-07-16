@@ -176,33 +176,34 @@ button {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0.2rem 0 0.15rem;
+  padding: 0.45rem 0 0.35rem;
 }
 
 .gd-logo-wrap::before {
   content: "";
   position: absolute;
-  top: -1.25rem;
+  top: -2.25rem;
   left: 50%;
   z-index: 0;
-  width: min(460px, 58vw);
-  height: 7.25rem;
+  width: min(820px, 92vw);
+  height: 11rem;
   transform: translateX(-50%);
   pointer-events: none;
   background:
     radial-gradient(
       ellipse at center,
-      rgba(64, 64, 64, 0.28) 0%,
-      rgba(64, 64, 64, 0.16) 36%,
-      transparent 72%
+      rgba(64, 64, 64, 0.34) 0%,
+      rgba(64, 64, 64, 0.24) 30%,
+      rgba(64, 64, 64, 0.1) 58%,
+      transparent 82%
     );
-  filter: blur(2px);
+  filter: blur(3px);
 }
 
 .gd-logo {
   position: relative;
   z-index: 1;
-  width: min(180px, 32vw);
+  width: min(220px, 38vw);
   height: auto;
   display: block;
   object-fit: contain;
@@ -327,6 +328,27 @@ button {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1.25rem;
   align-items: stretch;
+}
+
+.gd-result-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: stretch;
+}
+
+.gd-result-section .gd-card {
+  min-height: 26rem;
+  width: 100%;
+  align-self: stretch;
+  height: 100%;
+}
+
+.gd-result-section .gd-card-insight {
+  margin-top: auto;
+}
+
+.gd-kpi-row--secondary {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .gd-kpi-row .gd-card {
@@ -1075,15 +1097,24 @@ button {
   gap: 1rem;
 }
 
+.gd-balance-content--chart-only {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .gd-balance-chart,
 .gd-balance-ranking {
   display: grid;
   gap: 0.75rem;
   min-width: 0;
-  padding: 1rem;
+  padding: 1rem 1.15rem 1rem 1.35rem;
   border-radius: 20px;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.12);
+  overflow: visible;
+}
+
+.gd-balance-content--chart-only .gd-balance-chart {
+  min-height: 25rem;
 }
 
 .gd-balance-subtitle {
@@ -1686,6 +1717,50 @@ button {
   color: rgba(255, 255, 255, 0.9);
 }
 
+.gd-result-chart {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 0.65rem;
+  min-width: 0;
+  min-height: 12.8rem;
+  padding: 0.9rem 1.05rem 0.6rem 1.45rem;
+  border-radius: 18px;
+  background:
+    linear-gradient(145deg, rgba(64, 64, 64, 0.32), rgba(64, 64, 64, 0.2));
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  overflow: visible;
+}
+
+.gd-result-chart__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-left: 6.6rem;
+}
+
+.gd-result-chart__header strong {
+  color: #ffffff;
+  font-size: 0.9rem;
+  line-height: 1.2;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.gd-result-chart__header span {
+  color: rgba(255, 255, 255, 0.76);
+  font-size: 0.72rem;
+  line-height: 1.2;
+  font-weight: 800;
+  text-align: right;
+}
+
+.gd-result-chart-tooltip {
+  min-width: 11rem;
+}
+
 .gd-result-mini-grid {
   position: relative;
   z-index: 1;
@@ -1693,6 +1768,22 @@ button {
   grid-template-columns: repeat(auto-fit, minmax(6.7rem, 1fr));
   gap: 0.5rem;
   margin: 0.35rem 0 0.25rem;
+}
+
+.gd-metric-stack {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 0.55rem;
+  margin: 0.35rem 0 0.25rem;
+}
+
+.gd-metric-stack .gd-result-mini-grid {
+  margin: 0;
+}
+
+.gd-result-mini-grid--secondary {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .gd-result-mini {
@@ -3188,6 +3279,16 @@ button {
     font-size: 2.1rem;
   }
 
+  .gd-result-chart__header {
+    display: grid;
+    gap: 0.2rem;
+    padding-left: 0;
+  }
+
+  .gd-result-chart__header span {
+    text-align: left;
+  }
+
   .gd-row,
   .gd-row__value-group,
   .gd-cost-rect__head,
@@ -3309,5 +3410,132 @@ button {
 
   .ga-table-row {
     grid-template-columns: 1fr;
+  }
+}
+
+@page {
+  size: A4 landscape;
+  margin: 8mm;
+}
+
+@media print {
+  *,
+  *::before,
+  *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  html,
+  body {
+    width: auto !important;
+    min-height: auto !important;
+    background:
+      radial-gradient(circle at 50% 0%, rgba(255, 212, 24, 0.34), transparent 35%),
+      radial-gradient(circle at 92% 18%, rgba(255, 212, 24, 0.16), transparent 28%),
+      linear-gradient(160deg, var(--bg-start) 0%, var(--bg-mid) 55%, var(--bg-end) 140%) !important;
+    color: var(--text-main) !important;
+  }
+
+  body {
+    margin: 0 !important;
+  }
+
+  .gd-app {
+    min-height: auto !important;
+    padding: 0 !important;
+    background:
+      radial-gradient(circle at 50% 0%, rgba(255, 212, 24, 0.24), transparent 34%),
+      linear-gradient(160deg, #f2f2f2 0%, #efe8c8 58%, #404040 145%) !important;
+  }
+
+  .gd-shell {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 auto !important;
+    gap: 0.75rem !important;
+  }
+
+  .gd-fullscreen-button,
+  .gd-evolution-fab,
+  .gd-card-actions,
+  .gd-secondary-action,
+  .gd-month-filter,
+  .gd-modal-backdrop {
+    display: none !important;
+  }
+
+  .gd-logo-wrap,
+  .gd-hero,
+  .gd-top-section,
+  .gd-ranking-row,
+  .gd-balance-section,
+  .gd-result-section,
+  .gd-kpi-row,
+  .gd-dashboard-section,
+  .gd-dashboard-chart-card,
+  .gd-profit-section,
+  .gd-card,
+  .gd-ranking-card,
+  .gd-chart-panel,
+  .gd-revenue-card-visual,
+  .gd-cost-card-visual,
+  .gd-result-chart,
+  .profit-advance,
+  .profit-advance-page__content {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  .gd-card,
+  .gd-ranking-card,
+  .gd-hero,
+  .gd-balance-section,
+  .gd-dashboard-chart-card,
+  .gd-profit-section {
+    box-shadow: 0 8px 24px rgba(4, 10, 23, 0.18) !important;
+  }
+
+  .gd-top-section,
+  .gd-ranking-row,
+  .gd-kpi-row,
+  .gd-balance-content,
+  .gd-balance-metrics,
+  .gd-result-section,
+  .gd-dashboard-section,
+  .gd-dashboard-grid {
+    overflow: visible !important;
+  }
+
+  .gd-card,
+  .gd-ranking-card,
+  .gd-balance-section,
+  .gd-dashboard-chart-card,
+  .gd-chart-panel,
+  .gd-result-chart {
+    overflow: visible !important;
+  }
+
+  .recharts-wrapper,
+  .recharts-responsive-container,
+  .recharts-surface,
+  svg {
+    overflow: visible !important;
+  }
+
+  .gd-dashboard-chart-card .gd-chart-panel,
+  .gd-balance-content--chart-only .gd-balance-chart {
+    min-height: 360px !important;
+  }
+
+  .gd-profit-inline,
+  .gd-profit-inline .profit-advance-scroll {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  a {
+    color: inherit !important;
+    text-decoration: none !important;
   }
 }

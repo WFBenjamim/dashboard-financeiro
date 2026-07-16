@@ -8,7 +8,7 @@ import { EvolutionDashboardSections } from "@/components/EvolutionModal";
 import { FullscreenButton } from "@/components/FullscreenButton";
 import { MonthFilter } from "@/components/MonthFilter";
 import { ResultOpeningScreen } from "@/components/ResultOpeningScreen";
-import { fetchDashboardData } from "@/lib/api";
+import { fetchDashboardData, fetchEvolutionData } from "@/lib/api";
 import { formatCurrency, formatCurrencyText, parseCurrency } from "@/lib/formatters";
 
 type DashboardData = Record<string, any>;
@@ -150,6 +150,24 @@ function formatSignedPercentMetric(value: unknown): string {
   return isFiniteNumber(value) && value > 0 ? `+${formatted}` : formatted;
 }
 
+function formatCompactCurrency(value: unknown): string {
+  if (!isFiniteNumber(value)) return "";
+  const absValue = Math.abs(value);
+  if (absValue >= 1_000_000) {
+    return `R$ ${(value / 1_000_000).toLocaleString("pt-BR", {
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1,
+    })} M`;
+  }
+  if (absValue >= 1_000) {
+    return `R$ ${(value / 1_000).toLocaleString("pt-BR", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    })} mil`;
+  }
+  return formatCurrency(value);
+}
+
 function findInsight(insights: any[] | undefined, title: string) {
   const expected = normalizeKey(title);
   return (insights || []).find((insight) => normalizeKey(insight?.title).includes(expected));
@@ -158,6 +176,7 @@ function findInsight(insights: any[] | undefined, title: string) {
 export default function Dashboard() {
   const [showOpening, setShowOpening] = useState(true);
   const [data, setData] = useState<DashboardData | null>(null);
+  const [evolutionMonthly, setEvolutionMonthly] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const year = 2026;
   const currentMonth = 5;
@@ -169,9 +188,13 @@ export default function Dashboard() {
     async function loadData() {
       setLoading(true);
       const effectiveMonths = months.length ? months : availableMonthsUntil(currentMonth);
-      const dashboardData = await fetchDashboardData(year, sortMonths(effectiveMonths).join(","));
+      const [dashboardData, monthlyEvolution] = await Promise.all([
+        fetchDashboardData(year, sortMonths(effectiveMonths).join(",")),
+        fetchEvolutionData("monthly"),
+      ]);
       if (isMounted) {
         setData(dashboardData);
+        setEvolutionMonthly(Array.isArray(monthlyEvolution) ? monthlyEvolution : []);
         setLoading(false);
       }
     }
@@ -210,6 +233,18 @@ export default function Dashboard() {
   const costInsight = findInsight(data.insights, "Pessoas representam") || findInsight(data.insights, "Sócios");
   const resultInsight = findInsight(data.insights, "Efeito tesoura");
   const peopleInsight = findInsight(data.insights, "Estrutura de pessoas");
+  const effectiveMonths = months.length ? months : availableMonthsUntil(currentMonth);
+  const budgetReference = isFiniteNumber(data.net_result?.resultado_orcado)
+    ? data.net_result.resultado_orcado / Math.max(effectiveMonths.length, 1)
+    : 0;
+  const resultTrendData = evolutionMonthly
+    .filter((item) => item?.year === year && effectiveMonths.includes(Number(item?.month_num)))
+    .sort((a, b) => Number(a.month_num || 0) - Number(b.month_num || 0))
+    .map((item) => ({
+      label: cleanText(item.month),
+      realizado: Number(item.resultado || 0),
+      orcado: budgetReference,
+    }));
 
   return (
     <main className="gd-app">
@@ -235,8 +270,11 @@ export default function Dashboard() {
         <RankingCardsRow sucumbencias={data.topSucumbencias} glosas={data.topGlosas} />
         <SucumbenciasGlosasBalance data={data.sucumbenciasGlosas} />
 
-        <section className="gd-kpi-row">
-          <ResultCard data={data.net_result} insight={resultInsight} />
+        <section className="gd-result-section">
+          <ResultCard data={data.net_result} insight={resultInsight} chartData={resultTrendData} />
+        </section>
+
+        <section className="gd-kpi-row gd-kpi-row--secondary">
           <PeopleCard data={data.people} insight={peopleInsight} />
           <MarginsCard data={data.margins} />
         </section>
@@ -297,26 +335,30 @@ function RevenueCard({ data, insight, topClients }: { data: any; insight?: any; 
         <CardTitle icon="/icones/receita.png" title={data?.title || "Estrutura de Receita"} />
         <div className="gd-kpi"><AnimatedCurrencyKpi value={data?.value} /></div>
         {hasMetrics && (
-          <MetricaGrid>
-            <MetricaMini label="Orçado período" value={isFiniteNumber(receitaOrcadaPeriodo) ? formatCurrency(receitaOrcadaPeriodo) : ""} />
-            <MetricaMini
-              label="vs 2025"
-              value={formatSignedPercentMetric(data?.variacao_2025)}
-              tone={isFiniteNumber(data?.variacao_2025) && data.variacao_2025 < 0 ? "red" : "green"}
-            />
-            <MetricaMini
-              label="% Orçado Periodo"
-              value={formatPercentMetric(data?.pct_orcado)}
-            />
-            <MetricaMini
-              label="Média"
-              value={isFiniteNumber(data?.averagePeriod) ? formatCurrency(data.averagePeriod) : ""}
-            />
-            <MetricaMini
-              label="Faturamento 2025"
-              value={isFiniteNumber(data?.previousYearPeriod) ? formatCurrency(data.previousYearPeriod) : ""}
-            />
-          </MetricaGrid>
+          <div className="gd-metric-stack">
+            <MetricaGrid>
+              <MetricaMini label="Orçado período" value={isFiniteNumber(receitaOrcadaPeriodo) ? formatCurrency(receitaOrcadaPeriodo) : ""} />
+              <MetricaMini
+                label="% Orçado Periodo"
+                value={formatPercentMetric(data?.pct_orcado)}
+              />
+              <MetricaMini
+                label="Média"
+                value={isFiniteNumber(data?.averagePeriod) ? formatCurrency(data.averagePeriod) : ""}
+              />
+            </MetricaGrid>
+            <MetricaGrid variant="secondary">
+              <MetricaMini
+                label="vs 2025"
+                value={formatSignedPercentMetric(data?.variacao_2025)}
+                tone={isFiniteNumber(data?.variacao_2025) && data.variacao_2025 < 0 ? "red" : "green"}
+              />
+              <MetricaMini
+                label="Faturamento 2025"
+                value={isFiniteNumber(data?.previousYearPeriod) ? formatCurrency(data.previousYearPeriod) : ""}
+              />
+            </MetricaGrid>
+          </div>
         )}
         {!!rows.length && (
           <div className="gd-card-actions">
@@ -537,27 +579,31 @@ function CostCard({ data, insight, distribution }: { data: any; insight?: any; d
         <CardTitle icon="/icones/custo.png" title="Estrutura de Custos e Despesas" />
         <div className="gd-kpi"><AnimatedCurrencyKpi value={data?.value} /></div>
         {hasMetrics && (
-          <MetricaGrid>
-            <MetricaMini label="Orçado período" value={isFiniteNumber(custoOrcadoPeriodo) ? formatCurrency(custoOrcadoPeriodo) : ""} />
-            <MetricaMini
-              label="vs 2025"
-              value={formatSignedPercentMetric(data?.variacao_2025)}
-              tone={isFiniteNumber(data?.variacao_2025) && data.variacao_2025 > 0 ? "green" : data?.variacao_2025 < 0 ? "red" : undefined}
-            />
-            <MetricaMini
-              label="% Orçado Periodo"
-              value={formatPercentMetric(data?.pct_orcado_custos)}
-              tone={isFiniteNumber(data?.pct_orcado_custos) && data.pct_orcado_custos < 0 ? "red" : undefined}
-            />
-            <MetricaMini
-              label="Média"
-              value={isFiniteNumber(data?.averagePeriod) ? formatCurrency(data.averagePeriod) : ""}
-            />
-            <MetricaMini
-              label="Despesas 2025"
-              value={isFiniteNumber(data?.previousYearPeriod) ? formatCurrency(data.previousYearPeriod) : ""}
-            />
-          </MetricaGrid>
+          <div className="gd-metric-stack">
+            <MetricaGrid>
+              <MetricaMini label="Orçado período" value={isFiniteNumber(custoOrcadoPeriodo) ? formatCurrency(custoOrcadoPeriodo) : ""} />
+              <MetricaMini
+                label="% Orçado Periodo"
+                value={formatPercentMetric(data?.pct_orcado_custos)}
+                tone={isFiniteNumber(data?.pct_orcado_custos) && data.pct_orcado_custos < 0 ? "red" : undefined}
+              />
+              <MetricaMini
+                label="Média"
+                value={isFiniteNumber(data?.averagePeriod) ? formatCurrency(data.averagePeriod) : ""}
+              />
+            </MetricaGrid>
+            <MetricaGrid variant="secondary">
+              <MetricaMini
+                label="vs 2025"
+                value={formatSignedPercentMetric(data?.variacao_2025)}
+                tone={isFiniteNumber(data?.variacao_2025) && data.variacao_2025 > 0 ? "green" : data?.variacao_2025 < 0 ? "red" : undefined}
+              />
+              <MetricaMini
+                label="Despesas 2025"
+                value={isFiniteNumber(data?.previousYearPeriod) ? formatCurrency(data.previousYearPeriod) : ""}
+              />
+            </MetricaGrid>
+          </div>
         )}
         {hasDistribution && (
           <div className="gd-card-actions">
@@ -783,7 +829,6 @@ function SucumbenciasGlosasBalance({ data }: { data?: any }) {
 
   const summary = data.summary || {};
   const monthly = Array.isArray(data.monthly) ? data.monthly : [];
-  const ranking = Array.isArray(data.ranking) ? data.ranking.slice(0, 8) : [];
   const hasOkr = isFiniteNumber(summary.okrGlosas);
 
   return (
@@ -805,14 +850,20 @@ function SucumbenciasGlosasBalance({ data }: { data?: any }) {
         {hasOkr && <BalanceMetric label="% Atingimento OKR" value={formatPercentMetric(summary.okrAtingimento)} tone={Number(summary.okrAtingimento || 0) <= 1 ? "positive" : "negative"} />}
       </div>
 
-      <div className="gd-balance-content">
+      <div className="gd-balance-content gd-balance-content--chart-only">
         <div className="gd-balance-chart">
           <div className="gd-balance-subtitle">Evolução mensal</div>
-          <ResponsiveContainer width="100%" height={320}>
-            <ComposedChart data={monthly} margin={{ top: 18, right: 18, left: 4, bottom: 4 }}>
+          <ResponsiveContainer width="100%" height={390}>
+            <ComposedChart data={monthly} margin={{ top: 18, right: 24, left: 24, bottom: 4 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.14)" />
               <XAxis dataKey="label" stroke="rgba(255,255,255,0.72)" tick={{ fill: "rgba(255,255,255,0.78)" }} />
-              <YAxis stroke="rgba(255,255,255,0.72)" tick={{ fill: "rgba(255,255,255,0.78)" }} tickFormatter={(value) => formatCurrency(Number(value))} />
+              <YAxis
+                width={92}
+                tickMargin={10}
+                stroke="rgba(255,255,255,0.72)"
+                tick={{ fill: "rgba(255,255,255,0.78)", fontSize: 12, fontWeight: 800 }}
+                tickFormatter={(value) => formatCompactCurrency(Number(value))}
+              />
               <Tooltip
                 formatter={(value, name) => [formatCurrency(Number(value)), String(name)]}
                 contentStyle={{
@@ -828,30 +879,6 @@ function SucumbenciasGlosasBalance({ data }: { data?: any }) {
               <Line type="monotone" dataKey="diferenca" name="Diferença líquida" stroke="#f2ad28" strokeWidth={3} dot={{ r: 4 }} />
             </ComposedChart>
           </ResponsiveContainer>
-        </div>
-
-        <div className="gd-balance-ranking">
-          <div className="gd-balance-subtitle">Maiores impactos por glosa</div>
-          <div className="gd-balance-table">
-            <div className="gd-balance-table__head">
-              <span>Cliente/Grupo</span>
-              <span>Sucumb.</span>
-              <span>Glosas</span>
-              <span>Dif.</span>
-              <span>% Glosa</span>
-            </div>
-            {ranking.length > 0 ? ranking.map((item: any) => (
-              <div className="gd-balance-table__row" key={cleanText(item.name)}>
-                <strong title={cleanText(item.name)}>{cleanText(item.name)}</strong>
-                <span>{formatCurrency(Number(item.sucumbencias || 0))}</span>
-                <span className="gd-balance-table__negative">{formatCurrency(Number(item.glosas || 0))}</span>
-                <span>{formatCurrency(Number(item.diferenca || 0))}</span>
-                <span>{formatPercentMetric(item.glosasPercent)}</span>
-              </div>
-            )) : (
-              <div className="gd-balance-empty">Sem dados comparativos para o período selecionado.</div>
-            )}
-          </div>
         </div>
       </div>
     </section>
@@ -906,47 +933,115 @@ function CostDistributionTooltip({ active, payload }: any) {
   );
 }
 
-function ResultCard({ data, insight }: { data: any; insight?: any }) {
+function ResultCard({ data, insight, chartData }: { data: any; insight?: any; chartData?: any[] }) {
   const hasMetrics = isFiniteNumber(data?.resultado_orcado)
     || isFiniteNumber(data?.variacao_2025)
     || isFiniteNumber(data?.pct_vs_orcado)
     || isFiniteNumber(data?.averagePeriod)
     || isFiniteNumber(data?.previousYearPeriod);
+  const hasChartData = Array.isArray(chartData) && chartData.length > 0;
 
   return (
     <article className="gd-card gd-card--orange gd-card--compact">
       <CardTitle icon="/icones/liquido.png" title={data?.title || "Resultado Líquido"} />
       <div className="gd-kpi"><AnimatedCurrencyKpi value={data?.value} /></div>
       {hasMetrics && (
-        <MetricaGrid>
-          <MetricaMini label="Orçado" value={isFiniteNumber(data?.resultado_orcado) ? formatCurrency(data.resultado_orcado) : ""} />
-          <MetricaMini
-            label="vs 2025"
-            value={formatSignedPercentMetric(data?.variacao_2025)}
-            tone={isFiniteNumber(data?.variacao_2025) && data.variacao_2025 > 0 ? "green" : data?.variacao_2025 < 0 ? "red" : undefined}
-          />
-          <MetricaMini
-            label="% Orçado Periodo"
-            value={formatPercentMetric(data?.pct_vs_orcado)}
-            tone={isFiniteNumber(data?.pct_vs_orcado) && data.pct_vs_orcado < 0 ? "red" : undefined}
-          />
-          <MetricaMini
-            label="Média"
-            value={isFiniteNumber(data?.averagePeriod) ? formatCurrency(data.averagePeriod) : ""}
-          />
-          <MetricaMini
-            label="Resultado 2025"
-            value={isFiniteNumber(data?.previousYearPeriod) ? formatCurrency(data.previousYearPeriod) : ""}
-          />
-        </MetricaGrid>
+        <div className="gd-metric-stack">
+          <MetricaGrid>
+            <MetricaMini label="Orçado" value={isFiniteNumber(data?.resultado_orcado) ? formatCurrency(data.resultado_orcado) : ""} />
+            <MetricaMini
+              label="% Orçado Periodo"
+              value={formatPercentMetric(data?.pct_vs_orcado)}
+              tone={isFiniteNumber(data?.pct_vs_orcado) && data.pct_vs_orcado < 0 ? "red" : undefined}
+            />
+            <MetricaMini
+              label="Média"
+              value={isFiniteNumber(data?.averagePeriod) ? formatCurrency(data.averagePeriod) : ""}
+            />
+          </MetricaGrid>
+          <MetricaGrid variant="secondary">
+            <MetricaMini
+              label="vs 2025"
+              value={formatSignedPercentMetric(data?.variacao_2025)}
+              tone={isFiniteNumber(data?.variacao_2025) && data.variacao_2025 > 0 ? "green" : data?.variacao_2025 < 0 ? "red" : undefined}
+            />
+            <MetricaMini
+              label="Resultado 2025"
+              value={isFiniteNumber(data?.previousYearPeriod) ? formatCurrency(data.previousYearPeriod) : ""}
+            />
+          </MetricaGrid>
+        </div>
       )}
+      {hasChartData && <ResultTrendChart items={chartData} />}
       <InsightNote insight={insight} />
     </article>
   );
 }
 
-function MetricaGrid({ children }: { children: ReactNode }) {
-  return <div className="gd-result-mini-grid">{children}</div>;
+function ResultTrendChart({ items }: { items: any[] }) {
+  return (
+    <div className="gd-result-chart">
+      <div className="gd-result-chart__header">
+        <strong>Resultado mensal</strong>
+        <span>Realizado x orçado médio</span>
+      </div>
+      <ResponsiveContainer width="100%" height={172}>
+        <ComposedChart data={items} margin={{ top: 14, right: 18, left: 8, bottom: 0 }}>
+          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.16)" vertical={false} />
+          <XAxis
+            dataKey="label"
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: "rgba(255,255,255,0.78)", fontSize: 12, fontWeight: 800 }}
+          />
+          <YAxis
+            width={112}
+            tickMargin={12}
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: "rgba(255,255,255,0.72)", fontSize: 10.5, fontWeight: 700 }}
+            tickFormatter={(value) => formatCompactCurrency(Number(value))}
+          />
+          <Tooltip content={<ResultTrendTooltip />} />
+          <Line
+            type="monotone"
+            dataKey="realizado"
+            name="Realizado"
+            stroke="#ffffff"
+            strokeWidth={3}
+            dot={{ r: 3, strokeWidth: 2, fill: "#f2ad28", stroke: "#ffffff" }}
+            activeDot={{ r: 5, strokeWidth: 2, fill: "#ffffff", stroke: "#c93636" }}
+          />
+          <Line
+            type="monotone"
+            dataKey="orcado"
+            name="Orçado médio"
+            stroke="#404040"
+            strokeWidth={2.5}
+            strokeDasharray="6 5"
+            dot={false}
+          />
+        </ComposedChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
+
+function ResultTrendTooltip({ active, payload, label }: any) {
+  if (!active || !payload?.length) return null;
+
+  return (
+    <div className="gd-chart-tooltip gd-result-chart-tooltip">
+      <strong>{cleanText(label)}</strong>
+      {payload.map((item: any) => (
+        <span key={item.dataKey}>{cleanText(item.name)}: {formatCurrency(Number(item.value || 0))}</span>
+      ))}
+    </div>
+  );
+}
+
+function MetricaGrid({ children, variant = "primary" }: { children: ReactNode; variant?: "primary" | "secondary" }) {
+  return <div className={`gd-result-mini-grid gd-result-mini-grid--${variant}`}>{children}</div>;
 }
 
 function CardTitle({ icon, title }: { icon: string; title: unknown }) {
