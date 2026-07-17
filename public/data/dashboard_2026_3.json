@@ -89,14 +89,14 @@
     "total": 3903787.3639089996,
     "correspondentes": 98576.18039400001,
     "outras_despesas": 309900.70395144715,
-    "impostos": 834112.5943849997,
+    "impostos": 834112.594385,
     "socios_servico": 1930550.19,
     "socios": 1930550.19,
     "clt": 527653.26,
     "estagiarios": 0.0,
     "total_pessoas_custo": 2458203.45,
     "official_total_costs": 3903787.3639089996,
-    "detailed_cost_total": 3700792.928730447,
+    "detailed_cost_total": 3700792.9287304473,
     "cost_total_source": "INFORMAÇÕES GERENCIAIS.xlsx / TOTAIS  20 E 21 / CUSTOS E DESPESAS",
     "cost_total_warning": "",
     "cost_total_anterior": 3450105.260799736,
@@ -174,7 +174,7 @@
     "pct_vs_orcado": 1.2055085055891526,
     "resultado_2025": 598089.0792002641,
     "variacao_2025": 0.324526391871713,
-    "sem_sucumbencia": 301175.26009100163,
+    "sem_sucumbencia": 301175.2600910014,
     "resultado_orcado_anual": 657137.4373703375,
     "averagePeriod": 792184.770091001,
     "previousYearPeriod": 598089.0792002641,
@@ -188,15 +188,15 @@
     "title": "Margens",
     "value": "38,3%",
     "subtitle": "",
-    "operational": 0.38336430623706075,
-    "net": 0.1686945218246155,
+    "operational": 0.38336430538905186,
+    "net": 0.16869452097660667,
     "source": "PERFORMANCE.XLSX",
     "logic": "Linha consolidada 1 - TODOS; MO=(I-M-Q)/I; ML=Z/I",
     "totals": {
       "realRevenue": 4695972.134,
-      "realExpenses": 2061591.4439113692,
-      "taxes": 834112.5908291513,
-      "realResult": 792184.7736468492
+      "realExpenses": 2061591.443911369,
+      "taxes": 834112.5948113773,
+      "realResult": 792184.7696646233
     },
     "metrics": [
       {
@@ -497,7 +497,7 @@
     "warnings": [],
     "zeroOfficialMonths": [],
     "officialCostSource": "INFORMAÇÕES GERENCIAIS.xlsx / TOTAIS  20 E 21 / CUSTOS E DESPESAS",
-    "detailedCostTotal": 3700792.928730447,
+    "detailedCostTotal": 3700792.9287304473,
     "peopleCostSource": "Custos OMIE.xlsx"
   },
   "cost_subtitle": "+13,1% vs 2025",
@@ -562,8 +562,28 @@
     "items": [
       {
         "position": 1,
-        "name": "RECUPERA",
-        "value": 31308.160000000003
+        "name": "SANEAMENTO - RIO+",
+        "value": 12000.0
+      },
+      {
+        "position": 2,
+        "name": "SANEAMENTO - BRK",
+        "value": 10500.0
+      },
+      {
+        "position": 3,
+        "name": "CLARO",
+        "value": 5598.16
+      },
+      {
+        "position": 4,
+        "name": "SANTANDER",
+        "value": 2910.0
+      },
+      {
+        "position": 5,
+        "name": "NIO",
+        "value": 300.0
       }
     ]
   },
@@ -589,10 +609,38 @@
     ],
     "ranking": [
       {
-        "name": "RECUPERA",
+        "name": "SANEAMENTO - RIO+",
         "sucumbencias": 0.0,
-        "glosas": 31308.16,
-        "diferenca": -31308.16,
+        "glosas": 12000.0,
+        "diferenca": -12000.0,
+        "glosasPercent": null
+      },
+      {
+        "name": "SANEAMENTO - BRK",
+        "sucumbencias": 0.0,
+        "glosas": 10500.0,
+        "diferenca": -10500.0,
+        "glosasPercent": null
+      },
+      {
+        "name": "Claro",
+        "sucumbencias": 0.0,
+        "glosas": 5598.16,
+        "diferenca": -5598.16,
+        "glosasPercent": null
+      },
+      {
+        "name": "Santander",
+        "sucumbencias": 0.0,
+        "glosas": 2910.0,
+        "diferenca": -2910.0,
+        "glosasPercent": null
+      },
+      {
+        "name": "Nio",
+        "sucumbencias": 0.0,
+        "glosas": 300.0,
+        "diferenca": -300.0,
         "glosasPercent": null
       },
       {

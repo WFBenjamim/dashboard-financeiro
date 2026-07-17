@@ -174,7 +174,7 @@
     "pct_vs_orcado": 2.3080631747791025,
     "resultado_2025": 1308363.6476702648,
     "variacao_2025": -0.42850366527761047,
-    "sem_sucumbencia": -154265.2608724276,
+    "sem_sucumbencia": -154265.26087242784,
     "resultado_orcado_anual": 323962.11563798925,
     "averagePeriod": 373862.5145637861,
     "previousYearPeriod": 1308363.6476702648,
@@ -188,15 +188,15 @@
     "title": "Margens",
     "value": "30,7%",
     "subtitle": "",
-    "operational": 0.3068525524949531,
-    "net": 0.08987386258757814,
+    "operational": 0.3068525520163038,
+    "net": 0.08987386210892892,
     "source": "PERFORMANCE.XLSX",
     "logic": "Linha consolidada 1 - TODOS; MO=(I-M-Q)/I; ML=Z/I",
     "totals": {
       "realRevenue": 8319716.223999999,
       "realExpenses": 4137162.713893776,
-      "taxes": 1629627.3507381512,
-      "realResult": 747725.0326834205
+      "taxes": 1629627.3547203774,
+      "realResult": 747725.0287011948
     },
     "metrics": [
       {
@@ -598,28 +598,28 @@
     "items": [
       {
         "position": 1,
-        "name": "RECUPERA",
-        "value": 31308.160000000003
-      },
-      {
-        "position": 2,
         "name": "PATRIMÔNIO",
         "value": 18000.0
       },
       {
+        "position": 2,
+        "name": "SANEAMENTO - RIO+",
+        "value": 12000.0
+      },
+      {
         "position": 3,
-        "name": "DAYCOVAL",
-        "value": 3782.05
+        "name": "SANEAMENTO - BRK",
+        "value": 10500.0
       },
       {
         "position": 4,
-        "name": "VIVO",
-        "value": 1530.0
+        "name": "CLARO",
+        "value": 5836.68
       },
       {
         "position": 5,
-        "name": "CLARO",
-        "value": 238.52
+        "name": "DAYCOVAL",
+        "value": 3782.05
       }
     ]
   },
@@ -652,18 +652,32 @@
     ],
     "ranking": [
       {
-        "name": "RECUPERA",
-        "sucumbencias": 0.0,
-        "glosas": 31308.16,
-        "diferenca": -31308.16,
-        "glosasPercent": null
-      },
-      {
         "name": "PATRIMÔNIO",
         "sucumbencias": 0.0,
         "glosas": 18000.0,
         "diferenca": -18000.0,
         "glosasPercent": null
+      },
+      {
+        "name": "SANEAMENTO - RIO+",
+        "sucumbencias": 0.0,
+        "glosas": 12000.0,
+        "diferenca": -12000.0,
+        "glosasPercent": null
+      },
+      {
+        "name": "SANEAMENTO - BRK",
+        "sucumbencias": 0.0,
+        "glosas": 10500.0,
+        "diferenca": -10500.0,
+        "glosasPercent": null
+      },
+      {
+        "name": "Claro",
+        "sucumbencias": 16056.91,
+        "glosas": 5836.68,
+        "diferenca": 10220.23,
+        "glosasPercent": 0.3634995774404914
       },
       {
         "name": "Daycoval",
@@ -673,6 +687,13 @@
         "glosasPercent": null
       },
       {
+        "name": "Santander",
+        "sucumbencias": 7651.14,
+        "glosas": 2910.0,
+        "diferenca": 4741.14,
+        "glosasPercent": 0.3803354794187533
+      },
+      {
         "name": "Vivo",
         "sucumbencias": 0.0,
         "glosas": 1530.0,
@@ -680,32 +701,11 @@
         "glosasPercent": null
       },
       {
-        "name": "Claro",
-        "sucumbencias": 16056.91,
-        "glosas": 238.52,
-        "diferenca": 15818.39,
-        "glosasPercent": 0.014854663817633656
-      },
-      {
-        "name": "Santander",
-        "sucumbencias": 7651.14,
-        "glosas": 0.0,
-        "diferenca": 7651.14,
-        "glosasPercent": 0.0
-      },
-      {
-        "name": "Mercado Livre",
-        "sucumbencias": 2922.02,
-        "glosas": 0.0,
-        "diferenca": 2922.02,
-        "glosasPercent": 0.0
-      },
-      {
-        "name": "UOL PagSeguro",
-        "sucumbencias": -187.5,
-        "glosas": 0.0,
-        "diferenca": -187.5,
-        "glosasPercent": -0.0
+        "name": "Nio",
+        "sucumbencias": 0.0,
+        "glosas": 300.0,
+        "diferenca": -300.0,
+        "glosasPercent": null
       }
     ],
     "sources": {

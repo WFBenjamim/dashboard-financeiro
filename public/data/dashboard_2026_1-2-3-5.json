@@ -15,10 +15,10 @@
     "pct_contratual": 0.903549542934291,
     "pct_sucumbencia": 0.09283465471756815,
     "pct_outras": 0.0036158023481408443,
-    "pct_orcado": 1.007944394663773,
-    "receita_orcada": 16768976.6355,
-    "receita_orcada_periodo": 16768976.6355,
-    "meta_periodo_receita": 16768976.6355,
+    "pct_orcado": 0.999008176921009,
+    "receita_orcada": 16918976.6355,
+    "receita_orcada_periodo": 16918976.6355,
+    "meta_periodo_receita": 16918976.6355,
     "meta_periodo_meses": 4,
     "receita_2025_periodo": 16085313.440006,
     "variacao_yoy": 0.0507843734000433,
@@ -76,7 +76,7 @@
         "items": []
       }
     ],
-    "receita_orcada_anual": 16768976.6355,
+    "receita_orcada_anual": 16918976.6355,
     "averagePeriod": 4225549.001,
     "previousYearPeriod": 16085313.440006,
     "media_periodo": 4225549.001,
@@ -89,21 +89,21 @@
     "total": 15580304.705931367,
     "correspondentes": 729862.031818,
     "outras_despesas": 1271444.7023560521,
-    "impostos": 3325140.5642939997,
+    "impostos": 3325140.564294,
     "socios_servico": 7536679.6,
     "socios": 7536679.6,
     "clt": 2196633.4,
     "estagiarios": 0.0,
     "total_pessoas_custo": 9733313.0,
     "official_total_costs": 15580304.705931367,
-    "detailed_cost_total": 15059760.298468051,
+    "detailed_cost_total": 15059760.298468053,
     "cost_total_source": "INFORMAÇÕES GERENCIAIS.xlsx / TOTAIS  20 E 21 / CUSTOS E DESPESAS",
     "cost_total_warning": "",
     "cost_total_anterior": 13699680.067968471,
     "variacao_custos_yoy": 0.13727507712826278,
-    "custo_orcado_periodo": 16145772.808265688,
-    "meta_periodo_custos": 16145772.808265688,
-    "pct_orcado_custos": 1.0362937768552787,
+    "custo_orcado_periodo": 16160772.808265688,
+    "meta_periodo_custos": 16160772.808265688,
+    "pct_orcado_custos": 1.0372565308118358,
     "value": "R$ 15,58 M",
     "subtitle": "+13,7% vs 2025",
     "highlight": {
@@ -155,7 +155,7 @@
     "folha_months_used": [],
     "folha_snapshot_month": null,
     "cost_subtitle": "+13,7% vs 2025",
-    "custo_orcado_anual": 16145772.808265688,
+    "custo_orcado_anual": 16160772.808265688,
     "meta_periodo_meses": 4,
     "averagePeriod": 3895076.176482842,
     "previousYearPeriod": 13699680.067968471,
@@ -168,45 +168,45 @@
     "title": "Resultado Líquido",
     "value": 1321891.2980686328,
     "subtitle": "",
-    "resultado_orcado": 623203.827234312,
-    "meta_periodo_resultado": 623203.827234312,
+    "resultado_orcado": 758203.827234312,
+    "meta_periodo_resultado": 758203.827234312,
     "meta_periodo_meses": 4,
-    "pct_vs_orcado": 2.121121919188132,
+    "pct_vs_orcado": 1.743451101916057,
     "resultado_2025": 2385633.3720375304,
     "variacao_2025": -0.4458950341813725,
-    "sem_sucumbencia": -247218.23193136707,
-    "resultado_orcado_anual": 623203.827234312,
+    "sem_sucumbencia": -247218.23193136742,
+    "resultado_orcado_anual": 758203.827234312,
     "averagePeriod": 330472.8245171582,
     "previousYearPeriod": 2385633.3720375304,
     "media_periodo": 330472.8245171582,
     "periodo_2025": 2385633.3720375304,
     "pct_ano": 0.0,
-    "resultado_operacional": 4647031.8623626325
+    "resultado_operacional": 4647031.862362634
   },
   "margins": {
     "icon": "📈",
     "title": "Margens",
-    "value": "29,3%",
+    "value": "29,6%",
     "subtitle": "",
-    "operational": 0.29301330029630834,
-    "net": 0.0755563190547784,
+    "operational": 0.2956661508128475,
+    "net": 0.07820825709304255,
     "source": "PERFORMANCE.XLSX",
     "logic": "Linha consolidada 1 - TODOS; MO=(I-M-Q)/I; ML=Z/I",
     "totals": {
-      "realRevenue": 16815745.334,
-      "realExpenses": 8578754.317091973,
-      "taxes": 3309753.9796504374,
-      "realResult": 1270535.8195996052
+      "realRevenue": 16902196.004,
+      "realExpenses": 8579648.199368224,
+      "taxes": 3325140.5718448046,
+      "realResult": 1321891.2905178284
     },
     "metrics": [
       {
         "label": "Margem Operacional",
-        "value": "29,3%",
+        "value": "29,6%",
         "caption": ""
       },
       {
         "label": "Margem Líquida",
-        "value": "7,6%",
+        "value": "7,8%",
         "caption": ""
       }
     ]
@@ -322,9 +322,9 @@
     }
   },
   "budget": {
-    "revenue": 16768976.6355,
-    "costs": 16145772.808265688,
-    "result": 623203.827234312,
+    "revenue": 16918976.6355,
+    "costs": 16160772.808265688,
+    "result": 758203.827234312,
     "source": "INFORMAÇÕES GERENCIAIS.xlsx / Resultado Orçado",
     "logic": "Soma mensal da aba Resultado Orçado: Receita Mensal, Custos Mensal e Resultado Mensal",
     "months": [
@@ -507,7 +507,7 @@
     "warnings": [],
     "zeroOfficialMonths": [],
     "officialCostSource": "INFORMAÇÕES GERENCIAIS.xlsx / TOTAIS  20 E 21 / CUSTOS E DESPESAS",
-    "detailedCostTotal": 15059760.298468051,
+    "detailedCostTotal": 15059760.298468053,
     "peopleCostSource": "Custos OMIE.xlsx"
   },
   "cost_subtitle": "+13,7% vs 2025",
@@ -615,28 +615,28 @@
     "items": [
       {
         "position": 1,
-        "name": "RECUPERA",
-        "value": 39266.51
-      },
-      {
-        "position": 2,
         "name": "PATRIMÔNIO",
         "value": 18000.0
       },
       {
+        "position": 2,
+        "name": "SANEAMENTO - RIO+",
+        "value": 12000.0
+      },
+      {
         "position": 3,
-        "name": "DAYCOVAL",
-        "value": 7564.09
+        "name": "SANEAMENTO - BRK",
+        "value": 10920.0
       },
       {
         "position": 4,
-        "name": "CLARO",
-        "value": 2836.0
+        "name": "SANTANDER",
+        "value": 10201.44
       },
       {
         "position": 5,
-        "name": "BRADESCO",
-        "value": 2195.83
+        "name": "CLARO",
+        "value": 9639.76
       }
     ]
   },
@@ -683,13 +683,6 @@
     ],
     "ranking": [
       {
-        "name": "RECUPERA",
-        "sucumbencias": 0.0,
-        "glosas": 39266.51,
-        "diferenca": -39266.51,
-        "glosasPercent": null
-      },
-      {
         "name": "PATRIMÔNIO",
         "sucumbencias": 0.0,
         "glosas": 18000.0,
@@ -697,18 +690,39 @@
         "glosasPercent": null
       },
       {
+        "name": "SANEAMENTO - RIO+",
+        "sucumbencias": 0.0,
+        "glosas": 12000.0,
+        "diferenca": -12000.0,
+        "glosasPercent": null
+      },
+      {
+        "name": "SANEAMENTO - BRK",
+        "sucumbencias": 0.0,
+        "glosas": 10920.0,
+        "diferenca": -10920.0,
+        "glosasPercent": null
+      },
+      {
+        "name": "Santander",
+        "sucumbencias": 21526.15,
+        "glosas": 10201.44,
+        "diferenca": 11324.71,
+        "glosasPercent": 0.4739091755841151
+      },
+      {
+        "name": "Claro",
+        "sucumbencias": 34978.98,
+        "glosas": 9639.76,
+        "diferenca": 25339.22,
+        "glosasPercent": 0.27558722409858727
+      },
+      {
         "name": "Daycoval",
         "sucumbencias": 0.0,
         "glosas": 7564.09,
         "diferenca": -7564.09,
         "glosasPercent": null
-      },
-      {
-        "name": "Claro",
-        "sucumbencias": 34978.98,
-        "glosas": 2836.0,
-        "diferenca": 32142.98,
-        "glosasPercent": 0.08107726411690679
       },
       {
         "name": "Bradesco",
@@ -722,20 +736,6 @@
         "sucumbencias": 0.0,
         "glosas": 1530.0,
         "diferenca": -1530.0,
-        "glosasPercent": null
-      },
-      {
-        "name": "Santander",
-        "sucumbencias": 21526.15,
-        "glosas": 538.69,
-        "diferenca": 20987.46,
-        "glosasPercent": 0.02502491156105481
-      },
-      {
-        "name": "SANEAMENTO - BRK",
-        "sucumbencias": 0.0,
-        "glosas": 420.0,
-        "diferenca": -420.0,
         "glosasPercent": null
       }
     ],

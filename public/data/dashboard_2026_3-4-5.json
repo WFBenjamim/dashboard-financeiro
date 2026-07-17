@@ -89,7 +89,7 @@
     "total": 12035412.18566688,
     "correspondentes": 557223.6303940001,
     "outras_despesas": 984023.6345650443,
-    "impostos": 2476600.0543859997,
+    "impostos": 2476600.054386,
     "socios_servico": 5828022.069999999,
     "socios": 5828022.069999999,
     "clt": 1705933.22,
@@ -174,7 +174,7 @@
     "pct_vs_orcado": 1.204204061306269,
     "resultado_2025": 1224705.3323537745,
     "variacao_2025": 0.7798371091793845,
-    "sem_sucumbencia": 1193239.38833312,
+    "sem_sucumbencia": 1193239.3883331195,
     "resultado_orcado_anual": 1810138.3879810134,
     "averagePeriod": 726591.9994443731,
     "previousYearPeriod": 1224705.3323537745,
@@ -186,27 +186,27 @@
   "margins": {
     "icon": "📈",
     "title": "Margens",
-    "value": "36,0%",
+    "value": "36,3%",
     "subtitle": "",
-    "operational": 0.3601542779756759,
-    "net": 0.15064477805462057,
+    "operational": 0.3629002575849333,
+    "net": 0.1533413395371161,
     "source": "PERFORMANCE.XLSX",
     "logic": "Linha consolidada 1 - TODOS; MO=(I-M-Q)/I; ML=Z/I",
     "totals": {
-      "realRevenue": 14128737.513999999,
-      "realExpenses": 6578998.793319472,
-      "taxes": 2461213.4626180106,
-      "realResult": 2128420.526988521
+      "realRevenue": 14215188.183999998,
+      "realExpenses": 6579892.675595722,
+      "taxes": 2476600.0548123773,
+      "realResult": 2179775.9979067445
     },
     "metrics": [
       {
         "label": "Margem Operacional",
-        "value": "36,0%",
+        "value": "36,3%",
         "caption": ""
       },
       {
         "label": "Margem Líquida",
-        "value": "15,1%",
+        "value": "15,3%",
         "caption": ""
       }
     ]
@@ -589,13 +589,28 @@
     "items": [
       {
         "position": 1,
-        "name": "RECUPERA",
-        "value": 50059.840000000004
+        "name": "SANTANDER",
+        "value": 19906.08
       },
       {
         "position": 2,
+        "name": "SANEAMENTO - RIO+",
+        "value": 12000.0
+      },
+      {
+        "position": 3,
         "name": "SANEAMENTO - BRK",
-        "value": 420.0
+        "value": 11170.0
+      },
+      {
+        "position": 4,
+        "name": "CLARO",
+        "value": 6803.76
+      },
+      {
+        "position": 5,
+        "name": "NIO",
+        "value": 300.0
       }
     ]
   },
@@ -635,17 +650,45 @@
     ],
     "ranking": [
       {
-        "name": "RECUPERA",
+        "name": "Santander",
         "sucumbencias": 0.0,
-        "glosas": 50059.84,
-        "diferenca": -50059.84,
+        "glosas": 19906.08,
+        "diferenca": -19906.08,
+        "glosasPercent": null
+      },
+      {
+        "name": "SANEAMENTO - RIO+",
+        "sucumbencias": 0.0,
+        "glosas": 12000.0,
+        "diferenca": -12000.0,
         "glosasPercent": null
       },
       {
         "name": "SANEAMENTO - BRK",
         "sucumbencias": 0.0,
-        "glosas": 420.0,
-        "diferenca": -420.0,
+        "glosas": 11170.0,
+        "diferenca": -11170.0,
+        "glosasPercent": null
+      },
+      {
+        "name": "Claro",
+        "sucumbencias": 0.0,
+        "glosas": 6803.76,
+        "diferenca": -6803.76,
+        "glosasPercent": null
+      },
+      {
+        "name": "Vivo",
+        "sucumbencias": 0.0,
+        "glosas": 300.0,
+        "diferenca": -300.0,
+        "glosasPercent": null
+      },
+      {
+        "name": "Nio",
+        "sucumbencias": 0.0,
+        "glosas": 300.0,
+        "diferenca": -300.0,
         "glosasPercent": null
       },
       {
@@ -660,13 +703,6 @@
         "sucumbencias": 56297.59,
         "glosas": 0.0,
         "diferenca": 56297.59,
-        "glosasPercent": 0.0
-      },
-      {
-        "name": "Valor Legal",
-        "sucumbencias": 836643.7,
-        "glosas": 0.0,
-        "diferenca": 836643.7,
         "glosasPercent": 0.0
       }
     ],

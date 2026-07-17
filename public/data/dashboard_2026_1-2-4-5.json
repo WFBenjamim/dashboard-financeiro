@@ -15,10 +15,10 @@
     "pct_contratual": 0.9198253533836476,
     "pct_sucumbencia": 0.07873512394854885,
     "pct_outras": 0.00143952266780354,
-    "pct_orcado": 1.0240584619294044,
-    "receita_orcada": 16583055.295500001,
-    "receita_orcada_periodo": 16583055.295500001,
-    "meta_periodo_receita": 16583055.295500001,
+    "pct_orcado": 1.014878502467326,
+    "receita_orcada": 16733055.295500001,
+    "receita_orcada_periodo": 16733055.295500001,
+    "meta_periodo_receita": 16733055.295500001,
     "meta_periodo_meses": 4,
     "receita_2025_periodo": 15976746.600006001,
     "variacao_yoy": 0.06292091407355857,
@@ -76,7 +76,7 @@
         "items": []
       }
     ],
-    "receita_orcada_anual": 16583055.295500001,
+    "receita_orcada_anual": 16733055.295500001,
     "averagePeriod": 4245504.524999999,
     "previousYearPeriod": 15976746.600006001,
     "media_periodo": 4245504.524999999,
@@ -101,9 +101,9 @@
     "cost_total_warning": "",
     "cost_total_anterior": 13671160.001966227,
     "variacao_custos_yoy": 0.1466907170075293,
-    "custo_orcado_periodo": 16106123.812375689,
-    "meta_periodo_custos": 16106123.812375689,
-    "pct_orcado_custos": 1.0273995483288758,
+    "custo_orcado_periodo": 16121123.812375689,
+    "meta_periodo_custos": 16121123.812375689,
+    "pct_orcado_custos": 1.0283563889321432,
     "value": "R$ 15,68 M",
     "subtitle": "+14,7% vs 2025",
     "highlight": {
@@ -155,7 +155,7 @@
     "folha_months_used": [],
     "folha_snapshot_month": null,
     "cost_subtitle": "+14,7% vs 2025",
-    "custo_orcado_anual": 16106123.812375689,
+    "custo_orcado_anual": 16121123.812375689,
     "meta_periodo_meses": 4,
     "averagePeriod": 3919148.066244827,
     "previousYearPeriod": 13671160.001966227,
@@ -168,14 +168,14 @@
     "title": "Resultado Líquido",
     "value": 1305425.8350206907,
     "subtitle": "",
-    "resultado_orcado": 476931.483124312,
-    "meta_periodo_resultado": 476931.483124312,
+    "resultado_orcado": 611931.483124312,
+    "meta_periodo_resultado": 611931.483124312,
     "meta_periodo_meses": 4,
-    "pct_vs_orcado": 2.737134957979765,
+    "pct_vs_orcado": 2.133287583694231,
     "resultado_2025": 2305586.5980397756,
     "variacao_2025": -0.43379882753891263,
-    "sem_sucumbencia": -31655.464979310054,
-    "resultado_orcado_anual": 476931.483124312,
+    "sem_sucumbencia": -31655.46497931017,
+    "resultado_orcado_anual": 611931.483124312,
     "averagePeriod": 326356.4587551727,
     "previousYearPeriod": 2305586.5980397756,
     "media_periodo": 326356.4587551727,
@@ -186,27 +186,27 @@
   "margins": {
     "icon": "📈",
     "title": "Margens",
-    "value": "28,7%",
+    "value": "28,9%",
     "subtitle": "",
-    "operational": 0.2865359789900944,
-    "net": 0.07422481418227318,
+    "operational": 0.2892093345289634,
+    "net": 0.07687106563007765,
     "source": "PERFORMANCE.XLSX",
     "logic": "Linha consolidada 1 - TODOS; MO=(I-M-Q)/I; ML=Z/I",
     "totals": {
-      "realRevenue": 16895567.43,
-      "realExpenses": 8748924.31702951,
-      "taxes": 3305455.1588222864,
-      "realResult": 1254070.3529958169
+      "realRevenue": 16982018.099999998,
+      "realExpenses": 8749818.19930576,
+      "taxes": 3320841.7470344272,
+      "realResult": 1305425.8278962662
     },
     "metrics": [
       {
         "label": "Margem Operacional",
-        "value": "28,7%",
+        "value": "28,9%",
         "caption": ""
       },
       {
         "label": "Margem Líquida",
-        "value": "7,4%",
+        "value": "7,7%",
         "caption": ""
       }
     ]
@@ -322,9 +322,9 @@
     }
   },
   "budget": {
-    "revenue": 16583055.295500001,
-    "costs": 16106123.812375689,
-    "result": 476931.483124312,
+    "revenue": 16733055.295500001,
+    "costs": 16121123.812375689,
+    "result": 611931.483124312,
     "source": "INFORMAÇÕES GERENCIAIS.xlsx / Resultado Orçado",
     "logic": "Soma mensal da aba Resultado Orçado: Receita Mensal, Custos Mensal e Resultado Mensal",
     "months": [
@@ -610,13 +610,13 @@
     "items": [
       {
         "position": 1,
-        "name": "RECUPERA",
-        "value": 18751.68
+        "name": "PATRIMÔNIO",
+        "value": 18000.0
       },
       {
         "position": 2,
-        "name": "PATRIMÔNIO",
-        "value": 18000.0
+        "name": "SANTANDER",
+        "value": 17534.77
       },
       {
         "position": 3,
@@ -626,7 +626,7 @@
       {
         "position": 4,
         "name": "CLARO",
-        "value": 2836.0
+        "value": 4041.6
       },
       {
         "position": 5,
@@ -678,18 +678,18 @@
     ],
     "ranking": [
       {
-        "name": "RECUPERA",
-        "sucumbencias": 0.0,
-        "glosas": 18751.68,
-        "diferenca": -18751.68,
-        "glosasPercent": null
-      },
-      {
         "name": "PATRIMÔNIO",
         "sucumbencias": 0.0,
         "glosas": 18000.0,
         "diferenca": -18000.0,
         "glosasPercent": null
+      },
+      {
+        "name": "Santander",
+        "sucumbencias": 21526.15,
+        "glosas": 17534.77,
+        "diferenca": 3991.38,
+        "glosasPercent": 0.8145799411413559
       },
       {
         "name": "Daycoval",
@@ -701,9 +701,9 @@
       {
         "name": "Claro",
         "sucumbencias": 34978.98,
-        "glosas": 2836.0,
-        "diferenca": 32142.98,
-        "glosasPercent": 0.08107726411690679
+        "glosas": 4041.6,
+        "diferenca": 30937.38,
+        "glosasPercent": 0.11554367794601215
       },
       {
         "name": "Bradesco",
@@ -715,23 +715,23 @@
       {
         "name": "Vivo",
         "sucumbencias": 0.0,
-        "glosas": 1530.0,
-        "diferenca": -1530.0,
+        "glosas": 1830.0,
+        "diferenca": -1830.0,
         "glosasPercent": null
-      },
-      {
-        "name": "Santander",
-        "sucumbencias": 21526.15,
-        "glosas": 538.69,
-        "diferenca": 20987.46,
-        "glosasPercent": 0.02502491156105481
       },
       {
         "name": "SANEAMENTO - BRK",
         "sucumbencias": 0.0,
-        "glosas": 420.0,
-        "diferenca": -420.0,
+        "glosas": 670.0,
+        "diferenca": -670.0,
         "glosasPercent": null
+      },
+      {
+        "name": "Mercado Livre",
+        "sucumbencias": 6160.87,
+        "glosas": 0.0,
+        "diferenca": 6160.87,
+        "glosasPercent": 0.0
       }
     ],
     "sources": {

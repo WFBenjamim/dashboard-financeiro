@@ -15,10 +15,10 @@
     "pct_contratual": 0.9208454598887502,
     "pct_sucumbencia": 0.07773035965136872,
     "pct_outras": 0.001424180459881025,
-    "pct_orcado": 1.039207504065043,
-    "receita_orcada": 8258677.642750001,
-    "receita_orcada_periodo": 8258677.642750001,
-    "meta_periodo_receita": 8258677.642750001,
+    "pct_orcado": 1.0206693780680074,
+    "receita_orcada": 8408677.64275,
+    "receita_orcada_periodo": 8408677.64275,
+    "meta_periodo_receita": 8408677.64275,
     "meta_periodo_meses": 2,
     "receita_2025_periodo": 7950864.820006002,
     "variacao_yoy": 0.07943978099146234,
@@ -76,7 +76,7 @@
         "items": []
       }
     ],
-    "receita_orcada_anual": 8258677.642750001,
+    "receita_orcada_anual": 8408677.64275,
     "averagePeriod": 4291239.890000001,
     "previousYearPeriod": 7950864.820006002,
     "media_periodo": 4291239.890000001,
@@ -101,9 +101,9 @@
     "cost_total_warning": "",
     "cost_total_anterior": 6873595.095638736,
     "variacao_custos_yoy": 0.16508368613975777,
-    "custo_orcado_periodo": 7959435.931153677,
-    "meta_periodo_custos": 7959435.931153677,
-    "pct_orcado_custos": 0.9938966450504509,
+    "custo_orcado_periodo": 7974435.931153677,
+    "meta_periodo_custos": 7974435.931153677,
+    "pct_orcado_custos": 0.9957696985940324,
     "value": "R$ 8,01 M",
     "subtitle": "+16,5% vs 2025",
     "highlight": {
@@ -155,7 +155,7 @@
     "folha_months_used": [],
     "folha_snapshot_month": null,
     "cost_subtitle": "+16,5% vs 2025",
-    "custo_orcado_anual": 7959435.931153677,
+    "custo_orcado_anual": 7974435.931153677,
     "meta_periodo_meses": 2,
     "averagePeriod": 4004156.75552947,
     "previousYearPeriod": 6873595.095638736,
@@ -168,14 +168,14 @@
     "title": "Resultado Líquido",
     "value": 574166.2689410606,
     "subtitle": "",
-    "resultado_orcado": 299241.7115963227,
-    "meta_periodo_resultado": 299241.7115963227,
+    "resultado_orcado": 434241.7115963227,
+    "meta_periodo_resultado": 434241.7115963227,
     "meta_periodo_meses": 2,
-    "pct_vs_orcado": 1.9187374175817151,
+    "pct_vs_orcado": 1.3222273531263478,
     "resultado_2025": 1077269.7243672656,
     "variacao_2025": -0.4670171676101849,
-    "sem_sucumbencia": -92952.97105893947,
-    "resultado_orcado_anual": 299241.7115963227,
+    "sem_sucumbencia": -92952.97105893958,
+    "resultado_orcado_anual": 434241.7115963227,
     "averagePeriod": 287083.1344705303,
     "previousYearPeriod": 1077269.7243672656,
     "media_periodo": 287083.1344705303,
@@ -186,27 +186,27 @@
   "margins": {
     "icon": "📈",
     "title": "Margens",
-    "value": "27,9%",
+    "value": "28,5%",
     "subtitle": "",
-    "operational": 0.27946124561825053,
-    "net": 0.06153589872954009,
+    "operational": 0.2848222355382148,
+    "net": 0.06689980944139591,
     "source": "PERFORMANCE.XLSX",
     "logic": "Linha consolidada 1 - TODOS; MO=(I-M-Q)/I; ML=Z/I",
     "totals": {
-      "realRevenue": 8496029.11,
-      "realExpenses": 4441591.603198197,
-      "taxes": 1680126.6289122864,
-      "realResult": 522810.78691618453
+      "realRevenue": 8582479.780000001,
+      "realExpenses": 4442485.485474448,
+      "taxes": 1695513.2171244272,
+      "realResult": 574166.2618166336
     },
     "metrics": [
       {
         "label": "Margem Operacional",
-        "value": "27,9%",
+        "value": "28,5%",
         "caption": ""
       },
       {
         "label": "Margem Líquida",
-        "value": "6,2%",
+        "value": "6,7%",
         "caption": ""
       }
     ]
@@ -322,9 +322,9 @@
     }
   },
   "budget": {
-    "revenue": 8258677.642750001,
-    "costs": 7959435.931153677,
-    "result": 299241.7115963227,
+    "revenue": 8408677.64275,
+    "costs": 7974435.931153677,
+    "result": 434241.7115963227,
     "source": "INFORMAÇÕES GERENCIAIS.xlsx / Resultado Orçado",
     "logic": "Soma mensal da aba Resultado Orçado: Receita Mensal, Custos Mensal e Resultado Mensal",
     "months": [
@@ -588,18 +588,18 @@
     "items": [
       {
         "position": 1,
-        "name": "RECUPERA",
-        "value": 7958.35
+        "name": "SANTANDER",
+        "value": 7291.4400000000005
       },
       {
         "position": 2,
-        "name": "DAYCOVAL",
-        "value": 3782.04
+        "name": "CLARO",
+        "value": 3803.08
       },
       {
         "position": 3,
-        "name": "CLARO",
-        "value": 2597.48
+        "name": "DAYCOVAL",
+        "value": 3782.04
       },
       {
         "position": 4,
@@ -608,8 +608,8 @@
       },
       {
         "position": 5,
-        "name": "SANTANDER",
-        "value": 538.69
+        "name": "SANEAMENTO - BRK",
+        "value": 420.0
       }
     ]
   },
@@ -642,11 +642,18 @@
     ],
     "ranking": [
       {
-        "name": "RECUPERA",
-        "sucumbencias": 0.0,
-        "glosas": 7958.35,
-        "diferenca": -7958.35,
-        "glosasPercent": null
+        "name": "Santander",
+        "sucumbencias": 13875.01,
+        "glosas": 7291.44,
+        "diferenca": 6583.57,
+        "glosasPercent": 0.5255088104441006
+      },
+      {
+        "name": "Claro",
+        "sucumbencias": 18922.07,
+        "glosas": 3803.08,
+        "diferenca": 15118.99,
+        "glosasPercent": 0.2009864671254255
       },
       {
         "name": "Daycoval",
@@ -656,25 +663,11 @@
         "glosasPercent": null
       },
       {
-        "name": "Claro",
-        "sucumbencias": 18922.07,
-        "glosas": 2597.48,
-        "diferenca": 16324.59,
-        "glosasPercent": 0.13727250771189412
-      },
-      {
         "name": "Bradesco",
         "sucumbencias": 0.0,
         "glosas": 2195.83,
         "diferenca": -2195.83,
         "glosasPercent": null
-      },
-      {
-        "name": "Santander",
-        "sucumbencias": 13875.01,
-        "glosas": 538.69,
-        "diferenca": 13336.32,
-        "glosasPercent": 0.0388244765228998
       },
       {
         "name": "SANEAMENTO - BRK",
@@ -695,6 +688,13 @@
         "sucumbencias": 4011.32,
         "glosas": 0.0,
         "diferenca": 4011.32,
+        "glosasPercent": 0.0
+      },
+      {
+        "name": "UOL PagSeguro",
+        "sucumbencias": 15204.43,
+        "glosas": 0.0,
+        "diferenca": 15204.43,
         "glosasPercent": 0.0
       }
     ],

@@ -89,7 +89,7 @@
     "total": 7799753.729764369,
     "correspondentes": 417599.182167,
     "outras_despesas": 608682.626998187,
-    "impostos": 1608188.4499089997,
+    "impostos": 1608188.449909,
     "socios_servico": 3814577.5599999996,
     "socios": 3814577.5599999996,
     "clt": 1069882.52,
@@ -174,7 +174,7 @@
     "pct_vs_orcado": 1.8365199267300594,
     "resultado_2025": 818848.5164210019,
     "variacao_2025": -0.30706086796657006,
-    "sem_sucumbencia": -80114.41976436973,
+    "sem_sucumbencia": -80114.41976436984,
     "resultado_orcado_anual": 308960.53561798995,
     "averagePeriod": 283706.0901178154,
     "previousYearPeriod": 818848.5164210019,
@@ -186,27 +186,27 @@
   "margins": {
     "icon": "📈",
     "title": "Margens",
-    "value": "28,1%",
+    "value": "28,6%",
     "subtitle": "",
-    "operational": 0.2809776855412717,
-    "net": 0.06232030571977286,
+    "operational": 0.2864609627745681,
+    "net": 0.0678141423677867,
     "source": "PERFORMANCE.XLSX",
     "logic": "Linha consolidada 1 - TODOS; MO=(I-M-Q)/I; ML=Z/I",
     "totals": {
-      "realRevenue": 8280715.24,
-      "realExpenses": 4361217.175541605,
-      "taxes": 1592801.8616968591,
-      "realResult": 516056.7053351823
+      "realRevenue": 8367165.91,
+      "realExpenses": 4362111.057817855,
+      "taxes": 1608188.4499089997,
+      "realResult": 567412.1802356315
     },
     "metrics": [
       {
         "label": "Margem Operacional",
-        "value": "28,1%",
+        "value": "28,6%",
         "caption": ""
       },
       {
         "label": "Margem Líquida",
-        "value": "6,2%",
+        "value": "6,8%",
         "caption": ""
       }
     ]
@@ -598,8 +598,8 @@
       },
       {
         "position": 2,
-        "name": "RECUPERA",
-        "value": 7958.35
+        "name": "SANTANDER",
+        "value": 6752.75
       },
       {
         "position": 3,
@@ -613,8 +613,8 @@
       },
       {
         "position": 5,
-        "name": "SANEAMENTO - BRK",
-        "value": 420.0
+        "name": "CLARO",
+        "value": 1444.12
       }
     ]
   },
@@ -654,11 +654,11 @@
         "glosasPercent": null
       },
       {
-        "name": "RECUPERA",
-        "sucumbencias": 0.0,
-        "glosas": 7958.35,
-        "diferenca": -7958.35,
-        "glosasPercent": null
+        "name": "Santander",
+        "sucumbencias": 7651.14,
+        "glosas": 6752.75,
+        "diferenca": 898.39,
+        "glosasPercent": 0.882580896441576
       },
       {
         "name": "Daycoval",
@@ -675,6 +675,13 @@
         "glosasPercent": null
       },
       {
+        "name": "Claro",
+        "sucumbencias": 16056.91,
+        "glosas": 1444.12,
+        "diferenca": 14612.79,
+        "glosasPercent": 0.08993760318766188
+      },
+      {
         "name": "SANEAMENTO - BRK",
         "sucumbencias": 0.0,
         "glosas": 420.0,
@@ -682,25 +689,18 @@
         "glosasPercent": null
       },
       {
-        "name": "Claro",
-        "sucumbencias": 16056.91,
-        "glosas": 238.52,
-        "diferenca": 15818.39,
-        "glosasPercent": 0.014854663817633656
-      },
-      {
-        "name": "Santander",
-        "sucumbencias": 7651.14,
-        "glosas": 0.0,
-        "diferenca": 7651.14,
-        "glosasPercent": 0.0
-      },
-      {
         "name": "Mercado Livre",
         "sucumbencias": 2922.02,
         "glosas": 0.0,
         "diferenca": 2922.02,
         "glosasPercent": 0.0
+      },
+      {
+        "name": "UOL PagSeguro",
+        "sucumbencias": -187.5,
+        "glosas": 0.0,
+        "diferenca": -187.5,
+        "glosasPercent": -0.0
       }
     ],
     "sources": {

@@ -189,14 +189,14 @@
     "value": "29,4%",
     "subtitle": "",
     "operational": 0.2936919842826179,
-    "net": 0.08705949520325929,
+    "net": 0.08705949520325931,
     "source": "PERFORMANCE.XLSX",
     "logic": "Linha consolidada 1 - TODOS; MO=(I-M-Q)/I; ML=Z/I",
     "totals": {
       "realRevenue": 8399538.319999998,
       "realExpenses": 4307332.713831312,
       "taxes": 1625328.52991,
-      "realResult": 731259.5660796324
+      "realResult": 731259.5660796326
     },
     "metrics": [
       {
@@ -598,8 +598,8 @@
       },
       {
         "position": 2,
-        "name": "RECUPERA",
-        "value": 10793.33
+        "name": "SANTANDER",
+        "value": 10243.33
       },
       {
         "position": 3,
@@ -609,12 +609,12 @@
       {
         "position": 4,
         "name": "VIVO",
-        "value": 1530.0
+        "value": 1830.0
       },
       {
         "position": 5,
-        "name": "CLARO",
-        "value": 238.52
+        "name": "SANEAMENTO - BRK",
+        "value": 250.0
       }
     ]
   },
@@ -654,11 +654,11 @@
         "glosasPercent": null
       },
       {
-        "name": "RECUPERA",
-        "sucumbencias": 0.0,
-        "glosas": 10793.33,
-        "diferenca": -10793.33,
-        "glosasPercent": null
+        "name": "Santander",
+        "sucumbencias": 7651.14,
+        "glosas": 10243.33,
+        "diferenca": -2592.19,
+        "glosasPercent": 1.3387978784860817
       },
       {
         "name": "Daycoval",
@@ -670,8 +670,15 @@
       {
         "name": "Vivo",
         "sucumbencias": 0.0,
-        "glosas": 1530.0,
-        "diferenca": -1530.0,
+        "glosas": 1830.0,
+        "diferenca": -1830.0,
+        "glosasPercent": null
+      },
+      {
+        "name": "SANEAMENTO - BRK",
+        "sucumbencias": 0.0,
+        "glosas": 250.0,
+        "diferenca": -250.0,
         "glosasPercent": null
       },
       {
@@ -680,13 +687,6 @@
         "glosas": 238.52,
         "diferenca": 15818.39,
         "glosasPercent": 0.014854663817633656
-      },
-      {
-        "name": "Santander",
-        "sucumbencias": 7651.14,
-        "glosas": 0.0,
-        "diferenca": 7651.14,
-        "glosasPercent": 0.0
       },
       {
         "name": "Mercado Livre",

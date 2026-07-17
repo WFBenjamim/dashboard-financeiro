@@ -179,7 +179,7 @@ export default function Dashboard() {
   const [evolutionMonthly, setEvolutionMonthly] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const year = 2026;
-  const currentMonth = 5;
+  const currentMonth = 6;
   const [months, setMonths] = useState<number[]>([]);
 
   useEffect(() => {

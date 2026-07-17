@@ -89,14 +89,14 @@
     "total": 4131549.8988009407,
     "correspondentes": 266037.779999,
     "outras_despesas": 309890.58392997656,
-    "impostos": 812673.69,
+    "impostos": 812673.6900000001,
     "socios_servico": 1960480.14,
     "socios": 1960480.14,
     "clt": 564633.24,
     "estagiarios": 0.0,
     "total_pessoas_custo": 2525113.38,
     "official_total_costs": 4131549.8988009407,
-    "detailed_cost_total": 3913715.4339289763,
+    "detailed_cost_total": 3913715.4339289768,
     "cost_total_source": "INFORMAÇÕES GERENCIAIS.xlsx / TOTAIS  20 E 21 / CUSTOS E DESPESAS",
     "cost_total_warning": "",
     "cost_total_anterior": 3439636.9320489997,
@@ -174,7 +174,7 @@
     "pct_vs_orcado": 0.952869886014219,
     "resultado_2025": 108573.94795100112,
     "variacao_2025": 4.635531660644728,
-    "sem_sucumbencia": 375326.1011990595,
+    "sem_sucumbencia": 375326.1011990594,
     "resultado_orcado_anual": 642135.8573503383,
     "averagePeriod": 611871.9211990596,
     "previousYearPeriod": 108573.94795100112,
@@ -186,27 +186,27 @@
   "margins": {
     "icon": "📈",
     "title": "Margens",
-    "value": "33,8%",
+    "value": "34,7%",
     "subtitle": "",
-    "operational": 0.33799611205513763,
-    "net": 0.12036072980581186,
+    "operational": 0.3466291644635037,
+    "net": 0.12899378221417804,
     "source": "PERFORMANCE.XLSX",
     "logic": "Linha consolidada 1 - TODOS; MO=(I-M-Q)/I; ML=Z/I",
     "totals": {
-      "realRevenue": 4656971.15,
-      "realExpenses": 2285645.905559198,
-      "taxes": 797287.1017878592,
-      "realResult": 560516.446298611
+      "realRevenue": 4743421.82,
+      "realExpenses": 2286539.787835448,
+      "taxes": 812673.69,
+      "realResult": 611871.92119906
     },
     "metrics": [
       {
         "label": "Margem Operacional",
-        "value": "33,8%",
+        "value": "34,7%",
         "caption": ""
       },
       {
         "label": "Margem Líquida",
-        "value": "12,0%",
+        "value": "12,9%",
         "caption": ""
       }
     ]
@@ -492,7 +492,7 @@
     "warnings": [],
     "zeroOfficialMonths": [],
     "officialCostSource": "INFORMAÇÕES GERENCIAIS.xlsx / TOTAIS  20 E 21 / CUSTOS E DESPESAS",
-    "detailedCostTotal": 3913715.4339289763,
+    "detailedCostTotal": 3913715.4339289768,
     "peopleCostSource": "Custos OMIE.xlsx"
   },
   "cost_subtitle": "+20,1% vs 2025",
@@ -562,11 +562,16 @@
     "items": [
       {
         "position": 1,
-        "name": "RECUPERA",
-        "value": 7958.35
+        "name": "SANTANDER",
+        "value": 6752.75
       },
       {
         "position": 2,
+        "name": "CLARO",
+        "value": 1205.6
+      },
+      {
+        "position": 3,
         "name": "SANEAMENTO - BRK",
         "value": 420.0
       }
@@ -594,10 +599,17 @@
     ],
     "ranking": [
       {
-        "name": "RECUPERA",
+        "name": "Santander",
         "sucumbencias": 0.0,
-        "glosas": 7958.35,
-        "diferenca": -7958.35,
+        "glosas": 6752.75,
+        "diferenca": -6752.75,
+        "glosasPercent": null
+      },
+      {
+        "name": "Claro",
+        "sucumbencias": 0.0,
+        "glosas": 1205.6,
+        "diferenca": -1205.6,
         "glosasPercent": null
       },
       {

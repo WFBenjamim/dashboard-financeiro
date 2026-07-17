@@ -189,14 +189,14 @@
     "value": "20,8%",
     "subtitle": "",
     "operational": 0.2077017696105006,
-    "net": -0.01226900682256199,
+    "net": -0.012269006822561926,
     "source": "PERFORMANCE.XLSX",
     "logic": "Linha consolidada 1 - TODOS; MO=(I-M-Q)/I; ML=Z/I",
     "totals": {
       "realRevenue": 3623744.09,
       "realExpenses": 2075571.2699824069,
       "taxes": 795514.7599089999,
-      "realResult": -44459.74096342869
+      "realResult": -44459.740963428456
     },
     "metrics": [
       {

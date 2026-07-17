@@ -88,7 +88,7 @@
     "title": "Estrutura de Custos",
     "total": 11703541.093673369,
     "correspondentes": 516175.36256100005,
-    "outras_despesas": 918583.3309496343,
+    "outras_despesas": 918583.3309496342,
     "impostos": 2442301.0442939997,
     "socios_servico": 5745127.75,
     "socios": 5745127.75,
@@ -174,7 +174,7 @@
     "pct_vs_orcado": 1.4073075281600436,
     "resultado_2025": 1416937.595621266,
     "variacao_2025": -0.04046801035686597,
-    "sem_sucumbencia": 221060.8403266319,
+    "sem_sucumbencia": 221060.84032663156,
     "resultado_orcado_anual": 966097.9729883275,
     "averagePeriod": 453198.9834422106,
     "previousYearPeriod": 1416937.595621266,
@@ -186,27 +186,27 @@
   "margins": {
     "icon": "📈",
     "title": "Margens",
-    "value": "31,8%",
+    "value": "32,1%",
     "subtitle": "",
-    "operational": 0.31802910735830564,
-    "net": 0.10081474888600729,
+    "operational": 0.32129603801271733,
+    "net": 0.10407889324301585,
     "source": "PERFORMANCE.XLSX",
     "logic": "Linha consolidada 1 - TODOS; MO=(I-M-Q)/I; ML=Z/I",
     "totals": {
-      "realRevenue": 12976687.374,
-      "realExpenses": 6422808.619452974,
-      "taxes": 2426914.4525260106,
-      "realResult": 1308241.4789820313
+      "realRevenue": 13063138.044,
+      "realExpenses": 6423702.501729224,
+      "taxes": 2442301.0447203773,
+      "realResult": 1359596.9499002548
     },
     "metrics": [
       {
         "label": "Margem Operacional",
-        "value": "31,8%",
+        "value": "32,1%",
         "caption": ""
       },
       {
         "label": "Margem Líquida",
-        "value": "10,1%",
+        "value": "10,4%",
         "caption": ""
       }
     ]
@@ -604,28 +604,28 @@
     "items": [
       {
         "position": 1,
-        "name": "RECUPERA",
-        "value": 39266.51
-      },
-      {
-        "position": 2,
         "name": "PATRIMÔNIO",
         "value": 18000.0
       },
       {
+        "position": 2,
+        "name": "SANEAMENTO - RIO+",
+        "value": 12000.0
+      },
+      {
         "position": 3,
-        "name": "DAYCOVAL",
-        "value": 3782.05
+        "name": "SANEAMENTO - BRK",
+        "value": 10920.0
       },
       {
         "position": 4,
-        "name": "VIVO",
-        "value": 1530.0
+        "name": "SANTANDER",
+        "value": 9662.75
       },
       {
         "position": 5,
-        "name": "SANEAMENTO - BRK",
-        "value": 420.0
+        "name": "CLARO",
+        "value": 7042.28
       }
     ]
   },
@@ -665,18 +665,39 @@
     ],
     "ranking": [
       {
-        "name": "RECUPERA",
-        "sucumbencias": 0.0,
-        "glosas": 39266.51,
-        "diferenca": -39266.51,
-        "glosasPercent": null
-      },
-      {
         "name": "PATRIMÔNIO",
         "sucumbencias": 0.0,
         "glosas": 18000.0,
         "diferenca": -18000.0,
         "glosasPercent": null
+      },
+      {
+        "name": "SANEAMENTO - RIO+",
+        "sucumbencias": 0.0,
+        "glosas": 12000.0,
+        "diferenca": -12000.0,
+        "glosasPercent": null
+      },
+      {
+        "name": "SANEAMENTO - BRK",
+        "sucumbencias": 0.0,
+        "glosas": 10920.0,
+        "diferenca": -10920.0,
+        "glosasPercent": null
+      },
+      {
+        "name": "Santander",
+        "sucumbencias": 7651.14,
+        "glosas": 9662.75,
+        "diferenca": -2011.61,
+        "glosasPercent": 1.2629163758603292
+      },
+      {
+        "name": "Claro",
+        "sucumbencias": 16056.91,
+        "glosas": 7042.28,
+        "diferenca": 9014.63,
+        "glosasPercent": 0.4385825168105196
       },
       {
         "name": "Daycoval",
@@ -693,32 +714,11 @@
         "glosasPercent": null
       },
       {
-        "name": "SANEAMENTO - BRK",
+        "name": "Nio",
         "sucumbencias": 0.0,
-        "glosas": 420.0,
-        "diferenca": -420.0,
+        "glosas": 300.0,
+        "diferenca": -300.0,
         "glosasPercent": null
-      },
-      {
-        "name": "Claro",
-        "sucumbencias": 16056.91,
-        "glosas": 238.52,
-        "diferenca": 15818.39,
-        "glosasPercent": 0.014854663817633656
-      },
-      {
-        "name": "Santander",
-        "sucumbencias": 7651.14,
-        "glosas": 0.0,
-        "diferenca": 7651.14,
-        "glosasPercent": 0.0
-      },
-      {
-        "name": "Mercado Livre",
-        "sucumbencias": 2922.02,
-        "glosas": 0.0,
-        "diferenca": 2922.02,
-        "glosasPercent": 0.0
       }
     ],
     "sources": {

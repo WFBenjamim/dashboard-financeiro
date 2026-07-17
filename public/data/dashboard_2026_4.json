@@ -188,14 +188,14 @@
     "title": "Margens",
     "value": "35,9%",
     "subtitle": "",
-    "operational": 0.3589390441870218,
+    "operational": 0.35893904418702177,
     "net": 0.16242728846444904,
     "source": "PERFORMANCE.XLSX",
     "logic": "Linha consolidada 1 - TODOS; MO=(I-M-Q)/I; ML=Z/I",
     "totals": {
       "realRevenue": 4775794.229999999,
       "realExpenses": 2231761.443848905,
-      "taxes": 829813.770001,
+      "taxes": 829813.7700010001,
       "realResult": 775719.307043061
     },
     "metrics": [
@@ -567,8 +567,18 @@
     "items": [
       {
         "position": 1,
-        "name": "RECUPERA",
-        "value": 10793.33
+        "name": "SANTANDER",
+        "value": 10243.33
+      },
+      {
+        "position": 2,
+        "name": "VIVO",
+        "value": 300.0
+      },
+      {
+        "position": 3,
+        "name": "SANEAMENTO - BRK",
+        "value": 250.0
       }
     ]
   },
@@ -594,10 +604,24 @@
     ],
     "ranking": [
       {
-        "name": "RECUPERA",
+        "name": "Santander",
         "sucumbencias": 0.0,
-        "glosas": 10793.33,
-        "diferenca": -10793.33,
+        "glosas": 10243.33,
+        "diferenca": -10243.33,
+        "glosasPercent": null
+      },
+      {
+        "name": "Vivo",
+        "sucumbencias": 0.0,
+        "glosas": 300.0,
+        "diferenca": -300.0,
+        "glosasPercent": null
+      },
+      {
+        "name": "SANEAMENTO - BRK",
+        "sucumbencias": 0.0,
+        "glosas": 250.0,
+        "diferenca": -250.0,
         "glosasPercent": null
       },
       {

@@ -1,0 +1,775 @@
+{
+  "header": {
+    "title": "Encontro de Divulgação de Resultados – Gondim | 2026 (EDR)",
+    "subtitle": "Período acumulado: jan, fev, abr e jun/26",
+    "band": "DATA DE DIVULGAÇÃO: 22 DE MAIO DE 2026"
+  },
+  "revenue_mix": {
+    "icon": "💰",
+    "title": "Estrutura de Receita",
+    "value": 17790723.07,
+    "contratual": 16371890.25,
+    "sucumbencia": 1325654.51,
+    "outras": 93178.31,
+    "outras_receitas": 93178.31,
+    "pct_contratual": 0.9202487265741021,
+    "pct_sucumbencia": 0.07451380726820565,
+    "pct_outras": 0.0052374661576922625,
+    "pct_orcado": 1.0626076716201105,
+    "receita_orcada": 16742513.295500001,
+    "receita_orcada_periodo": 16742513.295500001,
+    "meta_periodo_receita": 16742513.295500001,
+    "meta_periodo_meses": 4,
+    "receita_2025_periodo": 16733051.98997,
+    "variacao_yoy": 0.06320849780804966,
+    "subtitle": "",
+    "comparison_pct": 6.3208497808049655,
+    "rows": [
+      {
+        "label": "Contratuais",
+        "value": "R$ 16,37 M",
+        "share": "92,0%"
+      },
+      {
+        "label": "Sucumbência",
+        "value": "R$ 1,33 M",
+        "share": "7,5%"
+      },
+      {
+        "label": "Outras Receitas",
+        "value": "R$ 93,2 mil",
+        "share": "0,5%"
+      }
+    ],
+    "expansions": [
+      {
+        "title": "Contratuais",
+        "items": [
+          {
+            "name": "SANTANDER",
+            "value": "R$ 2,41 M"
+          },
+          {
+            "name": "SANEAMENTO",
+            "value": "R$ 2,39 M"
+          },
+          {
+            "name": "CLARO",
+            "value": "R$ 1,63 M"
+          },
+          {
+            "name": "MERCADO LIVRE",
+            "value": "R$ 1,61 M"
+          },
+          {
+            "name": "UOL",
+            "value": "R$ 1,36 M"
+          },
+          {
+            "name": "MRS",
+            "value": "R$ 1,28 M"
+          }
+        ]
+      },
+      {
+        "title": "Sucumbência",
+        "items": []
+      }
+    ],
+    "receita_orcada_anual": 16742513.295500001,
+    "averagePeriod": 4447680.7675,
+    "previousYearPeriod": 16733051.98997,
+    "media_periodo": 4447680.7675,
+    "faturamento_2025": 16733051.98997,
+    "variacao_2025": 0.06320849780804966
+  },
+  "cost_structure": {
+    "icon": "📉",
+    "title": "Estrutura de Custos",
+    "total": 16251442.310302433,
+    "correspondentes": 790356.641428,
+    "outras_despesas": 1728354.6276756555,
+    "impostos": 3362746.69991,
+    "socios_servico": 7412053.29,
+    "socios": 7412053.29,
+    "clt": 2408939.55,
+    "estagiarios": 0.0,
+    "total_pessoas_custo": 9820992.84,
+    "official_total_costs": 16251442.310302433,
+    "detailed_cost_total": 15702450.809013655,
+    "cost_total_source": "INFORMAÇÕES GERENCIAIS.xlsx / TOTAIS  20 E 21 / CUSTOS E DESPESAS",
+    "cost_total_warning": "",
+    "cost_total_anterior": 13894797.636937227,
+    "variacao_custos_yoy": 0.16960626091454695,
+    "custo_orcado_periodo": 16199446.895375688,
+    "meta_periodo_custos": 16199446.895375688,
+    "pct_orcado_custos": 0.9968005661322883,
+    "value": "R$ 16,25 M",
+    "subtitle": "+17,0% vs 2025",
+    "highlight": {
+      "label": "Sócios",
+      "value": "45,6%",
+      "caption": "principal grupo de custo"
+    },
+    "items": [
+      {
+        "label": "Impostos",
+        "value": "R$ 3,36 M",
+        "share": "20,7%",
+        "details": []
+      },
+      {
+        "label": "Sócios",
+        "value": "R$ 7,41 M",
+        "share": "45,6%",
+        "details": []
+      },
+      {
+        "label": "CLT",
+        "value": "R$ 2,41 M",
+        "share": "14,8%",
+        "details": []
+      },
+      {
+        "label": "Estagiários",
+        "value": "R$ 0",
+        "share": "0,0%",
+        "details": []
+      },
+      {
+        "label": "Correspondentes",
+        "value": "R$ 790,4 mil",
+        "share": "4,9%",
+        "details": []
+      },
+      {
+        "label": "Outras Despesas",
+        "value": "R$ 1,73 M",
+        "share": "10,6%",
+        "details": []
+      }
+    ],
+    "socios_capital": 0.0,
+    "total_folha_val": 0.0,
+    "people_costs_source": "Custos OMIE.xlsx",
+    "folha_months_used": [],
+    "folha_snapshot_month": null,
+    "cost_subtitle": "+17,0% vs 2025",
+    "custo_orcado_anual": 16199446.895375688,
+    "meta_periodo_meses": 4,
+    "averagePeriod": 4062860.577575608,
+    "previousYearPeriod": 13894797.636937227,
+    "media_periodo": 4062860.577575608,
+    "despesas_2025": 13894797.636937227,
+    "variacao_2025": 0.16960626091454695
+  },
+  "net_result": {
+    "icon": "📊",
+    "title": "Resultado Líquido",
+    "value": 1539280.7596975658,
+    "subtitle": "",
+    "resultado_orcado": 543066.4001243124,
+    "meta_periodo_resultado": 543066.4001243124,
+    "meta_periodo_meses": 4,
+    "pct_vs_orcado": 2.834424592177332,
+    "resultado_2025": 2838254.3530327748,
+    "variacao_2025": -0.45766637931769927,
+    "sem_sucumbencia": 213626.24969756545,
+    "resultado_orcado_anual": 543066.4001243124,
+    "averagePeriod": 384820.18992439145,
+    "previousYearPeriod": 2838254.3530327748,
+    "media_periodo": 384820.18992439145,
+    "periodo_2025": 2838254.3530327748,
+    "pct_ano": 0.0,
+    "resultado_operacional": 4902027.459607568
+  },
+  "margins": {
+    "icon": "📈",
+    "title": "Margens",
+    "value": "30,1%",
+    "subtitle": "",
+    "operational": 0.3008494070052052,
+    "net": 0.08652153971014187,
+    "source": "PERFORMANCE.XLSX",
+    "logic": "Linha consolidada 1 - TODOS; MO=(I-M-Q)/I; ML=Z/I",
+    "totals": {
+      "realRevenue": 17790723.069999997,
+      "realExpenses": 9075647.877162246,
+      "taxes": 3362746.707034427,
+      "realResult": 1539280.7525731418
+    },
+    "metrics": [
+      {
+        "label": "Margem Operacional",
+        "value": "30,1%",
+        "caption": ""
+      },
+      {
+        "label": "Margem Líquida",
+        "value": "8,7%",
+        "caption": ""
+      }
+    ]
+  },
+  "people": {
+    "icon": "👥",
+    "title": "Pessoas",
+    "value": "602",
+    "total": 602,
+    "socios": {
+      "qtd": 437,
+      "pct": 0.7259136212624585
+    },
+    "clt": {
+      "qtd": 126,
+      "pct": 0.20930232558139536
+    },
+    "estagiarios": {
+      "qtd": 36,
+      "pct": 0.059800664451827246
+    },
+    "subtitle": "",
+    "rows": [
+      {
+        "label": "Sócios de Serviço",
+        "value": "437",
+        "share": "72,6%",
+        "costValue": "R$ 7,41 M",
+        "costSource": "Custos OMIE.xlsx"
+      },
+      {
+        "label": "CLT",
+        "value": "126",
+        "share": "20,9%",
+        "costValue": "R$ 2,41 M",
+        "costSource": "Custos OMIE.xlsx"
+      },
+      {
+        "label": "Estagiários",
+        "value": "36",
+        "share": "6,0%",
+        "costValue": "",
+        "costSource": ""
+      }
+    ]
+  },
+  "top_clients": {
+    "icon": "🏆",
+    "title": "Top 5 Clientes",
+    "subtitle": "Faturamento em jan, fev, abr e jun/26",
+    "ranking": [
+      {
+        "name": "SANTANDER",
+        "value": "R$ 2,41 M"
+      },
+      {
+        "name": "SANEAMENTO",
+        "value": "R$ 2,39 M"
+      },
+      {
+        "name": "CLARO",
+        "value": "R$ 1,63 M"
+      },
+      {
+        "name": "MERCADO LIVRE",
+        "value": "R$ 1,61 M"
+      },
+      {
+        "name": "UOL",
+        "value": "R$ 1,36 M"
+      },
+      {
+        "name": "Outros",
+        "value": "R$ 8,25 M"
+      }
+    ]
+  },
+  "insights": [
+    {
+      "tone": "red",
+      "title": "Efeito tesoura",
+      "description": "No período selecionado, receita e custos preservam resultado operacional de R$ 1,54 M."
+    },
+    {
+      "tone": "yellow",
+      "title": "Pessoas representam 60,4% dos custos",
+      "description": "O gasto consolidado com Sócios, CLT e Estagiários soma R$ 9,82 M, representando 60,4% do total de custos do período."
+    },
+    {
+      "tone": "green",
+      "title": "Estrutura de pessoas",
+      "description": "A base segue concentrada em pessoas, com Sócios de Serviço 72,6%, CLT 20,9%, Estagiários 6,0%, o que reforça uma estrutura mais rígida no curto prazo."
+    },
+    {
+      "tone": "blue",
+      "title": "Top 5 clientes",
+      "description": "SANTANDER lidera os cinco clientes exibidos, que somam R$ 8,29 M no período selecionado e mantêm concentração relevante na frente comercial."
+    }
+  ],
+  "technical_analysis": {
+    "title": "Análise técnica",
+    "paragraphs": [
+      "No período selecionado, a receita somou R$ 17,79 M e a estrutura de custos atingiu R$ 16,25 M, produzindo resultado operacional positivo de R$ 1,54 M. O ritmo entre receita e despesas segue relativamente equilibrado.",
+      "A comparação interanual de período acumulado: jan, fev, abr e jun/26 deve ser lida com cautela, mas já evidencia um descolamento relevante entre receita e custos. Como o painel observa um recorte parcial do ano, o efeito de base, sazonalidade e timing de reconhecimento das linhas pode ampliar ou suavizar a fotografia do período.",
+      "Mesmo sem considerar a sucumbência, o resultado líquido permaneceria em R$ 213,6 mil, sugerindo que a geração recorrente ainda se sustenta com menor dependência de receitas extraordinárias.",
+      "O principal vetor de rigidez está na estrutura de pessoas: o desembolso com essa frente responde por 60,4% do total de custos, patamar relevante. Em paralelo, a linha de Sócios concentra 45,6%, o que reforça a necessidade de disciplina sobre capacidade, alocação e produtividade.",
+      "Na camada complementar, correspondentes somam R$ 790,4 mil (4,9%) e outras despesas atingem R$ 1,73 M (10,6%). Juntas, essas rubricas representam R$ 2,52 M e 15,5% dos custos, oferecendo espaço para ajustes táticos sem alterar a espinha dorsal da operação.",
+      "Na frente comercial, o faturamento do período selecionado se concentra nos cinco clientes exibidos: SANTANDER, CLARO, MERCADO LIVRE, UOL, MRS, que juntos somam R$ 8,29 M. A liderança de SANTANDER, com 29,1% desse bloco, sinaliza um nível relevante de concentração comercial e mantém a diversificação da carteira como agenda prioritária."
+    ],
+    "meta": {
+      "mode": "template",
+      "provider": null
+    }
+  },
+  "budget": {
+    "revenue": 16742513.295500001,
+    "costs": 16199446.895375688,
+    "result": 543066.4001243124,
+    "source": "INFORMAÇÕES GERENCIAIS.xlsx / Resultado Orçado",
+    "logic": "Soma mensal da aba Resultado Orçado: Receita Mensal, Custos Mensal e Resultado Mensal",
+    "months": [
+      1,
+      2,
+      4,
+      6
+    ],
+    "validation": {
+      "requestedMonths": [
+        1,
+        2,
+        4,
+        6
+      ],
+      "foundMonths": [
+        1,
+        2,
+        4,
+        6
+      ],
+      "missingMonths": []
+    },
+    "error": null
+  },
+  "peopleCosts": {
+    "partners": 7412053.29,
+    "clt": 2408939.55,
+    "total": 9820992.84,
+    "breakdown": [
+      {
+        "name": "Sócios de Serviço e Capital",
+        "value": 7412053.29
+      },
+      {
+        "name": "Celetistas",
+        "value": 2408939.55
+      }
+    ],
+    "source": "Custos OMIE.xlsx",
+    "months": [
+      1,
+      2,
+      4,
+      6
+    ],
+    "available": true,
+    "error": null
+  },
+  "costDistribution": {
+    "source": "Custos OMIE.xlsx",
+    "logic": "Soma da coluna Valor por Grupo Resumo Final; percentuais recalculados sobre o total do periodo",
+    "periodLabel": "jan, fev, abr e jun/26",
+    "months": [
+      1,
+      2,
+      4,
+      6
+    ],
+    "total": 16251442.299999999,
+    "items": [
+      {
+        "name": "Sócios de Serviço e Capital",
+        "value": 7412053.29,
+        "percent": 0.45608587552872154
+      },
+      {
+        "name": "Impostos",
+        "value": 3407925.84,
+        "percent": 0.20969990091279467
+      },
+      {
+        "name": "Celetistas",
+        "value": 2408939.55,
+        "percent": 0.14822927747157555
+      },
+      {
+        "name": "Correspondentes",
+        "value": 796636.8,
+        "percent": 0.049019452261169466
+      },
+      {
+        "name": "Custo Operacional - Processos Trabalhistas",
+        "value": 654470.45,
+        "percent": 0.04027153023827307
+      },
+      {
+        "name": "Custo  Operacional - Condenações de Clientes",
+        "value": 353953.65,
+        "percent": 0.021779829966230138
+      },
+      {
+        "name": "Despesas Administrativas - Despesas Gerais",
+        "value": 339571.22,
+        "percent": 0.020894835900195762
+      },
+      {
+        "name": "Despesas Administrativas - Localização / Ocupação",
+        "value": 267858.45999999996,
+        "percent": 0.016482134634905603
+      },
+      {
+        "name": "Outros",
+        "value": 610033.04,
+        "percent": 0.03753716308613421
+      }
+    ],
+    "rawItems": [
+      {
+        "name": "Sócios de Serviço e Capital",
+        "value": 7412053.29,
+        "percent": 0.45608587552872154
+      },
+      {
+        "name": "Impostos",
+        "value": 3407925.84,
+        "percent": 0.20969990091279467
+      },
+      {
+        "name": "Celetistas",
+        "value": 2408939.55,
+        "percent": 0.14822927747157555
+      },
+      {
+        "name": "Correspondentes",
+        "value": 796636.8,
+        "percent": 0.049019452261169466
+      },
+      {
+        "name": "Custo Operacional - Processos Trabalhistas",
+        "value": 654470.45,
+        "percent": 0.04027153023827307
+      },
+      {
+        "name": "Custo  Operacional - Condenações de Clientes",
+        "value": 353953.65,
+        "percent": 0.021779829966230138
+      },
+      {
+        "name": "Despesas Administrativas - Despesas Gerais",
+        "value": 339571.22,
+        "percent": 0.020894835900195762
+      },
+      {
+        "name": "Despesas Administrativas - Localização / Ocupação",
+        "value": 267858.45999999996,
+        "percent": 0.016482134634905603
+      },
+      {
+        "name": "Despesas com  Marketing",
+        "value": 217533.07,
+        "percent": 0.013385462409081072
+      },
+      {
+        "name": "Despesas Administrativas - Prestadores de Serviço",
+        "value": 168505.21,
+        "percent": 0.010368631096822711
+      },
+      {
+        "name": "Despesas Administrativas - Comunicação",
+        "value": 136311.75,
+        "percent": 0.008387670920752677
+      },
+      {
+        "name": "Despesas Administrativas - Consumo de Material",
+        "value": 46274.0,
+        "percent": 0.0028473780447166837
+      },
+      {
+        "name": "Despesas Administrativas - Equipamentos",
+        "value": 31461.5,
+        "percent": 0.0019359204813470619
+      },
+      {
+        "name": "Despesas Financeiras / Bancos",
+        "value": 9947.509999999995,
+        "percent": 0.0006121001334140044
+      }
+    ],
+    "available": true,
+    "error": null
+  },
+  "dataQuality": {
+    "hasSuspectRealData": false,
+    "warnings": [],
+    "zeroOfficialMonths": [],
+    "officialCostSource": "INFORMAÇÕES GERENCIAIS.xlsx / TOTAIS  20 E 21 / CUSTOS E DESPESAS",
+    "detailedCostTotal": 15702450.809013655,
+    "peopleCostSource": "Custos OMIE.xlsx"
+  },
+  "cost_subtitle": "+17,0% vs 2025",
+  "topSucumbencias": {
+    "title": "Top 5 Sucumbências",
+    "source": "Orçamento.xlsx",
+    "sheet": "Sucumbência",
+    "nameColumn": "Cabeçalho do bloco do cliente",
+    "valueColumns": "jan-dez na linha Sucumbência",
+    "periodFilterable": true,
+    "totalPeriod": 1324609.7,
+    "totalLabel": "Total de sucumbencia no periodo",
+    "items": [
+      {
+        "position": 1,
+        "name": "RECUPERA",
+        "value": 1054343.01
+      },
+      {
+        "position": 2,
+        "name": "Casos Estratégicos",
+        "value": 146961.2
+      },
+      {
+        "position": 3,
+        "name": "Imobiliário",
+        "value": 39455.09
+      },
+      {
+        "position": 4,
+        "name": "Claro",
+        "value": 34978.979999999996
+      },
+      {
+        "position": 5,
+        "name": "Santander",
+        "value": 21526.15
+      }
+    ]
+  },
+  "topGlosas": {
+    "title": "Top 5 Glosas",
+    "source": "INFORMAÇÕES GERENCIAIS.xlsx",
+    "sheet": "GLOSAS",
+    "nameColumn": "Data",
+    "valueColumns": [
+      "Jan/2026",
+      "Feb/2026",
+      "Apr/2026",
+      "Jun/2026"
+    ],
+    "periodFilterable": true,
+    "totalPeriod": 395689.21,
+    "totalLabel": "Total de glosas no periodo",
+    "recuperaBreakdown": {
+      "available": true,
+      "source": "Glosas - Condenações - 2026.xlsx",
+      "sheet": "Resumo",
+      "periodFilterable": true,
+      "items": [
+        {
+          "position": 1,
+          "name": "Resolução de Disputas",
+          "value": 333277.82
+        },
+        {
+          "position": 2,
+          "name": "Imobiliário",
+          "value": 18000.0
+        },
+        {
+          "position": 3,
+          "name": "Claro Contencioso",
+          "value": 16632.46
+        },
+        {
+          "position": 4,
+          "name": "Santander",
+          "value": 13692.02
+        },
+        {
+          "position": 5,
+          "name": "Daycoval",
+          "value": 10231.08
+        },
+        {
+          "position": 6,
+          "name": "Bradesco",
+          "value": 2195.83
+        },
+        {
+          "position": 7,
+          "name": "Vivo",
+          "value": 1830.0
+        },
+        {
+          "position": 8,
+          "name": "Saneamento",
+          "value": 250.0
+        }
+      ],
+      "total": 396109.21,
+      "message": ""
+    },
+    "items": [
+      {
+        "position": 1,
+        "name": "RESOLUÇÃO DE DISPUTAS",
+        "value": 333277.82
+      },
+      {
+        "position": 2,
+        "name": "PATRIMÔNIO",
+        "value": 18000.0
+      },
+      {
+        "position": 3,
+        "name": "CLARO",
+        "value": 16632.46
+      },
+      {
+        "position": 4,
+        "name": "SANTANDER",
+        "value": 13692.02
+      },
+      {
+        "position": 5,
+        "name": "DAYCOVAL",
+        "value": 10231.08
+      }
+    ]
+  },
+  "sucumbenciasGlosas": {
+    "title": "Balanço de Sucumbências x Glosas",
+    "periodFilterable": true,
+    "summary": {
+      "sucumbenciasTotal": 1324609.7,
+      "glosasTotal": 395689.21,
+      "diferenca": 928920.49,
+      "glosasPercent": 0.29872135920490395,
+      "okrGlosas": 0.005,
+      "okrAtingimento": 59.74427184098079
+    },
+    "monthly": [
+      {
+        "month": 1,
+        "label": "jan",
+        "sucumbencias": 429528.61,
+        "glosas": 9114.04,
+        "diferenca": 420414.57
+      },
+      {
+        "month": 2,
+        "label": "fev",
+        "sucumbencias": 410980.78,
+        "glosas": 23550.57,
+        "diferenca": 387430.21
+      },
+      {
+        "month": 4,
+        "label": "abr",
+        "sucumbencias": 258981.28,
+        "glosas": 10793.33,
+        "diferenca": 248187.95
+      },
+      {
+        "month": 6,
+        "label": "jun",
+        "sucumbencias": 225119.03,
+        "glosas": 352231.27,
+        "diferenca": -127112.24
+      }
+    ],
+    "ranking": [
+      {
+        "name": "RESOLUÇÃO DE DISPUTAS",
+        "sucumbencias": 0.0,
+        "glosas": 333277.82,
+        "diferenca": -333277.82,
+        "glosasPercent": null
+      },
+      {
+        "name": "PATRIMÔNIO",
+        "sucumbencias": 0.0,
+        "glosas": 18000.0,
+        "diferenca": -18000.0,
+        "glosasPercent": null
+      },
+      {
+        "name": "Claro",
+        "sucumbencias": 34978.98,
+        "glosas": 16632.46,
+        "diferenca": 18346.52,
+        "glosasPercent": 0.475498713798973
+      },
+      {
+        "name": "Santander",
+        "sucumbencias": 21526.15,
+        "glosas": 13692.02,
+        "diferenca": 7834.13,
+        "glosasPercent": 0.6360645075872834
+      },
+      {
+        "name": "Daycoval",
+        "sucumbencias": 0.0,
+        "glosas": 10231.08,
+        "diferenca": -10231.08,
+        "glosasPercent": null
+      },
+      {
+        "name": "Bradesco",
+        "sucumbencias": 0.0,
+        "glosas": 2195.83,
+        "diferenca": -2195.83,
+        "glosasPercent": null
+      },
+      {
+        "name": "Vivo",
+        "sucumbencias": 0.0,
+        "glosas": 1830.0,
+        "diferenca": -1830.0,
+        "glosasPercent": null
+      },
+      {
+        "name": "SANEAMENTO - BRK",
+        "sucumbencias": 0.0,
+        "glosas": -170.0,
+        "diferenca": 170.0,
+        "glosasPercent": null
+      }
+    ],
+    "sources": {
+      "sucumbencias": {
+        "source": "Orçamento.xlsx",
+        "sheet": "Sucumbência",
+        "nameColumn": "Cabeçalho do bloco do cliente",
+        "valueColumns": "jan-dez na linha Sucumbência",
+        "periodFilterable": true
+      },
+      "glosas": {
+        "source": "INFORMAÇÕES GERENCIAIS.xlsx",
+        "sheet": "GLOSAS",
+        "nameColumn": "Data",
+        "valueColumns": [
+          "Jan/2026",
+          "Feb/2026",
+          "Apr/2026",
+          "Jun/2026"
+        ],
+        "periodFilterable": true
+      },
+      "okr": {
+        "source": "INFORMAÇÕES GERENCIAIS.xlsx",
+        "sheet": "OKR",
+        "column": "OKR GLOSAS",
+        "value": 0.005
+      }
+    }
+  }
+}
