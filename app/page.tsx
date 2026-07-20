@@ -57,6 +57,17 @@ function normalizeKey(value: unknown): string {
     .trim();
 }
 
+function formatSucumbenciaDisplayName(value: unknown): string {
+  const text = cleanText(value);
+  const aliases: Record<string, string> = {
+    "casos estrategicos": "RESOLUÇÃO DE DISPUTAS",
+    imobiliario: "PATRIMÔNIO",
+    "valor legal": "RECUPERA",
+  };
+
+  return aliases[normalizeKey(text)] || text.toUpperCase();
+}
+
 function sortMonths(months: number[]) {
   return [...months].sort((a, b) => a - b);
 }
@@ -238,7 +249,7 @@ export default function Dashboard() {
     ? data.net_result.resultado_orcado / Math.max(effectiveMonths.length, 1)
     : 0;
   const resultTrendData = evolutionMonthly
-    .filter((item) => item?.year === year && effectiveMonths.includes(Number(item?.month_num)))
+    .filter((item) => item?.year === year && Number(item?.month_num) <= currentMonth)
     .sort((a, b) => Number(a.month_num || 0) - Number(b.month_num || 0))
     .map((item) => ({
       label: cleanText(item.month),
@@ -290,9 +301,8 @@ function Hero({ header }: { header: any }) {
     <section className="gd-hero">
       <div className="gd-hero__inner">
         <h1>{cleanText(header?.title || "Encontro de Divulgação de Resultados – Gondim | 2026 (EDR)")}</h1>
-        <p className="gd-hero__subtitle">{cleanText(header?.subtitle || "Período acumulado")}</p>
       </div>
-      <div className="gd-hero__band">DATA DE DIVULGAÇÃO: 22 DE JUNHO DE 2026</div>
+      <div className="gd-hero__band">DATA DE DIVULGAÇÃO: 20 DE JULHO DE 2026</div>
     </section>
   );
 }
@@ -714,6 +724,7 @@ function RankingCard({ data, title, tone }: { data?: any; title: string; tone: "
   const items = Array.isArray(data?.items) ? data.items.slice(0, 5) : [];
   const hasTotalPeriod = isFiniteNumber(data?.totalPeriod);
   const isGlosasCard = normalizeKey(title).includes("glosas");
+  const isSucumbenciasCard = normalizeKey(title).includes("sucumbencias");
   const recuperaItem = items.find((item: any) => normalizeKey(item?.name) === "recupera");
   const canShowRecuperaDetails = isGlosasCard && Boolean(recuperaItem);
 
@@ -731,12 +742,13 @@ function RankingCard({ data, title, tone }: { data?: any; title: string; tone: "
           {items.length > 0 ? (
             items.map((item: any, index: number) => {
               const isRecupera = canShowRecuperaDetails && normalizeKey(item?.name) === "recupera";
+              const displayName = isSucumbenciasCard ? formatSucumbenciaDisplayName(item.name) : cleanText(item.name);
 
               return (
                 <div className="gd-ranking-item" key={`${cleanText(item.name)}-${index}`}>
                   <span className="gd-ranking-item__badge">{Number(item.position || index + 1)}</span>
-                  <span className="gd-ranking-item__name" title={cleanText(item.name)}>
-                    {cleanText(item.name)}
+                  <span className="gd-ranking-item__name" title={displayName}>
+                    {displayName}
                     {isRecupera && (
                       <button
                         className="gd-ranking-detail-button"
@@ -829,7 +841,6 @@ function SucumbenciasGlosasBalance({ data }: { data?: any }) {
 
   const summary = data.summary || {};
   const monthly = Array.isArray(data.monthly) ? data.monthly : [];
-  const hasOkr = isFiniteNumber(summary.okrGlosas);
 
   return (
     <section className="gd-balance-section" aria-label="Balanço de Sucumbências x Glosas">
@@ -845,9 +856,6 @@ function SucumbenciasGlosasBalance({ data }: { data?: any }) {
         <BalanceMetric label="Total de Sucumbências" value={formatCurrency(Number(summary.sucumbenciasTotal || 0))} tone="positive" />
         <BalanceMetric label="Total de Glosas" value={formatCurrency(Number(summary.glosasTotal || 0))} tone="negative" />
         <BalanceMetric label="Diferença líquida" value={formatCurrency(Number(summary.diferenca || 0))} tone={Number(summary.diferenca || 0) >= 0 ? "positive" : "negative"} />
-        <BalanceMetric label="% Glosas / Sucumbências" value={formatPercentMetric(summary.glosasPercent)} tone="warning" />
-        {hasOkr && <BalanceMetric label="OKR Glosas" value={formatPercentMetric(summary.okrGlosas)} tone="neutral" />}
-        {hasOkr && <BalanceMetric label="% Atingimento OKR" value={formatPercentMetric(summary.okrAtingimento)} tone={Number(summary.okrAtingimento || 0) <= 1 ? "positive" : "negative"} />}
       </div>
 
       <div className="gd-balance-content gd-balance-content--chart-only">

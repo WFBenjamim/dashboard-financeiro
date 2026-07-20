@@ -203,7 +203,7 @@ button {
 .gd-logo {
   position: relative;
   z-index: 1;
-  width: min(220px, 38vw);
+  width: min(250px, 42vw);
   height: auto;
   display: block;
   object-fit: contain;
@@ -1048,7 +1048,7 @@ button {
 
 .gd-balance-metrics {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.65rem;
 }
 
