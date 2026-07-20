@@ -596,7 +596,7 @@ button {
 }
 
 .gd-card--orange .gd-result-mini__value--red {
-  color: #c93636 !important;
+  color: #d15e5e !important;
 }
 
 .gd-card--orange .gd-result-mini__value--green {
@@ -605,7 +605,7 @@ button {
 
 .gd-card--gray .gd-result-mini__value--red,
 .gd-card--orange .gd-result-mini__value--red {
-  color: #c93636 !important;
+  color: #d15e5e !important;
 }
 
 .gd-card--gray .gd-result-mini__value--green,
