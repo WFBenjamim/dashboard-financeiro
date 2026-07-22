@@ -3520,18 +3520,25 @@ button {
 
   html,
   body {
-    min-width: 1180px;
+    width: 100%;
+    min-width: 100%;
+    height: auto;
+    min-height: 100dvh;
     overflow-x: auto;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
 
   .gd-app {
+    box-sizing: border-box;
     width: 1180px;
     min-width: 1180px;
     max-width: none;
-    padding: 0.7rem 0 1.6rem;
-    overflow-x: visible;
+    min-height: 100dvh;
+    padding: 0.7rem max(0.7rem, env(safe-area-inset-right)) 1.6rem max(0.7rem, env(safe-area-inset-left));
+    overflow-x: auto;
+    overflow-y: visible;
+    -webkit-overflow-scrolling: touch;
   }
 
   .gd-shell {
@@ -3539,6 +3546,7 @@ button {
     min-width: 1120px;
     max-width: none;
     gap: 0.8rem;
+    overflow: visible;
   }
 
   .gd-logo-wrap {
@@ -3627,6 +3635,7 @@ button {
   .gd-contractual-ranking__row em,
   .gd-revenue-secondary__item em,
   .gd-result-mini strong,
+  .gd-result-mini [class*="gd-result-mini__value"],
   .gd-balance-metric strong {
     flex-shrink: 0;
     white-space: nowrap;
@@ -3637,6 +3646,42 @@ button {
   .gd-ranking-item,
   .gd-revenue-secondary__item {
     gap: 0.85rem;
+  }
+}
+
+@supports (-webkit-touch-callout: none) {
+  @media (max-width: 932px) and (orientation: landscape) and (hover: none) and (pointer: coarse) {
+    html,
+    body {
+      width: 100%;
+      min-width: 100%;
+      height: auto !important;
+      min-height: 100dvh;
+      overflow-x: auto !important;
+      overflow-y: auto !important;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .gd-app {
+      width: 1180px;
+      min-width: 1180px;
+      max-width: none !important;
+      height: auto !important;
+      min-height: 100dvh;
+      overflow-x: auto !important;
+      overflow-y: visible !important;
+      transform: none !important;
+      flex-shrink: 0;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .gd-shell {
+      width: 1120px;
+      min-width: 1120px;
+      max-width: none !important;
+      overflow: visible !important;
+      transform: none !important;
+    }
   }
 }
 
