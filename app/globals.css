@@ -37,6 +37,7 @@ html,
 body {
   min-height: 100%;
   margin: 0;
+  overflow-x: hidden;
   background:
     radial-gradient(circle at 50% 0%, rgba(255, 212, 24, 0.34), transparent 35%),
     radial-gradient(circle at 92% 18%, rgba(255, 212, 24, 0.16), transparent 28%),
@@ -3162,6 +3163,79 @@ button {
   padding: 1.4rem;
 }
 
+.gd-rotate-notice {
+  display: none;
+}
+
+.gd-rotate-notice__card {
+  width: min(88vw, 420px);
+  display: grid;
+  place-items: center;
+  gap: 1rem;
+  padding: 2rem 1.4rem;
+  border: 1px solid rgba(255, 212, 24, 0.28);
+  border-radius: 24px;
+  background:
+    linear-gradient(145deg, rgba(64, 64, 64, 0.9), rgba(37, 37, 37, 0.94)),
+    radial-gradient(circle at top, rgba(255, 212, 24, 0.28), transparent 58%);
+  color: #ffffff;
+  text-align: center;
+  box-shadow: 0 24px 58px rgba(15, 23, 42, 0.26);
+}
+
+.gd-rotate-notice__logo {
+  width: min(190px, 58vw);
+  height: auto;
+  object-fit: contain;
+}
+
+.gd-rotate-notice__icon {
+  position: relative;
+  width: 4.1rem;
+  height: 4.1rem;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 212, 24, 0.72);
+}
+
+.gd-rotate-notice__icon::before,
+.gd-rotate-notice__icon::after {
+  content: "";
+  position: absolute;
+  border: solid #ffd418;
+}
+
+.gd-rotate-notice__icon::before {
+  inset: 0.9rem 1.16rem;
+  border-width: 2px;
+  border-radius: 7px;
+  transform: rotate(90deg);
+}
+
+.gd-rotate-notice__icon::after {
+  right: 0.18rem;
+  bottom: 0.66rem;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-width: 0 2px 2px 0;
+  transform: rotate(-45deg);
+}
+
+.gd-rotate-notice__icon span {
+  position: absolute;
+  inset: 0.5rem;
+  border: 2px solid rgba(255, 255, 255, 0.58);
+  border-left-color: transparent;
+  border-radius: 50%;
+}
+
+.gd-rotate-notice h1 {
+  max-width: 18rem;
+  margin: 0;
+  font-size: 1.12rem;
+  line-height: 1.35;
+  font-weight: 900;
+}
+
 @keyframes gd-spin {
   to {
     transform: rotate(360deg);
@@ -3410,6 +3484,113 @@ button {
 
   .ga-table-row {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) and (orientation: portrait) {
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .gd-mobile-portrait-hidden,
+  .gd-fullscreen-button {
+    display: none !important;
+  }
+
+  .gd-rotate-notice {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+    background:
+      radial-gradient(circle at 50% 6%, rgba(255, 212, 24, 0.36), transparent 34%),
+      linear-gradient(160deg, #f2f2f2 0%, #efe8c8 48%, #404040 145%);
+  }
+}
+
+@media (max-width: 920px) and (orientation: landscape) {
+  html {
+    font-size: 14px;
+  }
+
+  html,
+  body {
+    overflow-x: hidden;
+  }
+
+  .gd-app {
+    padding: 0.7rem 0 1.6rem;
+  }
+
+  .gd-shell {
+    width: min(96vw, 1668px);
+    gap: 0.8rem;
+  }
+
+  .gd-logo-wrap {
+    padding: 0.1rem 0 0;
+  }
+
+  .gd-logo {
+    width: min(190px, 24vw);
+  }
+
+  .gd-hero__inner,
+  .gd-card,
+  .gd-ranking-card,
+  .gd-balance-section,
+  .gd-dashboard-chart-card {
+    padding: 0.95rem;
+    border-radius: 18px;
+  }
+
+  .gd-hero h1 {
+    font-size: clamp(1.45rem, 4.6vw, 2.1rem);
+  }
+
+  .gd-kpi {
+    font-size: clamp(2rem, 6vw, 3rem);
+  }
+
+  .gd-top-section,
+  .gd-ranking-row,
+  .gd-result-section,
+  .gd-kpi-row,
+  .gd-kpi-row--secondary {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+  }
+
+  .gd-month-grid {
+    width: min(100%, 34rem);
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 0.35rem;
+  }
+
+  .gd-month-filter__button {
+    min-height: 2.05rem;
+  }
+
+  .gd-mini-grid,
+  .gd-result-mini-grid,
+  .gd-revenue-metrics,
+  .gd-cost-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .gd-result-chart,
+  .gd-balance-chart {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .gd-dashboard-chart-card .gd-chart-panel {
+    min-height: 330px;
   }
 }
 

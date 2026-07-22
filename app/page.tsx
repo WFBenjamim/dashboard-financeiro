@@ -217,26 +217,39 @@ export default function Dashboard() {
   }, [year, months]);
 
   if (showOpening) {
-    return <ResultOpeningScreen onEnter={() => setShowOpening(false)} />;
+    return (
+      <>
+        <MobileRotateNotice />
+        <div className="gd-mobile-portrait-hidden">
+          <ResultOpeningScreen onEnter={() => setShowOpening(false)} />
+        </div>
+      </>
+    );
   }
 
   if (loading) {
     return (
-      <main className="gd-app gd-app--centered">
-        <div className="gd-loader" />
-        <p>Carregando dados financeiros...</p>
-      </main>
+      <>
+        <MobileRotateNotice />
+        <main className="gd-app gd-app--centered gd-mobile-portrait-hidden">
+          <div className="gd-loader" />
+          <p>Carregando dados financeiros...</p>
+        </main>
+      </>
     );
   }
 
   if (!data) {
     return (
-      <main className="gd-app gd-app--centered">
-        <div className="gd-error">
-          <h1>Erro de conexão</h1>
-          <p>Não foi possível carregar os dados do dashboard. Confira os arquivos em public/data.</p>
-        </div>
-      </main>
+      <>
+        <MobileRotateNotice />
+        <main className="gd-app gd-app--centered gd-mobile-portrait-hidden">
+          <div className="gd-error">
+            <h1>Erro de conexão</h1>
+            <p>Não foi possível carregar os dados do dashboard. Confira os arquivos em public/data.</p>
+          </div>
+        </main>
+      </>
     );
   }
 
@@ -259,8 +272,9 @@ export default function Dashboard() {
 
   return (
     <main className="gd-app">
+      <MobileRotateNotice />
       <FullscreenButton />
-      <div className="gd-shell">
+      <div className="gd-shell gd-mobile-portrait-hidden">
         <div className="gd-logo-wrap">
           <Image className="gd-logo" src="/logo.png" alt="Logo Gondim" width={420} height={160} priority />
         </div>
@@ -293,6 +307,20 @@ export default function Dashboard() {
         <EvolutionDashboardSections />
       </div>
     </main>
+  );
+}
+
+function MobileRotateNotice() {
+  return (
+    <section className="gd-rotate-notice" aria-label="Orientação de visualização">
+      <div className="gd-rotate-notice__card">
+        <Image className="gd-rotate-notice__logo" src="/logo.png" alt="Logo Gondim" width={260} height={100} priority />
+        <div className="gd-rotate-notice__icon" aria-hidden="true">
+          <span />
+        </div>
+        <h1>Para melhor visualização, gire seu celular para o modo paisagem.</h1>
+      </div>
+    </section>
   );
 }
 
