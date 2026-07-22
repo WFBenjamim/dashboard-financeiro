@@ -3487,7 +3487,7 @@ button {
   }
 }
 
-@media (max-width: 600px) and (orientation: portrait) and (hover: none) and (pointer: coarse) {
+@media (max-width: 768px) and (orientation: portrait) and (hover: none) and (pointer: coarse) {
   html,
   body {
     height: 100%;
@@ -3684,12 +3684,21 @@ button {
   }
 
   .gd-fullscreen-button,
+  .gd-rotate-notice,
   .gd-evolution-fab,
   .gd-card-actions,
   .gd-secondary-action,
   .gd-month-filter,
   .gd-modal-backdrop {
     display: none !important;
+  }
+
+  .gd-mobile-portrait-hidden {
+    display: block !important;
+  }
+
+  .gd-shell.gd-mobile-portrait-hidden {
+    display: grid !important;
   }
 
   .gd-logo-wrap,
