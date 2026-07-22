@@ -3487,7 +3487,7 @@ button {
   }
 }
 
-@media (max-width: 768px) and (orientation: portrait) {
+@media (max-width: 600px) and (orientation: portrait) and (hover: none) and (pointer: coarse) {
   html,
   body {
     height: 100%;
@@ -3513,22 +3513,31 @@ button {
   }
 }
 
-@media (max-width: 920px) and (orientation: landscape) {
+@media (max-width: 932px) and (orientation: landscape) and (hover: none) and (pointer: coarse) {
   html {
     font-size: 14px;
   }
 
   html,
   body {
-    overflow-x: hidden;
+    min-width: 1180px;
+    overflow-x: auto;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .gd-app {
+    width: 1180px;
+    min-width: 1180px;
+    max-width: none;
     padding: 0.7rem 0 1.6rem;
+    overflow-x: visible;
   }
 
   .gd-shell {
-    width: min(96vw, 1668px);
+    width: 1120px;
+    min-width: 1120px;
+    max-width: none;
     gap: 0.8rem;
   }
 
@@ -3586,11 +3595,48 @@ button {
   .gd-result-chart,
   .gd-balance-chart {
     min-width: 0;
-    overflow: hidden;
+    overflow: visible;
   }
 
   .gd-dashboard-chart-card .gd-chart-panel {
     min-height: 330px;
+  }
+
+  .gd-cost-layout {
+    grid-template-columns: minmax(300px, 0.9fr) minmax(0, 1.1fr);
+  }
+
+  .gd-cost-rect,
+  .gd-mini-row,
+  .gd-distribution-row,
+  .gd-ranking-item,
+  .gd-contractual-ranking__row,
+  .gd-revenue-secondary__item,
+  .gd-result-mini,
+  .gd-balance-metric {
+    min-width: 0;
+  }
+
+  .gd-cost-rect__share,
+  .gd-cost-rect__value,
+  .gd-cost__value,
+  .gd-mini-row__value,
+  .gd-distribution-row strong,
+  .gd-distribution-row span:last-child,
+  .gd-ranking-item strong,
+  .gd-contractual-ranking__row em,
+  .gd-revenue-secondary__item em,
+  .gd-result-mini strong,
+  .gd-balance-metric strong {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .gd-cost-rect__head,
+  .gd-mini-row,
+  .gd-ranking-item,
+  .gd-revenue-secondary__item {
+    gap: 0.85rem;
   }
 }
 
