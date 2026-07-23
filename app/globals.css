@@ -3606,6 +3606,14 @@ button {
     overflow: visible;
   }
 
+  .gd-cost-card-visual,
+  .gd-cost-chart,
+  .gd-cost-chart--compact,
+  .gd-distribution-list {
+    min-width: 0;
+    overflow: visible;
+  }
+
   .gd-dashboard-chart-card .gd-chart-panel {
     min-height: 330px;
   }
@@ -3623,6 +3631,18 @@ button {
   .gd-result-mini,
   .gd-balance-metric {
     min-width: 0;
+  }
+
+  .gd-cost-chart--compact .gd-distribution-row,
+  .gd-distribution-row {
+    grid-template-columns: 0.75rem minmax(14rem, 1fr) minmax(6rem, auto) minmax(4rem, auto);
+    column-gap: 0.9rem;
+  }
+
+  .gd-distribution-row__name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .gd-cost-rect__share,
@@ -3650,7 +3670,7 @@ button {
 }
 
 @supports (-webkit-touch-callout: none) {
-  @media (max-width: 932px) and (orientation: landscape) and (hover: none) and (pointer: coarse) {
+  @media (max-width: 932px) and (orientation: landscape) {
     html,
     body {
       width: 100%;
@@ -3681,6 +3701,12 @@ button {
       max-width: none !important;
       overflow: visible !important;
       transform: none !important;
+    }
+
+    .gd-cost-chart--compact .gd-distribution-row,
+    .gd-distribution-row {
+      grid-template-columns: 0.75rem minmax(14rem, 1fr) minmax(6rem, auto) minmax(4rem, auto);
+      column-gap: 0.9rem;
     }
   }
 }

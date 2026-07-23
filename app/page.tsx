@@ -194,6 +194,27 @@ export default function Dashboard() {
   const [months, setMonths] = useState<number[]>([]);
 
   useEffect(() => {
+    const mobileLandscapeQuery = window.matchMedia(
+      "(max-width: 932px) and (orientation: landscape) and (hover: none) and (pointer: coarse)"
+    );
+
+    function skipOpeningOnMobileLandscape() {
+      if (mobileLandscapeQuery.matches) {
+        setShowOpening(false);
+      }
+    }
+
+    skipOpeningOnMobileLandscape();
+    if (typeof mobileLandscapeQuery.addEventListener === "function") {
+      mobileLandscapeQuery.addEventListener("change", skipOpeningOnMobileLandscape);
+      return () => mobileLandscapeQuery.removeEventListener("change", skipOpeningOnMobileLandscape);
+    }
+
+    mobileLandscapeQuery.addListener(skipOpeningOnMobileLandscape);
+    return () => mobileLandscapeQuery.removeListener(skipOpeningOnMobileLandscape);
+  }, []);
+
+  useEffect(() => {
     let isMounted = true;
 
     async function loadData() {
